@@ -5,9 +5,7 @@
 | Thông tin | Giá trị |
 |-----------|---------|
 | **Tên dự án** | VinFast Miền Trung |
-| **Hotline** | 0934 98 07 11 |
-| **Showroom 1** | Vincom Đà Nẵng – 910A Ngô Quyền, Sơn Trà |
-| **Showroom 2** | Showroom 3S – 03 Phạm Hùng, Cẩm Lệ |
+| **Hotline** | 0934 980 711 |
 
 ---
 
