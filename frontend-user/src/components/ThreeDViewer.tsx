@@ -50,7 +50,7 @@ const CarModel: React.FC<{ url: string; color?: string; meshNames?: string[] }> 
     }, [scene, color, meshNames]);
 
     // Auto rotate
-    useFrame((_, delta) => {
+    useFrame((_state, _delta) => {
         if (modelRef.current) {
             // Slow auto rotation when not interacting
             // modelRef.current.rotation.y += delta * 0.1;
@@ -190,8 +190,8 @@ const ThreeDViewer: React.FC<ThreeDViewerProps> = ({ config, fallbackImage, carN
                                 key={colorConfig.hexCode}
                                 onClick={() => handleColorChange(colorConfig.hexCode, colorConfig.meshNames)}
                                 className={`size-6 rounded-full border-2 transition-transform hover:scale-110 ${selectedColor === colorConfig.hexCode
-                                        ? 'border-white scale-110'
-                                        : 'border-transparent'
+                                    ? 'border-white scale-110'
+                                    : 'border-transparent'
                                     }`}
                                 style={{ backgroundColor: colorConfig.hexCode }}
                                 title={colorConfig.name}
