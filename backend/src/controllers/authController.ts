@@ -10,10 +10,11 @@ const generateToken = (id: string, role: string): string => {
         throw new Error('JWT secret not configured');
     }
 
+    const expiresIn = process.env.JWT_ADMIN_EXPIRES_IN || '24h';
     return jwt.sign(
         { id, role },
         secret,
-        { expiresIn: process.env.JWT_ADMIN_EXPIRES_IN || '24h' }
+        { expiresIn } as jwt.SignOptions
     );
 };
 
