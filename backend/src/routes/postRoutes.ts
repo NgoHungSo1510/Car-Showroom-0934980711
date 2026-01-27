@@ -1,12 +1,12 @@
 import { Router } from 'express';
 import {
-    getPosts,
-    getPost,
-    getAdminPosts,
-    getAdminPost,
-    createPost,
-    updatePost,
-    deletePost,
+  getPosts,
+  getPost,
+  getAdminPosts,
+  getAdminPost,
+  createPost,
+  updatePost,
+  deletePost,
 } from '../controllers/postController.js';
 import { protectAdmin } from '../middleware/auth.js';
 

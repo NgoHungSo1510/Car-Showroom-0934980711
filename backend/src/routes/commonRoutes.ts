@@ -1,19 +1,19 @@
 import { Router } from 'express';
 import {
-    getBrands,
-    getAdminBrands,
-    createBrand,
-    updateBrand,
-    deleteBrand,
-    getCarTypes,
-    getAdminCarTypes,
-    createCarType,
-    updateCarType,
-    deleteCarType,
-    getZaloSettings,
-    getBrandingSettings,
-    getSettings,
-    updateSetting,
+  getBrands,
+  getAdminBrands,
+  createBrand,
+  updateBrand,
+  deleteBrand,
+  getCarTypes,
+  getAdminCarTypes,
+  createCarType,
+  updateCarType,
+  deleteCarType,
+  getZaloSettings,
+  getBrandingSettings,
+  getSettings,
+  updateSetting,
 } from '../controllers/commonController.js';
 import { protectAdmin } from '../middleware/auth.js';
 

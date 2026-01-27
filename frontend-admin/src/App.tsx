@@ -16,30 +16,30 @@ import AIConfigPage from './pages/AIConfigPage';
 import FacebookSyncPage from './pages/FacebookSyncPage';
 
 const App: React.FC = () => {
-    return (
-        <Routes>
-            {/* Public route */}
-            <Route path="/login" element={<LoginPage />} />
+  return (
+    <Routes>
+      {/* Public route */}
+      <Route path="/login" element={<LoginPage />} />
 
-            {/* Protected routes */}
-            <Route element={<AdminLayout />}>
-                <Route path="/" element={<Dashboard />} />
-                <Route path="/posts" element={<PostsPage />} />
-                <Route path="/posts/new" element={<PostEditorPage />} />
-                <Route path="/posts/:id" element={<PostEditorPage />} />
-                <Route path="/cars" element={<CarsPage />} />
-                <Route path="/cars/new" element={<CarEditorPage />} />
-                <Route path="/cars/:id" element={<CarEditorPage />} />
-                <Route path="/brands" element={<BrandsPage />} />
-                <Route path="/car-types" element={<CarTypesPage />} />
-                <Route path="/notifications" element={<NotificationsPage />} />
-                <Route path="/facebook-sync" element={<FacebookSyncPage />} />
-                <Route path="/ai-test" element={<FacebookImportPage />} />
-                <Route path="/ai-config" element={<AIConfigPage />} />
-                <Route path="/settings" element={<SettingsPage />} />
-            </Route>
-        </Routes>
-    );
+      {/* Protected routes */}
+      <Route element={<AdminLayout />}>
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/posts" element={<PostsPage />} />
+        <Route path="/posts/new" element={<PostEditorPage />} />
+        <Route path="/posts/:id" element={<PostEditorPage />} />
+        <Route path="/cars" element={<CarsPage />} />
+        <Route path="/cars/new" element={<CarEditorPage />} />
+        <Route path="/cars/:id" element={<CarEditorPage />} />
+        <Route path="/brands" element={<BrandsPage />} />
+        <Route path="/car-types" element={<CarTypesPage />} />
+        <Route path="/notifications" element={<NotificationsPage />} />
+        <Route path="/facebook-sync" element={<FacebookSyncPage />} />
+        <Route path="/ai-test" element={<FacebookImportPage />} />
+        <Route path="/ai-config" element={<AIConfigPage />} />
+        <Route path="/settings" element={<SettingsPage />} />
+      </Route>
+    </Routes>
+  );
 };
 
 export default App;

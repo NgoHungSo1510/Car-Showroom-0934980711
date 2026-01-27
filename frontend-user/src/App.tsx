@@ -9,18 +9,18 @@ import PostDetailPage from './pages/PostDetailPage';
 import SearchPage from './pages/SearchPage';
 
 const App: React.FC = () => {
-    return (
-        <Routes>
-            <Route element={<Layout />}>
-                <Route path="/" element={<HomePage />} />
-                <Route path="/cars" element={<CarsPage />} />
-                <Route path="/cars/:slug" element={<CarDetailPage />} />
-                <Route path="/posts" element={<PostsPage />} />
-                <Route path="/posts/:slug" element={<PostDetailPage />} />
-                <Route path="/search" element={<SearchPage />} />
-            </Route>
-        </Routes>
-    );
+  return (
+    <Routes>
+      <Route element={<Layout />}>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/cars" element={<CarsPage />} />
+        <Route path="/cars/:slug" element={<CarDetailPage />} />
+        <Route path="/posts" element={<PostsPage />} />
+        <Route path="/posts/:slug" element={<PostDetailPage />} />
+        <Route path="/search" element={<SearchPage />} />
+      </Route>
+    </Routes>
+  );
 };
 
 export default App;

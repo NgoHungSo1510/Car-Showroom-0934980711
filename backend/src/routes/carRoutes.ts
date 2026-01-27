@@ -1,14 +1,14 @@
 import { Router } from 'express';
 import {
-    getCars,
-    getCar,
-    getAdminCars,
-    getAdminCar,
-    createCar,
-    updateCar,
-    deleteCar,
-    update3DConfig,
-    upload3DModel,
+  getCars,
+  getCar,
+  getAdminCars,
+  getAdminCar,
+  createCar,
+  updateCar,
+  deleteCar,
+  update3DConfig,
+  upload3DModel,
 } from '../controllers/carController.js';
 import { getRelatedPosts } from '../controllers/postController.js';
 import { protectAdmin } from '../middleware/auth.js';

@@ -11,12 +11,12 @@ import authRoutes from './routes/authRoutes.js';
 import carRoutes, { adminCarRouter } from './routes/carRoutes.js';
 import postRoutes, { adminPostRouter } from './routes/postRoutes.js';
 import {
-    brandRouter,
-    carTypeRouter,
-    settingsRouter,
-    adminBrandRouter,
-    adminCarTypeRouter,
-    adminSettingsRouter,
+  brandRouter,
+  carTypeRouter,
+  settingsRouter,
+  adminBrandRouter,
+  adminCarTypeRouter,
+  adminSettingsRouter,
 } from './routes/commonRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import notificationRoutes, { adminNotificationRouter } from './routes/notificationRoutes.js';
@@ -41,18 +41,15 @@ app.use(express.urlencoded({ extended: true }));
 
 // CORS - Allow all origins in production for Vercel
 app.use(
-    cors({
-        origin: process.env.NODE_ENV === 'production'
-            ? true  // Allow all origins in production
-            : [
-                'http://localhost:5173',
-                'http://localhost:5174',
-                'http://localhost:3000',
-            ],
-        credentials: true,
-        methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-        allowedHeaders: ['Content-Type', 'Authorization'],
-    })
+  cors({
+    origin:
+      process.env.NODE_ENV === 'production'
+        ? true // Allow all origins in production
+        : ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:3000'],
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  }),
 );
 
 // Serve static files (uploads)
@@ -79,7 +76,7 @@ app.use('/api/admin/notifications', adminNotificationRouter);
 
 // Health check
 app.get('/api/health', (req, res) => {
-    res.json({ status: 'ok', message: 'API is running' });
+  res.json({ status: 'ok', message: 'API is running' });
 });
 
 // Error handling
@@ -90,7 +87,7 @@ app.use(errorHandler);
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-    console.log(`
+  console.log(`
 🚀 Server is running!
 📡 API: http://localhost:${PORT}/api
 🔧 Environment: ${process.env.NODE_ENV || 'development'}

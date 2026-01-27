@@ -1,45 +1,45 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
 export interface INotification extends Document {
-    _id: mongoose.Types.ObjectId;
-    type: 'contact_car' | 'contact_post';
-    refId: mongoose.Types.ObjectId;
-    refTitle: string;
-    refThumbnail?: string;
-    isRead: boolean;
-    createdAt: Date;
-    updatedAt: Date;
+  _id: mongoose.Types.ObjectId;
+  type: 'contact_car' | 'contact_post';
+  refId: mongoose.Types.ObjectId;
+  refTitle: string;
+  refThumbnail?: string;
+  isRead: boolean;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 const notificationSchema = new Schema<INotification>(
-    {
-        type: {
-            type: String,
-            enum: ['contact_car', 'contact_post'],
-            required: true,
-        },
-        refId: {
-            type: Schema.Types.ObjectId,
-            required: true,
-            refPath: 'type',
-        },
-        refTitle: {
-            type: String,
-            required: true,
-            trim: true,
-        },
-        refThumbnail: {
-            type: String,
-            default: '',
-        },
-        isRead: {
-            type: Boolean,
-            default: false,
-        },
+  {
+    type: {
+      type: String,
+      enum: ['contact_car', 'contact_post'],
+      required: true,
     },
-    {
-        timestamps: true,
-    }
+    refId: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      refPath: 'type',
+    },
+    refTitle: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    refThumbnail: {
+      type: String,
+      default: '',
+    },
+    isRead: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  {
+    timestamps: true,
+  },
 );
 
 // Indexes

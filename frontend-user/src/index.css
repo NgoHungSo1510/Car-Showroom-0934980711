@@ -4,113 +4,145 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Dark theme (default) - Using RGB values for opacity support */
+:root,
+.dark-theme {
+  --color-background: 10 10 11;
+  --color-surface: 20 20 22;
+  --color-surface-hover: 26 26 29;
+  --color-border: 39 39 42;
+  --color-text-primary: 250 250 250;
+  --color-text-secondary: 161 161 170;
+  --color-primary: 0 102 255;
+  --color-primary-light: 51 153 255;
+}
+
+/* Light theme - Using RGB values for opacity support */
+.light-theme {
+  --color-background: 248 250 252;
+  --color-surface: 255 255 255;
+  --color-surface-hover: 241 245 249;
+  --color-border: 226 232 240;
+  --color-text-primary: 15 23 42;
+  --color-text-secondary: 100 116 139;
+  --color-primary: 0 102 255;
+  --color-primary-light: 51 153 255;
+}
+
 @layer base {
-    html {
-        scroll-behavior: smooth;
-    }
+  html {
+    scroll-behavior: smooth;
+  }
 
-    body {
-        @apply bg-background text-text-primary font-sans antialiased;
-    }
+  body {
+    background-color: rgb(var(--color-background));
+    color: rgb(var(--color-text-primary));
+    @apply font-sans antialiased;
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease;
+  }
 
-    ::selection {
-        @apply bg-primary/30;
-    }
+  ::selection {
+    @apply bg-primary/30;
+  }
 }
 
 @layer components {
+  /* Glass effect */
+  .glass {
+    @apply bg-surface/80 backdrop-blur-xl border border-border;
+  }
 
-    /* Glass effect */
-    .glass {
-        @apply bg-surface/80 backdrop-blur-xl border border-white/10;
-    }
+  /* Gradient text */
+  .text-gradient {
+    @apply bg-gradient-to-r from-primary to-primary-light bg-clip-text text-transparent;
+  }
 
-    /* Gradient text */
-    .text-gradient {
-        @apply bg-gradient-to-r from-primary to-primary-light bg-clip-text text-transparent;
-    }
+  /* Button styles */
+  .btn-primary {
+    @apply px-6 py-3 bg-primary hover:bg-primary-light text-text-primary font-semibold rounded-xl transition-all duration-300 shadow-lg shadow-primary/25 hover:shadow-primary/40 hover:-translate-y-0.5 active:translate-y-0;
+  }
 
-    /* Button styles */
-    .btn-primary {
-        @apply px-6 py-3 bg-primary hover:bg-primary-light text-white font-semibold rounded-xl transition-all duration-300 shadow-lg shadow-primary/25 hover:shadow-primary/40 hover:-translate-y-0.5 active:translate-y-0;
-    }
+  .btn-secondary {
+    @apply px-6 py-3 bg-surface hover:bg-surface-hover border border-border text-text-primary font-semibold rounded-xl transition-all duration-300;
+  }
 
-    .btn-secondary {
-        @apply px-6 py-3 bg-surface hover:bg-surface-hover border border-border text-text-primary font-semibold rounded-xl transition-all duration-300;
-    }
+  /* Card styles */
+  .card {
+    @apply bg-surface border border-border rounded-2xl overflow-hidden transition-all duration-300 hover:border-primary/30 hover:shadow-xl hover:shadow-primary/5;
+  }
 
-    /* Card styles */
-    .card {
-        @apply bg-surface border border-border rounded-2xl overflow-hidden transition-all duration-300 hover:border-primary/30 hover:shadow-xl hover:shadow-primary/5;
-    }
+  /* Custom scrollbar */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
 
-    /* Custom scrollbar */
-    .custom-scrollbar::-webkit-scrollbar {
-        width: 6px;
-        height: 6px;
-    }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
 
-    .custom-scrollbar::-webkit-scrollbar-track {
-        @apply bg-transparent;
-    }
-
-    .custom-scrollbar::-webkit-scrollbar-thumb {
-        @apply bg-border rounded-full hover:bg-text-secondary;
-    }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-border rounded-full hover:bg-text-secondary;
+  }
 }
 
 @layer utilities {
+  /* Hide scrollbar but allow scrolling */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 
-    /* Hide scrollbar but allow scrolling */
-    .scrollbar-hide {
-        -ms-overflow-style: none;
-        scrollbar-width: none;
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Line clamp utilities */
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* Gold gradient text */
+  .gold-text-gradient {
+    background: linear-gradient(135deg, #d4af37 0%, #ffd700 50%, #d4af37 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Gold gradient background */
+  .gold-gradient {
+    background: linear-gradient(135deg, #d4af37 0%, #ffd700 50%, #d4af37 100%);
+  }
+
+  /* Glow animation */
+  .animate-glow {
+    animation: glow 2s ease-in-out infinite alternate;
+  }
+
+  @keyframes glow {
+    from {
+      box-shadow:
+        0 0 5px rgba(212, 175, 55, 0.5),
+        0 0 10px rgba(212, 175, 55, 0.3);
     }
 
-    .scrollbar-hide::-webkit-scrollbar {
-        display: none;
+    to {
+      box-shadow:
+        0 0 10px rgba(212, 175, 55, 0.8),
+        0 0 20px rgba(212, 175, 55, 0.5);
     }
-
-    /* Line clamp utilities */
-    .line-clamp-2 {
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-    }
-
-    .line-clamp-3 {
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-    }
-
-    /* Gold gradient text */
-    .gold-text-gradient {
-        background: linear-gradient(135deg, #D4AF37 0%, #FFD700 50%, #D4AF37 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-    }
-
-    /* Gold gradient background */
-    .gold-gradient {
-        background: linear-gradient(135deg, #D4AF37 0%, #FFD700 50%, #D4AF37 100%);
-    }
-
-    /* Glow animation */
-    .animate-glow {
-        animation: glow 2s ease-in-out infinite alternate;
-    }
-
-    @keyframes glow {
-        from {
-            box-shadow: 0 0 5px rgba(212, 175, 55, 0.5), 0 0 10px rgba(212, 175, 55, 0.3);
-        }
-
-        to {
-            box-shadow: 0 0 10px rgba(212, 175, 55, 0.8), 0 0 20px rgba(212, 175, 55, 0.5);
-        }
-    }
+  }
 }

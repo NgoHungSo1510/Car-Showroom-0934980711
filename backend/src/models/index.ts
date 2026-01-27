@@ -5,4 +5,3 @@ export { default as Car } from './Car.js';
 export { default as Post } from './Post.js';
 export { default as Setting } from './Setting.js';
 export { default as Notification } from './Notification.js';
-

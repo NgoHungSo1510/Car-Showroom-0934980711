@@ -5,39 +5,39 @@ dotenv.config();
 
 // Configure Cloudinary
 cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET,
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
 export const uploadToCloudinary = async (
-    fileBuffer: Buffer,
-    folder: string = 'car-showroom'
+  fileBuffer: Buffer,
+  folder: string = 'car-showroom',
 ): Promise<{ url: string; publicId: string }> => {
-    return new Promise((resolve, reject) => {
-        cloudinary.uploader
-            .upload_stream(
-                {
-                    folder,
-                    resource_type: 'auto',
-                },
-                (error, result) => {
-                    if (error) {
-                        reject(error);
-                    } else if (result) {
-                        resolve({
-                            url: result.secure_url,
-                            publicId: result.public_id,
-                        });
-                    }
-                }
-            )
-            .end(fileBuffer);
-    });
+  return new Promise((resolve, reject) => {
+    cloudinary.uploader
+      .upload_stream(
+        {
+          folder,
+          resource_type: 'auto',
+        },
+        (error, result) => {
+          if (error) {
+            reject(error);
+          } else if (result) {
+            resolve({
+              url: result.secure_url,
+              publicId: result.public_id,
+            });
+          }
+        },
+      )
+      .end(fileBuffer);
+  });
 };
 
 export const deleteFromCloudinary = async (publicId: string): Promise<void> => {
-    await cloudinary.uploader.destroy(publicId);
+  await cloudinary.uploader.destroy(publicId);
 };
 
 export default cloudinary;

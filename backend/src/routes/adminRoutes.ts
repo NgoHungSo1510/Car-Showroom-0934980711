@@ -1,13 +1,6 @@
 import { Router } from 'express';
-import {
-    getDashboardStats,
-    getActivityLogs,
-} from '../controllers/dashboardController.js';
-import {
-    uploadImage,
-    uploadMultipleImages,
-    uploadModel,
-} from '../controllers/uploadController.js';
+import { getDashboardStats, getActivityLogs } from '../controllers/dashboardController.js';
+import { uploadImage, uploadMultipleImages, uploadModel } from '../controllers/uploadController.js';
 import { protectAdmin } from '../middleware/auth.js';
 import { uploadSingleImage, uploadImages, uploadSingleModel } from '../middleware/upload.js';
 

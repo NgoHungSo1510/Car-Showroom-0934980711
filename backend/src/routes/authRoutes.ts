@@ -1,10 +1,10 @@
 import { Router } from 'express';
 import {
-    login,
-    getMe,
-    logout,
-    updateProfile,
-    changePassword,
+  login,
+  getMe,
+  logout,
+  updateProfile,
+  changePassword,
 } from '../controllers/authController.js';
 import { protectAdmin } from '../middleware/auth.js';
 

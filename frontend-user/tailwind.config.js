@@ -1,4 +1,14 @@
 /** @type {import('tailwindcss').Config} */
+
+function withOpacityValue(variable) {
+    return ({ opacityValue }) => {
+        if (opacityValue === undefined) {
+            return `rgb(var(${variable}))`
+        }
+        return `rgb(var(${variable}) / ${opacityValue})`
+    }
+}
+
 export default {
     content: [
         "./index.html",
@@ -8,16 +18,18 @@ export default {
     theme: {
         extend: {
             colors: {
-                "primary": "#0066FF",
-                "primary-light": "#3399FF",
-                "background": "#0A0A0B",
-                "surface": "#141416",
-                "surface-hover": "#1A1A1D",
-                "border": "#27272A",
-                "text-primary": "#FAFAFA",
-                "text-secondary": "#A1A1AA",
+                "primary": withOpacityValue('--color-primary'),
+                "primary-light": withOpacityValue('--color-primary-light'),
+                "background": withOpacityValue('--color-background'),
+                "surface": withOpacityValue('--color-surface'),
+                "surface-hover": withOpacityValue('--color-surface-hover'),
+                "border": withOpacityValue('--color-border'),
+                "text-primary": withOpacityValue('--color-text-primary'),
+                "text-secondary": withOpacityValue('--color-text-secondary'),
                 "accent": "#10B981",
             },
+
+
             fontFamily: {
                 "sans": ["Inter", "system-ui", "sans-serif"],
                 "display": ["Space Grotesk", "sans-serif"],
