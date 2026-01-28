@@ -53,10 +53,7 @@ const PostsPage: React.FC = () => {
 
   // Copy to clipboard and open Meta Business Suite
   const handleCopyAndOpenFB = async (post: Post) => {
-    // Get website URL from environment or use default
     const baseUrl = import.meta.env.VITE_CLIENT_URL || 'https://maihieu.vercel.app';
-
-    // Build Facebook post content
     const categoryEmoji =
       post.category === 'news'
         ? '📰'
@@ -67,18 +64,11 @@ const PostsPage: React.FC = () => {
             : '⭐';
 
     let content = `${categoryEmoji} ${post.title}\n\n`;
-
-    if (post.excerpt) {
-      content += `${post.excerpt}\n\n`;
-    }
-
+    if (post.excerpt) content += `${post.excerpt}\n\n`;
     content += `👉 Xem chi tiết: ${baseUrl}/posts/${post.slug}\n`;
-
     if (post.relatedCar) {
       content += `🚗 Xem xe ${post.relatedCar.name}: ${baseUrl}/cars/${post.relatedCar.slug}\n`;
     }
-
-    // Add hashtags
     if (post.tags && post.tags.length > 0) {
       const hashtags = post.tags
         .filter((t) => !t.includes('facebook'))
@@ -90,8 +80,6 @@ const PostsPage: React.FC = () => {
     try {
       await navigator.clipboard.writeText(content);
       toast.success('Đã copy nội dung! Đang mở Facebook...');
-
-      // Open Meta Business Suite
       window.open('https://business.facebook.com/latest/composer', '_blank');
     } catch (err) {
       toast.error('Không thể copy. Vui lòng thử lại.');
@@ -100,14 +88,11 @@ const PostsPage: React.FC = () => {
 
   const posts: Post[] = postsData?.data || [];
 
-  // Filtered posts
   const filteredPosts = useMemo(() => {
     return posts.filter((post) => {
       const matchesSearch = post.title.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesCategory = !categoryFilter || post.category === categoryFilter;
       const matchesStatus = !statusFilter || post.status === statusFilter;
-
-      // Date filter
       const postDate = post.publishedAt || post.createdAt;
       let matchesDateFrom = true;
       let matchesDateTo = true;
@@ -125,7 +110,6 @@ const PostsPage: React.FC = () => {
     });
   }, [posts, searchTerm, categoryFilter, statusFilter, dateFrom, dateTo]);
 
-  // Posts that can be published to FB (published but not yet on FB)
   const publishablePosts = filteredPosts.filter(
     (p) => p.status === 'published' && !p.facebookPostId,
   );
@@ -156,13 +140,10 @@ const PostsPage: React.FC = () => {
 
   const handleCopySelectedAndOpenFB = async () => {
     const selectedPosts = publishablePosts.filter((p) => selectedIds.has(p._id));
-
     if (selectedPosts.length === 0) {
       toast.error('Vui lòng chọn các bài đã xuất bản');
       return;
     }
-
-    // Copy first selected post
     if (selectedPosts.length === 1) {
       handleCopyAndOpenFB(selectedPosts[0]);
     } else {
@@ -183,12 +164,12 @@ const PostsPage: React.FC = () => {
 
   const getCategoryColor = (category: string) => {
     const colors: Record<string, string> = {
-      news: 'bg-blue-500/10 text-blue-400',
-      review: 'bg-purple-500/10 text-purple-400',
-      promotion: 'bg-emerald-500/10 text-emerald-400',
-      event: 'bg-amber-500/10 text-amber-400',
+      news: 'bg-blue-500/10 text-blue-500',
+      review: 'bg-purple-500/10 text-purple-500',
+      promotion: 'bg-emerald-500/10 text-emerald-500',
+      event: 'bg-amber-500/10 text-amber-500',
     };
-    return colors[category] || 'bg-slate-500/10 text-slate-400';
+    return colors[category] || 'bg-slate-500/10 text-slate-500';
   };
 
   const formatDate = (dateStr?: string) => {
@@ -218,41 +199,39 @@ const PostsPage: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl md:text-2xl font-bold">Quản lý tin tức</h2>
-          <p className="text-slate-400 text-sm mt-1">Quản lý bài viết và tin tức</p>
+          <h2 className="text-xl md:text-2xl font-bold dark:text-white light:text-text-light">Quản lý tin tức</h2>
+          <p className="dark:text-slate-400 light:text-slate-500 text-sm mt-1">Quản lý bài viết và tin tức</p>
         </div>
         <div className="flex gap-3">
           <a
             href="/posts/new"
-            className="flex items-center justify-center gap-2 px-4 py-2 bg-primary hover:bg-accent-blue text-white rounded-xl text-sm font-bold transition-all shadow-lg shadow-primary/20"
+            className="flex items-center justify-center gap-2 px-4 py-2.5 bg-primary hover:bg-accent-blue text-white rounded-xl text-sm font-bold transition-all shadow-lg shadow-primary/20 touch-target"
           >
             <span className="material-symbols-outlined text-[18px]">add</span>
-            <span className="sm:inline">Tạo bài viết</span>
+            <span>Tạo bài viết</span>
           </a>
         </div>
       </div>
 
       {/* Search and Filters Toolbar */}
-      <div className="flex flex-wrap items-center gap-4 bg-card-dark border border-border-dark rounded-xl p-4">
-        {/* Search */}
+      <div className="flex flex-wrap items-center gap-3 md:gap-4 dark:bg-card-dark light:bg-white dark:border-border-dark light:border-border-light border rounded-xl p-4 shadow-sm">
         <div className="relative flex-1 min-w-[200px]">
           <input
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Tìm kiếm theo tiêu đề..."
-            className="w-full bg-background-dark border border-border-dark rounded-lg text-sm pl-10 pr-4 py-2 text-white placeholder-slate-500 focus:ring-primary focus:border-primary transition-all"
+            className="w-full dark:bg-background-dark light:bg-slate-50 dark:border-border-dark light:border-border-light border rounded-lg text-sm pl-10 pr-4 py-2.5 dark:text-white light:text-text-light placeholder-slate-400 focus:ring-primary focus:border-primary transition-all"
           />
-          <span className="material-symbols-outlined absolute left-3 top-2 text-slate-500 text-[20px]">
+          <span className="material-symbols-outlined absolute left-3 top-2.5 text-slate-400 text-[20px]">
             search
           </span>
         </div>
 
-        {/* Category Filter */}
         <select
           value={categoryFilter}
           onChange={(e) => setCategoryFilter(e.target.value)}
-          className="bg-background-dark border border-border-dark rounded-lg text-sm px-4 py-2 text-white focus:ring-primary focus:border-primary transition-all"
+          className="dark:bg-background-dark light:bg-slate-50 dark:border-border-dark light:border-border-light border rounded-lg text-sm px-4 py-2.5 dark:text-white light:text-text-light focus:ring-primary focus:border-primary transition-all"
         >
           <option value="">Tất cả danh mục</option>
           <option value="news">Tin tức</option>
@@ -261,26 +240,24 @@ const PostsPage: React.FC = () => {
           <option value="event">Sự kiện</option>
         </select>
 
-        {/* Status Filter */}
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          className="bg-background-dark border border-border-dark rounded-lg text-sm px-4 py-2 text-white focus:ring-primary focus:border-primary transition-all"
+          className="dark:bg-background-dark light:bg-slate-50 dark:border-border-dark light:border-border-light border rounded-lg text-sm px-4 py-2.5 dark:text-white light:text-text-light focus:ring-primary focus:border-primary transition-all"
         >
           <option value="">Tất cả trạng thái</option>
           <option value="published">Đã xuất bản</option>
           <option value="draft">Nháp</option>
         </select>
 
-        {/* Results count */}
-        <span className="text-xs text-slate-500">
+        <span className="text-xs dark:text-slate-500 light:text-slate-400">
           {filteredPosts.length} / {posts.length} bài viết
         </span>
       </div>
 
       {/* Date Filter Row */}
-      <div className="flex flex-wrap items-center gap-4 bg-card-dark border border-border-dark rounded-xl p-4">
-        <span className="text-sm text-slate-400 flex items-center gap-2">
+      <div className="flex flex-wrap items-center gap-4 dark:bg-card-dark light:bg-white dark:border-border-dark light:border-border-light border rounded-xl p-4 shadow-sm">
+        <span className="text-sm dark:text-slate-400 light:text-slate-500 flex items-center gap-2">
           <span className="material-symbols-outlined text-[18px]">calendar_month</span>
           Lọc theo ngày:
         </span>
@@ -289,20 +266,20 @@ const PostsPage: React.FC = () => {
             type="date"
             value={dateFrom}
             onChange={(e) => setDateFrom(e.target.value)}
-            className="bg-background-dark border border-border-dark rounded-lg text-sm px-4 py-2 text-white focus:ring-primary focus:border-primary transition-all"
+            className="dark:bg-background-dark light:bg-slate-50 dark:border-border-dark light:border-border-light border rounded-lg text-sm px-4 py-2 dark:text-white light:text-text-light focus:ring-primary focus:border-primary transition-all"
           />
-          <span className="text-slate-500">đến</span>
+          <span className="dark:text-slate-500 light:text-slate-400">đến</span>
           <input
             type="date"
             value={dateTo}
             onChange={(e) => setDateTo(e.target.value)}
-            className="bg-background-dark border border-border-dark rounded-lg text-sm px-4 py-2 text-white focus:ring-primary focus:border-primary transition-all"
+            className="dark:bg-background-dark light:bg-slate-50 dark:border-border-dark light:border-border-light border rounded-lg text-sm px-4 py-2 dark:text-white light:text-text-light focus:ring-primary focus:border-primary transition-all"
           />
         </div>
         {(dateFrom || dateTo) && (
           <button
             onClick={clearDateFilter}
-            className="text-xs text-primary hover:text-white transition-colors flex items-center gap-1"
+            className="text-xs text-primary hover:opacity-70 transition-opacity flex items-center gap-1"
           >
             <span className="material-symbols-outlined text-[14px]">close</span>
             Xóa bộ lọc ngày
@@ -317,23 +294,21 @@ const PostsPage: React.FC = () => {
             <label className="flex items-center gap-2 cursor-pointer">
               <input
                 type="checkbox"
-                checked={
-                  selectedIds.size === publishablePosts.length && publishablePosts.length > 0
-                }
+                checked={selectedIds.size === publishablePosts.length && publishablePosts.length > 0}
                 onChange={handleSelectAllPublishable}
-                className="rounded border-border-dark bg-background-dark text-primary focus:ring-primary w-5 h-5"
+                className="rounded dark:border-border-dark light:border-border-light dark:bg-background-dark light:bg-white text-primary focus:ring-primary w-5 h-5"
               />
-              <span className="text-white text-sm">
+              <span className="dark:text-white light:text-text-light text-sm">
                 Chọn tất cả ({publishablePosts.length} bài có thể đăng FB)
               </span>
             </label>
           </div>
           <div className="flex items-center gap-3">
-            <span className="text-slate-400 text-sm">Đã chọn: {selectedIds.size}</span>
+            <span className="dark:text-slate-400 light:text-slate-500 text-sm">Đã chọn: {selectedIds.size}</span>
             <button
               onClick={handleCopySelectedAndOpenFB}
               disabled={selectedIds.size === 0}
-              className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-bold transition-colors disabled:opacity-50 flex items-center gap-2"
+              className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-bold transition-colors disabled:opacity-50 flex items-center gap-2 touch-target"
             >
               📋 Copy + Mở Facebook
             </button>
@@ -342,10 +317,10 @@ const PostsPage: React.FC = () => {
       )}
 
       {/* Posts Table */}
-      <div className="bg-card-dark border border-border-dark rounded-2xl overflow-hidden">
+      <div className="dark:bg-card-dark light:bg-white dark:border-border-dark light:border-border-light border rounded-2xl overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full text-left">
-            <thead className="bg-background-dark/30 text-slate-500 text-[10px] uppercase font-bold tracking-widest">
+            <thead className="dark:bg-background-dark/30 light:bg-slate-50 dark:text-slate-500 light:text-slate-400 text-[10px] uppercase font-bold tracking-widest">
               <tr>
                 <th className="px-4 py-4 w-10"></th>
                 <th className="px-4 py-4">Tiêu đề</th>
@@ -357,41 +332,33 @@ const PostsPage: React.FC = () => {
                 <th className="px-4 py-4">Thao tác</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-border-dark">
+            <tbody className="divide-y dark:divide-border-dark light:divide-border-light">
               {filteredPosts.length > 0 ? (
                 filteredPosts.map((post) => (
-                  <tr key={post._id} className="hover:bg-white/5 transition-colors">
+                  <tr key={post._id} className="dark:hover:bg-white/5 light:hover:bg-slate-50 transition-colors">
                     <td className="px-4 py-4">
                       {post.status === 'published' && !post.facebookPostId && (
                         <input
                           type="checkbox"
                           checked={selectedIds.has(post._id)}
                           onChange={() => handleToggleSelect(post._id)}
-                          className="rounded border-border-dark bg-background-dark text-primary focus:ring-primary w-4 h-4"
+                          className="rounded dark:border-border-dark light:border-border-light dark:bg-background-dark light:bg-white text-primary focus:ring-primary w-4 h-4"
                         />
                       )}
                     </td>
                     <td className="px-4 py-4">
-                      <span className="text-sm font-medium text-white">{post.title}</span>
+                      <span className="text-sm font-medium dark:text-white light:text-text-light">{post.title}</span>
                     </td>
                     <td className="px-4 py-4">
-                      <span
-                        className={`px-2 py-1 text-[10px] font-bold rounded uppercase tracking-tighter ${getCategoryColor(post.category)}`}
-                      >
+                      <span className={`px-2 py-1 text-[10px] font-bold rounded uppercase tracking-tighter ${getCategoryColor(post.category)}`}>
                         {getCategoryLabel(post.category)}
                       </span>
                     </td>
-                    <td className="px-4 py-4 text-sm text-slate-400">
+                    <td className="px-4 py-4 text-sm dark:text-slate-400 light:text-slate-500">
                       {formatDate(post.publishedAt || post.createdAt)}
                     </td>
                     <td className="px-4 py-4">
-                      <span
-                        className={`px-2 py-1 text-[10px] font-bold rounded uppercase tracking-tighter ${
-                          post.status === 'published'
-                            ? 'bg-emerald-500/10 text-emerald-400'
-                            : 'bg-amber-500/10 text-amber-400'
-                        }`}
-                      >
+                      <span className={`px-2 py-1 text-[10px] font-bold rounded uppercase tracking-tighter ${post.status === 'published' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-amber-500/10 text-amber-500'}`}>
                         {post.status === 'published' ? 'Đã xuất bản' : 'Nháp'}
                       </span>
                     </td>
@@ -401,30 +368,27 @@ const PostsPage: React.FC = () => {
                           href={`https://facebook.com/${post.facebookPostId}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-[10px] px-2 py-1 bg-blue-500/20 text-blue-400 rounded font-bold hover:bg-blue-500/30 transition-colors"
+                          className="text-[10px] px-2 py-1 bg-blue-500/20 text-blue-500 rounded font-bold hover:bg-blue-500/30 transition-colors"
                         >
                           ✅ Đã đăng
                         </a>
                       ) : post.status === 'published' ? (
                         <button
                           onClick={() => handleCopyAndOpenFB(post)}
-                          className="text-[10px] px-2 py-1 bg-slate-500/20 text-slate-400 rounded font-bold hover:bg-blue-500/20 hover:text-blue-400 transition-colors"
+                          className="text-[10px] px-2 py-1 dark:bg-slate-500/20 light:bg-slate-100 dark:text-slate-400 light:text-slate-500 rounded font-bold hover:bg-blue-500/20 hover:text-blue-500 transition-colors"
                         >
                           📋 Copy FB
                         </button>
                       ) : (
-                        <span className="text-[10px] text-slate-600">-</span>
+                        <span className="text-[10px] dark:text-slate-600 light:text-slate-300">-</span>
                       )}
                     </td>
-                    <td className="px-4 py-4 text-sm text-slate-400">
+                    <td className="px-4 py-4 text-sm dark:text-slate-400 light:text-slate-500">
                       {post.viewCount?.toLocaleString() || 0}
                     </td>
                     <td className="px-4 py-4">
                       <div className="flex items-center gap-2">
-                        <a
-                          href={`/posts/${post._id}`}
-                          className="text-primary hover:text-white transition-colors"
-                        >
+                        <a href={`/posts/${post._id}`} className="text-primary hover:opacity-70 transition-opacity">
                           <span className="material-symbols-outlined">edit</span>
                         </a>
                         <button
@@ -439,7 +403,7 @@ const PostsPage: React.FC = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={8} className="px-6 py-12 text-center text-slate-500">
+                  <td colSpan={8} className="px-6 py-12 text-center dark:text-slate-500 light:text-slate-400">
                     {posts.length === 0 ? (
                       <>
                         Chưa có bài viết nào.{' '}

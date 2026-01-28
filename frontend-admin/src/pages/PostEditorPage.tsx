@@ -29,7 +29,6 @@ const PostEditorPage: React.FC = () => {
   });
   const [tagInput, setTagInput] = useState('');
 
-  // Fetch post if editing
   const { data: postData, isLoading } = useQuery({
     queryKey: ['admin-post', id],
     queryFn: async () => {
@@ -39,7 +38,6 @@ const PostEditorPage: React.FC = () => {
     enabled: isEditing,
   });
 
-  // Fetch cars for dropdown
   const { data: carsData } = useQuery({
     queryKey: ['admin-cars-select'],
     queryFn: async () => {
@@ -48,7 +46,6 @@ const PostEditorPage: React.FC = () => {
     },
   });
 
-  // Populate form when editing
   useEffect(() => {
     if (postData) {
       setFormData({
@@ -74,7 +71,6 @@ const PostEditorPage: React.FC = () => {
     }
   }, [postData]);
 
-  // Create/Update mutations
   const saveMutation = useMutation({
     mutationFn: async (data: PostInput) => {
       if (isEditing) {
@@ -118,7 +114,6 @@ const PostEditorPage: React.FC = () => {
     });
   };
 
-  // Content block handlers
   const addContentBlock = (type: ContentBlock['type']) => {
     const newBlock: ContentBlock = { type };
     if (type === 'text') newBlock.content = '';
@@ -163,12 +158,12 @@ const PostEditorPage: React.FC = () => {
   return (
     <div className="max-w-4xl">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold">
+        <h2 className="text-xl md:text-2xl font-bold dark:text-white light:text-text-light">
           {isEditing ? 'Chỉnh sửa bài viết' : 'Tạo bài viết mới'}
         </h2>
         <button
           onClick={() => navigate('/posts')}
-          className="text-slate-400 hover:text-white transition-colors"
+          className="dark:text-slate-400 light:text-slate-500 dark:hover:text-white light:hover:text-text-light transition-colors"
         >
           ← Quay lại
         </button>
@@ -176,20 +171,20 @@ const PostEditorPage: React.FC = () => {
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Title */}
-        <div className="bg-card-dark border border-border-dark rounded-2xl p-6">
-          <label className="block text-sm font-medium text-slate-300 mb-2">Tiêu đề *</label>
+        <div className="dark:bg-card-dark light:bg-white dark:border-border-dark light:border-border-light border rounded-2xl p-6 shadow-sm">
+          <label className="block text-sm font-medium dark:text-slate-300 light:text-slate-600 mb-2">Tiêu đề *</label>
           <input
             type="text"
             value={formData.title}
             onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-            className="w-full bg-background-dark border-border-dark rounded-lg px-4 py-3 text-white focus:ring-primary focus:border-primary text-lg"
+            className="w-full dark:bg-background-dark light:bg-slate-50 dark:border-border-dark light:border-border-light border rounded-lg px-4 py-3 dark:text-white light:text-text-light focus:ring-primary focus:border-primary text-lg"
             placeholder="Nhập tiêu đề bài viết..."
           />
         </div>
 
         {/* Category */}
-        <div className="bg-card-dark border border-border-dark rounded-2xl p-6">
-          <label className="block text-sm font-medium text-slate-300 mb-2">Danh mục *</label>
+        <div className="dark:bg-card-dark light:bg-white dark:border-border-dark light:border-border-light border rounded-2xl p-6 shadow-sm">
+          <label className="block text-sm font-medium dark:text-slate-300 light:text-slate-600 mb-2">Danh mục *</label>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {[
               { value: 'news', label: '📰 Tin tức', desc: 'Tin tức, bài viết thông thường' },
@@ -203,11 +198,10 @@ const PostEditorPage: React.FC = () => {
                 onClick={() =>
                   setFormData({ ...formData, category: cat.value as PostInput['category'] })
                 }
-                className={`p-4 rounded-xl text-left transition-all ${
-                  formData.category === cat.value
+                className={`p-4 rounded-xl text-left transition-all ${formData.category === cat.value
                     ? 'bg-primary text-white ring-2 ring-primary'
-                    : 'bg-background-dark text-slate-300 hover:bg-slate-700'
-                }`}
+                    : 'dark:bg-background-dark light:bg-slate-100 dark:text-slate-300 light:text-slate-600 dark:hover:bg-slate-700 light:hover:bg-slate-200'
+                  }`}
               >
                 <div className="font-bold">{cat.label}</div>
                 <div className="text-xs opacity-70 mt-1">{cat.desc}</div>
@@ -216,41 +210,42 @@ const PostEditorPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Category-specific fields */}
+        {/* Event-specific fields */}
         {formData.category === 'event' && (
-          <div className="bg-card-dark border border-border-dark rounded-2xl p-6">
-            <h3 className="text-lg font-bold mb-4 flex items-center gap-2">📅 Thông tin sự kiện</h3>
+          <div className="dark:bg-card-dark light:bg-white dark:border-border-dark light:border-border-light border rounded-2xl p-6 shadow-sm">
+            <h3 className="text-lg font-bold mb-4 flex items-center gap-2 dark:text-white light:text-text-light">📅 Thông tin sự kiện</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">Bắt đầu</label>
+                <label className="block text-sm font-medium dark:text-slate-300 light:text-slate-600 mb-2">Bắt đầu</label>
                 <input
                   type="datetime-local"
                   value={formData.eventStartDate}
                   onChange={(e) => setFormData({ ...formData, eventStartDate: e.target.value })}
-                  className="w-full bg-background-dark border-border-dark rounded-lg px-4 py-3 text-white focus:ring-primary focus:border-primary"
+                  className="w-full dark:bg-background-dark light:bg-slate-50 dark:border-border-dark light:border-border-light border rounded-lg px-4 py-3 dark:text-white light:text-text-light focus:ring-primary focus:border-primary"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">Kết thúc</label>
+                <label className="block text-sm font-medium dark:text-slate-300 light:text-slate-600 mb-2">Kết thúc</label>
                 <input
                   type="datetime-local"
                   value={formData.eventEndDate}
                   onChange={(e) => setFormData({ ...formData, eventEndDate: e.target.value })}
-                  className="w-full bg-background-dark border-border-dark rounded-lg px-4 py-3 text-white focus:ring-primary focus:border-primary"
+                  className="w-full dark:bg-background-dark light:bg-slate-50 dark:border-border-dark light:border-border-light border rounded-lg px-4 py-3 dark:text-white light:text-text-light focus:ring-primary focus:border-primary"
                 />
               </div>
             </div>
           </div>
         )}
 
+        {/* Promotion-specific fields */}
         {formData.category === 'promotion' && (
-          <div className="bg-card-dark border border-border-dark rounded-2xl p-6">
-            <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+          <div className="dark:bg-card-dark light:bg-white dark:border-border-dark light:border-border-light border rounded-2xl p-6 shadow-sm">
+            <h3 className="text-lg font-bold mb-4 flex items-center gap-2 dark:text-white light:text-text-light">
               🏷️ Thông tin khuyến mãi
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">
+                <label className="block text-sm font-medium dark:text-slate-300 light:text-slate-600 mb-2">
                   Số tiền giảm (VNĐ)
                 </label>
                 <input
@@ -262,12 +257,12 @@ const PostEditorPage: React.FC = () => {
                       discountAmount: Number(e.target.value) || undefined,
                     })
                   }
-                  className="w-full bg-background-dark border-border-dark rounded-lg px-4 py-3 text-white focus:ring-primary focus:border-primary"
+                  className="w-full dark:bg-background-dark light:bg-slate-50 dark:border-border-dark light:border-border-light border rounded-lg px-4 py-3 dark:text-white light:text-text-light focus:ring-primary focus:border-primary"
                   placeholder="VD: 100000000"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">Hoặc % giảm</label>
+                <label className="block text-sm font-medium dark:text-slate-300 light:text-slate-600 mb-2">Hoặc % giảm</label>
                 <input
                   type="number"
                   value={formData.discountPercent || ''}
@@ -277,14 +272,14 @@ const PostEditorPage: React.FC = () => {
                       discountPercent: Number(e.target.value) || undefined,
                     })
                   }
-                  className="w-full bg-background-dark border-border-dark rounded-lg px-4 py-3 text-white focus:ring-primary focus:border-primary"
+                  className="w-full dark:bg-background-dark light:bg-slate-50 dark:border-border-dark light:border-border-light border rounded-lg px-4 py-3 dark:text-white light:text-text-light focus:ring-primary focus:border-primary"
                   placeholder="VD: 15"
                   min="0"
                   max="100"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">
+                <label className="block text-sm font-medium dark:text-slate-300 light:text-slate-600 mb-2">
                   Mô tả ưu đãi
                 </label>
                 <input
@@ -293,7 +288,7 @@ const PostEditorPage: React.FC = () => {
                   onChange={(e) =>
                     setFormData({ ...formData, discountDescription: e.target.value })
                   }
-                  className="w-full bg-background-dark border-border-dark rounded-lg px-4 py-3 text-white focus:ring-primary focus:border-primary"
+                  className="w-full dark:bg-background-dark light:bg-slate-50 dark:border-border-dark light:border-border-light border rounded-lg px-4 py-3 dark:text-white light:text-text-light focus:ring-primary focus:border-primary"
                   placeholder="VD: Giảm 100tr + Tặng PK"
                 />
               </div>
@@ -301,16 +296,16 @@ const PostEditorPage: React.FC = () => {
           </div>
         )}
 
-        {/* Related Car - for review category */}
+        {/* Related Car */}
         {(formData.category === 'review' || formData.category === 'news') && (
-          <div className="bg-card-dark border border-border-dark rounded-2xl p-6">
-            <label className="block text-sm font-medium text-slate-300 mb-2">
+          <div className="dark:bg-card-dark light:bg-white dark:border-border-dark light:border-border-light border rounded-2xl p-6 shadow-sm">
+            <label className="block text-sm font-medium dark:text-slate-300 light:text-slate-600 mb-2">
               Gắn xe chính (cho nút CTA)
             </label>
             <select
               value={formData.relatedCar || ''}
               onChange={(e) => setFormData({ ...formData, relatedCar: e.target.value || null })}
-              className="w-full bg-background-dark border-border-dark rounded-lg px-4 py-3 text-white focus:ring-primary focus:border-primary"
+              className="w-full dark:bg-background-dark light:bg-slate-50 dark:border-border-dark light:border-border-light border rounded-lg px-4 py-3 dark:text-white light:text-text-light focus:ring-primary focus:border-primary"
             >
               <option value="">-- Không gắn xe --</option>
               {cars.map((car: { _id: string; name: string }) => (
@@ -331,28 +326,28 @@ const PostEditorPage: React.FC = () => {
         />
 
         {/* Excerpt */}
-        <div className="bg-card-dark border border-border-dark rounded-2xl p-6">
-          <label className="block text-sm font-medium text-slate-300 mb-2">
+        <div className="dark:bg-card-dark light:bg-white dark:border-border-dark light:border-border-light border rounded-2xl p-6 shadow-sm">
+          <label className="block text-sm font-medium dark:text-slate-300 light:text-slate-600 mb-2">
             Tóm tắt (hiển thị trên card)
           </label>
           <textarea
             value={formData.excerpt}
             onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
             rows={2}
-            className="w-full bg-background-dark border-border-dark rounded-lg px-4 py-3 text-white focus:ring-primary focus:border-primary resize-none"
+            className="w-full dark:bg-background-dark light:bg-slate-50 dark:border-border-dark light:border-border-light border rounded-lg px-4 py-3 dark:text-white light:text-text-light focus:ring-primary focus:border-primary resize-none"
             placeholder="Tóm tắt ngắn gọn về bài viết..."
           />
         </div>
 
         {/* Content Blocks */}
-        <div className="bg-card-dark border border-border-dark rounded-2xl p-6">
+        <div className="dark:bg-card-dark light:bg-white dark:border-border-dark light:border-border-light border rounded-2xl p-6 shadow-sm">
           <div className="flex items-center justify-between mb-4">
-            <label className="block text-lg font-bold text-white">Nội dung bài viết</label>
+            <label className="block text-lg font-bold dark:text-white light:text-text-light">Nội dung bài viết</label>
           </div>
 
-          {/* Add Block Buttons - Sticky */}
-          <div className="sticky top-0 z-10 flex flex-wrap gap-2 mb-6 p-4 bg-slate-800/95 backdrop-blur-sm rounded-xl border border-border-dark shadow-lg">
-            <span className="text-sm text-slate-400 flex items-center mr-2">Thêm:</span>
+          {/* Add Block Buttons */}
+          <div className="sticky top-0 z-10 flex flex-wrap gap-2 mb-6 p-4 dark:bg-slate-800/95 light:bg-slate-100/95 backdrop-blur-sm rounded-xl dark:border-border-dark light:border-border-light border shadow-lg">
+            <span className="text-sm dark:text-slate-400 light:text-slate-500 flex items-center mr-2">Thêm:</span>
             <button
               type="button"
               onClick={() => addContentBlock('text')}
@@ -388,10 +383,10 @@ const PostEditorPage: React.FC = () => {
             {formData.contentBlocks?.map((block, index) => (
               <div
                 key={index}
-                className="bg-background-dark rounded-xl p-4 border border-border-dark"
+                className="dark:bg-background-dark light:bg-slate-50 rounded-xl p-4 dark:border-border-dark light:border-border-light border"
               >
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-sm font-medium px-2 py-1 rounded bg-slate-700">
+                  <span className="text-sm font-medium px-2 py-1 rounded dark:bg-slate-700 light:bg-slate-200 dark:text-white light:text-text-light">
                     {block.type === 'text' && '📝 Văn bản'}
                     {block.type === 'image' && '🖼️ Hình ảnh'}
                     {block.type === 'video' && '🎬 Video'}
@@ -402,7 +397,7 @@ const PostEditorPage: React.FC = () => {
                       type="button"
                       onClick={() => moveContentBlock(index, 'up')}
                       disabled={index === 0}
-                      className="p-1 text-slate-400 hover:text-white disabled:opacity-30"
+                      className="p-1 dark:text-slate-400 light:text-slate-500 dark:hover:text-white light:hover:text-text-light disabled:opacity-30"
                     >
                       ↑
                     </button>
@@ -410,7 +405,7 @@ const PostEditorPage: React.FC = () => {
                       type="button"
                       onClick={() => moveContentBlock(index, 'down')}
                       disabled={index === (formData.contentBlocks?.length || 0) - 1}
-                      className="p-1 text-slate-400 hover:text-white disabled:opacity-30"
+                      className="p-1 dark:text-slate-400 light:text-slate-500 dark:hover:text-white light:hover:text-text-light disabled:opacity-30"
                     >
                       ↓
                     </button>
@@ -429,7 +424,7 @@ const PostEditorPage: React.FC = () => {
                     value={block.content || ''}
                     onChange={(e) => updateContentBlock(index, { content: e.target.value })}
                     rows={5}
-                    className="w-full bg-slate-800 border-border-dark rounded-lg px-4 py-3 text-white focus:ring-primary focus:border-primary resize-none"
+                    className="w-full dark:bg-slate-800 light:bg-white dark:border-border-dark light:border-border-light border rounded-lg px-4 py-3 dark:text-white light:text-text-light focus:ring-primary focus:border-primary resize-none"
                     placeholder="Nhập nội dung văn bản..."
                   />
                 )}
@@ -440,14 +435,14 @@ const PostEditorPage: React.FC = () => {
                       type="text"
                       value={block.url || ''}
                       onChange={(e) => updateContentBlock(index, { url: e.target.value })}
-                      className="w-full bg-slate-800 border-border-dark rounded-lg px-4 py-3 text-white focus:ring-primary focus:border-primary"
+                      className="w-full dark:bg-slate-800 light:bg-white dark:border-border-dark light:border-border-light border rounded-lg px-4 py-3 dark:text-white light:text-text-light focus:ring-primary focus:border-primary"
                       placeholder="URL ảnh (hoặc upload qua Cloudinary)"
                     />
                     <input
                       type="text"
                       value={block.caption || ''}
                       onChange={(e) => updateContentBlock(index, { caption: e.target.value })}
-                      className="w-full bg-slate-800 border-border-dark rounded-lg px-4 py-2 text-white text-sm focus:ring-primary focus:border-primary"
+                      className="w-full dark:bg-slate-800 light:bg-white dark:border-border-dark light:border-border-light border rounded-lg px-4 py-2 dark:text-white light:text-text-light text-sm focus:ring-primary focus:border-primary"
                       placeholder="Chú thích ảnh (không bắt buộc)"
                     />
                     {block.url && <img src={block.url} alt="" className="max-h-32 rounded-lg" />}
@@ -460,14 +455,14 @@ const PostEditorPage: React.FC = () => {
                       type="text"
                       value={block.url || ''}
                       onChange={(e) => updateContentBlock(index, { url: e.target.value })}
-                      className="w-full bg-slate-800 border-border-dark rounded-lg px-4 py-3 text-white focus:ring-primary focus:border-primary"
+                      className="w-full dark:bg-slate-800 light:bg-white dark:border-border-dark light:border-border-light border rounded-lg px-4 py-3 dark:text-white light:text-text-light focus:ring-primary focus:border-primary"
                       placeholder="URL video (YouTube, Vimeo...)"
                     />
                     <input
                       type="text"
                       value={block.caption || ''}
                       onChange={(e) => updateContentBlock(index, { caption: e.target.value })}
-                      className="w-full bg-slate-800 border-border-dark rounded-lg px-4 py-2 text-white text-sm focus:ring-primary focus:border-primary"
+                      className="w-full dark:bg-slate-800 light:bg-white dark:border-border-dark light:border-border-light border rounded-lg px-4 py-2 dark:text-white light:text-text-light text-sm focus:ring-primary focus:border-primary"
                       placeholder="Tiêu đề video (không bắt buộc)"
                     />
                   </div>
@@ -478,7 +473,7 @@ const PostEditorPage: React.FC = () => {
                     <select
                       value={block.car || ''}
                       onChange={(e) => updateContentBlock(index, { car: e.target.value })}
-                      className="w-full bg-slate-800 border-border-dark rounded-lg px-4 py-3 text-white focus:ring-primary focus:border-primary"
+                      className="w-full dark:bg-slate-800 light:bg-white dark:border-border-dark light:border-border-light border rounded-lg px-4 py-3 dark:text-white light:text-text-light focus:ring-primary focus:border-primary"
                     >
                       <option value="">-- Chọn xe --</option>
                       {cars.map((car: { _id: string; name: string }) => (
@@ -491,7 +486,7 @@ const PostEditorPage: React.FC = () => {
                       type="text"
                       value={block.description || ''}
                       onChange={(e) => updateContentBlock(index, { description: e.target.value })}
-                      className="w-full bg-slate-800 border-border-dark rounded-lg px-4 py-2 text-white text-sm focus:ring-primary focus:border-primary"
+                      className="w-full dark:bg-slate-800 light:bg-white dark:border-border-dark light:border-border-light border rounded-lg px-4 py-2 dark:text-white light:text-text-light text-sm focus:ring-primary focus:border-primary"
                       placeholder="Mô tả ngắn về xe trong bài (VD: Top 1 - Xe điện đáng mua nhất)"
                     />
                   </div>
@@ -500,7 +495,7 @@ const PostEditorPage: React.FC = () => {
             ))}
 
             {(!formData.contentBlocks || formData.contentBlocks.length === 0) && (
-              <div className="text-center py-8 text-slate-500">
+              <div className="text-center py-8 dark:text-slate-500 light:text-slate-400">
                 <p className="text-lg mb-2">Chưa có nội dung</p>
                 <p className="text-sm">
                   Nhấn các nút phía trên để thêm văn bản, ảnh, video hoặc gắn xe
@@ -511,15 +506,15 @@ const PostEditorPage: React.FC = () => {
         </div>
 
         {/* Tags */}
-        <div className="bg-card-dark border border-border-dark rounded-2xl p-6">
-          <label className="block text-sm font-medium text-slate-300 mb-2">Thẻ (Tags)</label>
+        <div className="dark:bg-card-dark light:bg-white dark:border-border-dark light:border-border-light border rounded-2xl p-6 shadow-sm">
+          <label className="block text-sm font-medium dark:text-slate-300 light:text-slate-600 mb-2">Thẻ (Tags)</label>
           <div className="flex gap-2 mb-3">
             <input
               type="text"
               value={tagInput}
               onChange={(e) => setTagInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddTag())}
-              className="flex-1 bg-background-dark border-border-dark rounded-lg px-4 py-2 text-white focus:ring-primary focus:border-primary"
+              className="flex-1 dark:bg-background-dark light:bg-slate-50 dark:border-border-dark light:border-border-light border rounded-lg px-4 py-2 dark:text-white light:text-text-light focus:ring-primary focus:border-primary"
               placeholder="Nhập tag và nhấn Enter"
             />
             <button
@@ -535,7 +530,7 @@ const PostEditorPage: React.FC = () => {
               {formData.tags.map((tag) => (
                 <span
                   key={tag}
-                  className="flex items-center gap-1 px-3 py-1 bg-background-dark rounded text-sm"
+                  className="flex items-center gap-1 px-3 py-1 dark:bg-background-dark light:bg-slate-100 rounded text-sm dark:text-white light:text-text-light"
                 >
                   #{tag}
                   <button
@@ -565,7 +560,7 @@ const PostEditorPage: React.FC = () => {
             type="submit"
             disabled={saveMutation.isPending}
             onClick={() => setFormData({ ...formData, status: 'draft' })}
-            className="py-3 px-6 border border-border-dark text-slate-400 hover:text-white rounded-xl font-bold transition-all disabled:opacity-50"
+            className="py-3 px-6 dark:border-border-dark light:border-border-light border dark:text-slate-400 light:text-slate-500 dark:hover:text-white light:hover:text-text-light rounded-xl font-bold transition-all disabled:opacity-50"
           >
             Lưu nháp
           </button>

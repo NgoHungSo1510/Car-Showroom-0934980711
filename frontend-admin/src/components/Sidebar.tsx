@@ -35,9 +35,9 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
   };
 
   return (
-    <aside className="w-64 border-r border-border-dark flex flex-col shrink-0 bg-background-dark h-full">
+    <aside className="w-64 theme-border border-r flex flex-col shrink-0 theme-bg h-full">
       {/* Header with close button on mobile */}
-      <div className="p-6 flex items-center justify-between">
+      <div className="p-4 md:p-6 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="size-8 text-primary">
             <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
@@ -49,19 +49,20 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
               />
             </svg>
           </div>
-          <h2 className="text-lg font-bold tracking-tight text-white">Quản trị</h2>
+          <h2 className="text-lg font-bold tracking-tight dark:text-white light:text-text-light">Quản trị</h2>
         </div>
         {/* Close button - only on mobile */}
         <button
           onClick={onClose}
-          className="lg:hidden p-2 hover:bg-white/5 rounded-lg transition-colors"
+          className="lg:hidden p-2 touch-target flex items-center justify-center dark:hover:bg-white/5 light:hover:bg-black/5 rounded-lg transition-colors"
+          aria-label="Đóng menu"
         >
-          <span className="material-symbols-outlined text-slate-400">close</span>
+          <span className="material-symbols-outlined theme-text-muted">close</span>
         </button>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 px-4 space-y-1 overflow-y-auto custom-scrollbar">
+      <nav className="flex-1 px-3 md:px-4 space-y-1 overflow-y-auto custom-scrollbar">
         {navItems.map((item) => (
           <NavLink
             key={item.path}
@@ -69,22 +70,21 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
             end={item.path === '/'}
             onClick={handleNavClick}
             className={({ isActive }) =>
-              `flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${
-                isActive
-                  ? 'bg-primary/10 text-primary border border-primary/20'
-                  : 'text-slate-400 hover:bg-white/5 hover:text-white'
+              `flex items-center gap-3 px-3 md:px-4 py-3 rounded-xl transition-colors touch-target ${isActive
+                ? 'bg-primary/10 text-primary border border-primary/20'
+                : 'theme-text-muted dark:hover:bg-white/5 light:hover:bg-black/5 dark:hover:text-white light:hover:text-text-light'
               }`
             }
           >
-            <span className="material-symbols-outlined">{item.icon}</span>
+            <span className="material-symbols-outlined text-[20px] md:text-[24px]">{item.icon}</span>
             <span className="text-sm font-medium">{item.label}</span>
           </NavLink>
         ))}
       </nav>
 
       {/* User Profile */}
-      <div className="p-4 border-t border-border-dark">
-        <div className="bg-white/5 rounded-xl p-4">
+      <div className="p-3 md:p-4 theme-border border-t">
+        <div className="dark:bg-white/5 light:bg-black/5 rounded-xl p-3 md:p-4">
           <div className="flex items-center gap-3 mb-3">
             <div
               className="size-10 rounded-full bg-cover bg-center ring-2 ring-primary/20 bg-primary/20 flex items-center justify-center"
@@ -94,16 +94,16 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
                 <span className="material-symbols-outlined text-primary">person</span>
               )}
             </div>
-            <div className="flex flex-col text-white">
-              <span className="text-sm font-bold">{admin?.fullName || 'Quản trị viên'}</span>
-              <span className="text-[10px] text-primary uppercase font-bold tracking-widest">
-                {admin?.role === 'super_admin' ? 'Quản trị viên cao cấp' : 'Quản trị viên'}
+            <div className="flex flex-col dark:text-white light:text-text-light min-w-0">
+              <span className="text-sm font-bold truncate">{admin?.fullName || 'Quản trị viên'}</span>
+              <span className="text-[10px] text-primary uppercase font-bold tracking-widest truncate">
+                {admin?.role === 'super_admin' ? 'Super Admin' : 'Admin'}
               </span>
             </div>
           </div>
           <button
             onClick={handleLogout}
-            className="w-full flex items-center justify-center gap-2 py-2 text-xs font-bold text-slate-400 hover:text-white border border-white/10 rounded-lg hover:bg-white/5 transition-all"
+            className="w-full flex items-center justify-center gap-2 py-2.5 text-xs font-bold theme-text-muted dark:border-white/10 light:border-black/10 border rounded-lg dark:hover:bg-white/5 light:hover:bg-black/5 dark:hover:text-white light:hover:text-text-light transition-all touch-target"
           >
             <span className="material-symbols-outlined text-[16px]">logout</span>
             <span>Đăng xuất</span>
@@ -115,3 +115,4 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
 };
 
 export default Sidebar;
+

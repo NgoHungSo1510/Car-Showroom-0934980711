@@ -36,14 +36,14 @@ const LoginPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background-dark flex items-center justify-center">
+      <div className="min-h-screen dark:bg-background-dark light:bg-background-light flex items-center justify-center">
         <div className="size-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background-dark flex items-center justify-center p-4">
+    <div className="min-h-screen dark:bg-background-dark light:bg-background-light flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="flex flex-col items-center mb-8">
@@ -57,21 +57,21 @@ const LoginPage: React.FC = () => {
               />
             </svg>
           </div>
-          <h1 className="text-2xl font-bold text-white">Trang Quản Trị</h1>
-          <p className="text-slate-400 text-sm mt-2">Đăng nhập để quản lý showroom</p>
+          <h1 className="text-2xl font-bold dark:text-white light:text-text-light">Trang Quản Trị</h1>
+          <p className="dark:text-slate-400 light:text-slate-500 text-sm mt-2">Đăng nhập để quản lý showroom</p>
         </div>
 
         {/* Login Form */}
         <form
           onSubmit={handleSubmit}
-          className="bg-card-dark border border-border-dark rounded-2xl p-8"
+          className="dark:bg-card-dark light:bg-white dark:border-border-dark light:border-border-light border rounded-2xl p-8 shadow-lg"
         >
           <div className="space-y-6">
             {/* Username */}
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">Tên đăng nhập</label>
+              <label className="block text-sm font-medium dark:text-slate-300 light:text-slate-600 mb-2">Tên đăng nhập</label>
               <div className="relative">
-                <span className="material-symbols-outlined absolute left-3 top-3 text-slate-500">
+                <span className="material-symbols-outlined absolute left-3 top-3 dark:text-slate-500 light:text-slate-400">
                   person
                 </span>
                 <input
@@ -79,16 +79,16 @@ const LoginPage: React.FC = () => {
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder="Nhập tên đăng nhập"
-                  className="w-full bg-background-dark border-border-dark rounded-lg text-sm pl-10 pr-4 py-3 focus:ring-primary focus:border-primary transition-all text-white placeholder-slate-500"
+                  className="w-full dark:bg-background-dark light:bg-slate-50 dark:border-border-dark light:border-border-light border rounded-lg text-sm pl-10 pr-4 py-3 focus:ring-primary focus:border-primary transition-all dark:text-white light:text-text-light dark:placeholder-slate-500 light:placeholder-slate-400"
                 />
               </div>
             </div>
 
             {/* Password */}
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">Mật khẩu</label>
+              <label className="block text-sm font-medium dark:text-slate-300 light:text-slate-600 mb-2">Mật khẩu</label>
               <div className="relative">
-                <span className="material-symbols-outlined absolute left-3 top-3 text-slate-500">
+                <span className="material-symbols-outlined absolute left-3 top-3 dark:text-slate-500 light:text-slate-400">
                   lock
                 </span>
                 <input
@@ -96,7 +96,7 @@ const LoginPage: React.FC = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Nhập mật khẩu"
-                  className="w-full bg-background-dark border-border-dark rounded-lg text-sm pl-10 pr-4 py-3 focus:ring-primary focus:border-primary transition-all text-white placeholder-slate-500"
+                  className="w-full dark:bg-background-dark light:bg-slate-50 dark:border-border-dark light:border-border-light border rounded-lg text-sm pl-10 pr-4 py-3 focus:ring-primary focus:border-primary transition-all dark:text-white light:text-text-light dark:placeholder-slate-500 light:placeholder-slate-400"
                 />
               </div>
             </div>
@@ -123,7 +123,7 @@ const LoginPage: React.FC = () => {
         </form>
 
         {/* Footer */}
-        <p className="text-center text-slate-500 text-xs mt-6">
+        <p className="text-center dark:text-slate-500 light:text-slate-400 text-xs mt-6">
           Hệ thống quản trị Showroom Xe 3D v1.0
         </p>
       </div>

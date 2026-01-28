@@ -12,8 +12,6 @@ const BrandsPage: React.FC = () => {
     country?: string;
   } | null>(null);
   const [formData, setFormData] = useState({ name: '', country: '' });
-
-  // Search state
   const [searchTerm, setSearchTerm] = useState('');
 
   const { data: brandsData, isLoading } = useQuery({
@@ -56,7 +54,6 @@ const BrandsPage: React.FC = () => {
 
   const brands = brandsData?.data || [];
 
-  // Filtered brands
   const filteredBrands = useMemo(() => {
     return brands.filter((brand: { name: string; country?: string }) => {
       const matchesSearch =
@@ -89,7 +86,6 @@ const BrandsPage: React.FC = () => {
       toast.error('Vui lòng nhập tên thương hiệu');
       return;
     }
-
     if (editingBrand) {
       updateMutation.mutate({ id: editingBrand._id, data: formData });
     } else {
@@ -114,14 +110,14 @@ const BrandsPage: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold">Quản lý thương hiệu</h2>
-          <p className="text-slate-400 text-sm mt-1">Quản lý các hãng xe</p>
+          <h2 className="text-xl md:text-2xl font-bold dark:text-white light:text-text-light">Quản lý thương hiệu</h2>
+          <p className="dark:text-slate-400 light:text-slate-500 text-sm mt-1">Quản lý các hãng xe</p>
         </div>
         <button
           onClick={() => openModal()}
-          className="flex items-center gap-2 px-4 py-2 bg-primary hover:bg-accent-blue text-white rounded-xl text-sm font-bold transition-all shadow-lg shadow-primary/20"
+          className="flex items-center justify-center gap-2 px-4 py-2.5 bg-primary hover:bg-accent-blue text-white rounded-xl text-sm font-bold transition-all shadow-lg shadow-primary/20 touch-target"
         >
           <span className="material-symbols-outlined text-[18px]">add</span>
           Thêm thương hiệu
@@ -129,20 +125,20 @@ const BrandsPage: React.FC = () => {
       </div>
 
       {/* Search Toolbar */}
-      <div className="flex flex-wrap items-center gap-4 bg-card-dark border border-border-dark rounded-xl p-4">
+      <div className="flex flex-wrap items-center gap-4 dark:bg-card-dark light:bg-white dark:border-border-dark light:border-border-light border rounded-xl p-4 shadow-sm">
         <div className="relative flex-1 min-w-[200px]">
           <input
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Tìm kiếm theo tên hoặc quốc gia..."
-            className="w-full bg-background-dark border border-border-dark rounded-lg text-sm pl-10 pr-4 py-2 text-white placeholder-slate-500 focus:ring-primary focus:border-primary transition-all"
+            className="w-full dark:bg-background-dark light:bg-slate-50 dark:border-border-dark light:border-border-light border rounded-lg text-sm pl-10 pr-4 py-2.5 dark:text-white light:text-text-light placeholder-slate-400 focus:ring-primary focus:border-primary transition-all"
           />
-          <span className="material-symbols-outlined absolute left-3 top-2 text-slate-500 text-[20px]">
+          <span className="material-symbols-outlined absolute left-3 top-2.5 text-slate-400 text-[20px]">
             search
           </span>
         </div>
-        <span className="text-xs text-slate-500">
+        <span className="text-xs dark:text-slate-500 light:text-slate-400">
           {filteredBrands.length} / {brands.length} thương hiệu
         </span>
       </div>
@@ -153,22 +149,22 @@ const BrandsPage: React.FC = () => {
           (brand: { _id: string; name: string; country?: string; isActive: boolean }) => (
             <div
               key={brand._id}
-              className="bg-card-dark border border-border-dark rounded-xl p-4 flex items-center justify-between group hover:border-primary/30 transition-colors"
+              className="dark:bg-card-dark light:bg-white dark:border-border-dark light:border-border-light border rounded-xl p-4 flex items-center justify-between group hover:border-primary/30 transition-colors shadow-sm"
             >
               <div>
-                <h3 className="font-bold text-white">{brand.name}</h3>
-                {brand.country && <p className="text-xs text-slate-400">{brand.country}</p>}
+                <h3 className="font-bold dark:text-white light:text-text-light">{brand.name}</h3>
+                {brand.country && <p className="text-xs dark:text-slate-400 light:text-slate-500">{brand.country}</p>}
               </div>
               <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                 <button
                   onClick={() => openModal(brand)}
-                  className="p-2 hover:bg-primary/10 rounded-lg text-primary transition-colors"
+                  className="p-2 hover:bg-primary/10 rounded-lg text-primary transition-colors touch-target"
                 >
                   <span className="material-symbols-outlined text-[18px]">edit</span>
                 </button>
                 <button
                   onClick={() => handleDelete(brand._id, brand.name)}
-                  className="p-2 hover:bg-red-500/10 rounded-lg text-red-400 transition-colors"
+                  className="p-2 hover:bg-red-500/10 rounded-lg text-red-400 transition-colors touch-target"
                 >
                   <span className="material-symbols-outlined text-[18px]">delete</span>
                 </button>
@@ -180,31 +176,31 @@ const BrandsPage: React.FC = () => {
 
       {/* Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-card-dark border border-border-dark rounded-2xl p-6 w-full max-w-md">
-            <h3 className="text-lg font-bold mb-4">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="dark:bg-card-dark light:bg-white dark:border-border-dark light:border-border-light border rounded-2xl p-6 w-full max-w-md shadow-xl">
+            <h3 className="text-lg font-bold mb-4 dark:text-white light:text-text-light">
               {editingBrand ? 'Chỉnh sửa thương hiệu' : 'Thêm thương hiệu'}
             </h3>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">
+                <label className="block text-sm font-medium dark:text-slate-300 light:text-slate-600 mb-2">
                   Tên thương hiệu *
                 </label>
                 <input
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full bg-background-dark border-border-dark rounded-lg px-4 py-2 text-white focus:ring-primary focus:border-primary"
+                  className="w-full dark:bg-background-dark light:bg-slate-50 dark:border-border-dark light:border-border-light border rounded-lg px-4 py-2.5 dark:text-white light:text-text-light focus:ring-primary focus:border-primary"
                   placeholder="VD: Toyota"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">Quốc gia</label>
+                <label className="block text-sm font-medium dark:text-slate-300 light:text-slate-600 mb-2">Quốc gia</label>
                 <input
                   type="text"
                   value={formData.country}
                   onChange={(e) => setFormData({ ...formData, country: e.target.value })}
-                  className="w-full bg-background-dark border-border-dark rounded-lg px-4 py-2 text-white focus:ring-primary focus:border-primary"
+                  className="w-full dark:bg-background-dark light:bg-slate-50 dark:border-border-dark light:border-border-light border rounded-lg px-4 py-2.5 dark:text-white light:text-text-light focus:ring-primary focus:border-primary"
                   placeholder="VD: Nhật Bản"
                 />
               </div>
@@ -212,14 +208,14 @@ const BrandsPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="px-4 py-2 text-slate-400 hover:text-white transition-colors"
+                  className="px-4 py-2 dark:text-slate-400 light:text-slate-500 dark:hover:text-white light:hover:text-text-light transition-colors touch-target"
                 >
                   Hủy
                 </button>
                 <button
                   type="submit"
                   disabled={createMutation.isPending || updateMutation.isPending}
-                  className="px-4 py-2 bg-primary hover:bg-accent-blue text-white rounded-lg font-bold transition-all disabled:opacity-50"
+                  className="px-4 py-2 bg-primary hover:bg-accent-blue text-white rounded-lg font-bold transition-all disabled:opacity-50 touch-target"
                 >
                   {editingBrand ? 'Cập nhật' : 'Tạo mới'}
                 </button>

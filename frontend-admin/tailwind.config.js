@@ -8,11 +8,21 @@ export default {
     theme: {
         extend: {
             colors: {
+                // Primary accent
                 "primary": "#0066FF",
+                "accent-blue": "#3399FF",
+
+                // Dark mode colors
                 "background-dark": "#0B0E14",
                 "card-dark": "#161B22",
                 "border-dark": "#21262D",
-                "accent-blue": "#3399FF"
+
+                // Light mode colors
+                "background-light": "#F8FAFC",
+                "card-light": "#FFFFFF",
+                "border-light": "#E2E8F0",
+                "text-light": "#0F172A",
+                "text-muted-light": "#64748B",
             },
             fontFamily: {
                 "display": ["Space Grotesk", "sans-serif"]
@@ -24,3 +34,4 @@ export default {
         require('@tailwindcss/container-queries'),
     ],
 }
+

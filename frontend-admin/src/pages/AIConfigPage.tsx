@@ -158,8 +158,8 @@ const AIConfigPage: React.FC = () => {
     <div className="max-w-6xl">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="text-2xl font-bold">⚙️ Cấu hình AI</h2>
-          <p className="text-slate-400 mt-1">Quản lý từ khóa phân loại và cài đặt AI</p>
+          <h2 className="text-2xl font-bold dark:text-white light:text-text-light">⚙️ Cấu hình AI</h2>
+          <p className="dark:text-slate-400 light:text-slate-500 mt-1">Quản lý từ khóa phân loại và cài đặt AI</p>
         </div>
         <div className="flex gap-3">
           <Link
@@ -181,7 +181,7 @@ const AIConfigPage: React.FC = () => {
         {/* Left: Config Tabs */}
         <div className="lg:col-span-2 space-y-4">
           {/* Tabs */}
-          <div className="flex gap-2 bg-card-dark rounded-xl p-2">
+          <div className="flex gap-2 dark:bg-card-dark light:bg-white dark:border-border-dark light:border-border-light border rounded-xl p-2 shadow-sm">
             {[
               { key: 'promotion', label: '🏷️ Khuyến mãi' },
               { key: 'event', label: '📅 Sự kiện' },
@@ -191,11 +191,10 @@ const AIConfigPage: React.FC = () => {
               <button
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key as typeof activeTab)}
-                className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-all ${
-                  activeTab === tab.key
-                    ? 'bg-primary text-white'
-                    : 'text-slate-400 hover:text-white hover:bg-slate-700'
-                }`}
+                className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-all ${activeTab === tab.key
+                  ? 'bg-primary text-white'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-700'
+                  }`}
               >
                 {tab.label}
               </button>
@@ -204,7 +203,7 @@ const AIConfigPage: React.FC = () => {
 
           {/* Promotion Keywords */}
           {activeTab === 'promotion' && (
-            <div className="bg-card-dark border border-border-dark rounded-2xl p-6 space-y-6">
+            <div className="dark:bg-card-dark light:bg-white dark:border-border-dark light:border-border-light border shadow-sm rounded-2xl p-6 space-y-6">
               <div>
                 <h3 className="text-lg font-bold text-emerald-400 mb-2">
                   Từ khóa MẠNH (1 từ = promotion)
@@ -233,7 +232,7 @@ const AIConfigPage: React.FC = () => {
                     type="text"
                     value={newKeyword}
                     onChange={(e) => setNewKeyword(e.target.value)}
-                    className="flex-1 bg-background-dark border border-border-dark rounded-lg px-3 py-2 text-white text-sm"
+                    className="flex-1 dark:bg-background-dark light:bg-slate-50 dark:border-border-dark light:border-border-light border rounded-lg px-3 py-2 dark:text-white light:text-text-light text-sm"
                     placeholder="Thêm từ khóa..."
                     onKeyDown={(e) => e.key === 'Enter' && addKeyword('promotionStrong')}
                   />
@@ -274,7 +273,7 @@ const AIConfigPage: React.FC = () => {
                     type="text"
                     value={newKeyword}
                     onChange={(e) => setNewKeyword(e.target.value)}
-                    className="flex-1 bg-background-dark border border-border-dark rounded-lg px-3 py-2 text-white text-sm"
+                    className="flex-1 dark:bg-background-dark light:bg-slate-50 dark:border-border-dark light:border-border-light border rounded-lg px-3 py-2 dark:text-white light:text-text-light text-sm"
                     placeholder="Thêm từ khóa..."
                     onKeyDown={(e) => e.key === 'Enter' && addKeyword('promotionWeak')}
                   />
@@ -291,7 +290,7 @@ const AIConfigPage: React.FC = () => {
 
           {/* Event Keywords */}
           {activeTab === 'event' && (
-            <div className="bg-card-dark border border-border-dark rounded-2xl p-6">
+            <div className="dark:bg-card-dark light:bg-white dark:border-border-dark light:border-border-light border rounded-2xl p-6 shadow-sm">
               <h3 className="text-lg font-bold text-amber-400 mb-2">Từ khóa sự kiện</h3>
               <p className="text-xs text-slate-500 mb-3">
                 Cần từ khóa này + có ngày cụ thể → category = event
@@ -317,7 +316,7 @@ const AIConfigPage: React.FC = () => {
                   type="text"
                   value={newKeyword}
                   onChange={(e) => setNewKeyword(e.target.value)}
-                  className="flex-1 bg-background-dark border border-border-dark rounded-lg px-3 py-2 text-white text-sm"
+                  className="flex-1 dark:bg-background-dark light:bg-slate-50 dark:border-border-dark light:border-border-light border rounded-lg px-3 py-2 dark:text-white light:text-text-light text-sm"
                   placeholder="Thêm từ khóa..."
                   onKeyDown={(e) => e.key === 'Enter' && addKeyword('event')}
                 />
@@ -333,7 +332,7 @@ const AIConfigPage: React.FC = () => {
 
           {/* Review Keywords */}
           {activeTab === 'review' && (
-            <div className="bg-card-dark border border-border-dark rounded-2xl p-6">
+            <div className="dark:bg-card-dark light:bg-white dark:border-border-dark light:border-border-light border rounded-2xl p-6 shadow-sm">
               <h3 className="text-lg font-bold text-purple-400 mb-2">Từ khóa đánh giá</h3>
               <p className="text-xs text-slate-500 mb-3">Có từ khóa này → category = review</p>
               <div className="flex flex-wrap gap-2 mb-3">
@@ -357,7 +356,7 @@ const AIConfigPage: React.FC = () => {
                   type="text"
                   value={newKeyword}
                   onChange={(e) => setNewKeyword(e.target.value)}
-                  className="flex-1 bg-background-dark border border-border-dark rounded-lg px-3 py-2 text-white text-sm"
+                  className="flex-1 dark:bg-background-dark light:bg-slate-50 dark:border-border-dark light:border-border-light border rounded-lg px-3 py-2 dark:text-white light:text-text-light text-sm"
                   placeholder="Thêm từ khóa..."
                   onKeyDown={(e) => e.key === 'Enter' && addKeyword('review')}
                 />
@@ -373,7 +372,7 @@ const AIConfigPage: React.FC = () => {
 
           {/* Settings */}
           {activeTab === 'settings' && (
-            <div className="bg-card-dark border border-border-dark rounded-2xl p-6 space-y-6">
+            <div className="dark:bg-card-dark light:bg-white dark:border-border-dark light:border-border-light border rounded-2xl p-6 space-y-6 shadow-sm">
               <div>
                 <h3 className="text-lg font-bold mb-4">🔄 Tự động đăng bài (Auto-Publish)</h3>
                 <label className="flex items-center gap-3 cursor-pointer mb-4">
@@ -386,14 +385,14 @@ const AIConfigPage: React.FC = () => {
                         autoPublish: { ...config.autoPublish, enabled: e.target.checked },
                       })
                     }
-                    className="rounded border-border-dark bg-background-dark text-primary focus:ring-primary w-5 h-5"
+                    className="rounded dark:border-border-dark light:border-border-light dark:bg-background-dark light:bg-white text-primary focus:ring-primary w-5 h-5"
                   />
-                  <span className="text-white">Tự động công khai bài từ Facebook webhook</span>
+                  <span className="dark:text-white light:text-text-light">Tự động công khai bài từ Facebook webhook</span>
                 </label>
 
                 {config.autoPublish.enabled && (
-                  <div className="ml-8 p-4 bg-background-dark rounded-xl">
-                    <label className="block text-sm text-slate-300 mb-2">
+                  <div className="ml-8 p-4 dark:bg-background-dark light:bg-slate-50 rounded-xl">
+                    <label className="block text-sm dark:text-slate-300 light:text-slate-600 mb-2">
                       Độ tin cậy tối thiểu (confidence)
                     </label>
                     <input
@@ -424,7 +423,7 @@ const AIConfigPage: React.FC = () => {
                 )}
               </div>
 
-              <div className="border-t border-border-dark pt-6">
+              <div className="border-t dark:border-border-dark light:border-border-light pt-6">
                 <button className="w-full py-3 bg-primary hover:bg-accent-blue text-white rounded-xl font-bold transition-all">
                   💾 Lưu cấu hình
                 </button>
@@ -438,13 +437,13 @@ const AIConfigPage: React.FC = () => {
 
         {/* Right: Test Area */}
         <div className="space-y-4">
-          <div className="bg-card-dark border border-border-dark rounded-2xl p-6">
-            <h3 className="text-lg font-bold mb-4">🧪 Test phân loại</h3>
+          <div className="dark:bg-card-dark light:bg-white dark:border-border-dark light:border-border-light border rounded-2xl p-6 shadow-sm">
+            <h3 className="text-lg font-bold mb-4 dark:text-white light:text-text-light">🧪 Test phân loại</h3>
             <textarea
               value={testContent}
               onChange={(e) => setTestContent(e.target.value)}
               rows={6}
-              className="w-full bg-background-dark border border-border-dark rounded-lg px-4 py-3 text-white text-sm resize-none"
+              className="w-full dark:bg-background-dark light:bg-slate-50 dark:border-border-dark light:border-border-light border rounded-lg px-4 py-3 dark:text-white light:text-text-light text-sm resize-none"
               placeholder="Nhập nội dung để test AI phân loại..."
             />
             <button
@@ -457,8 +456,8 @@ const AIConfigPage: React.FC = () => {
           </div>
 
           {testResult && (
-            <div className="bg-card-dark border border-border-dark rounded-2xl p-6">
-              <h3 className="text-lg font-bold mb-4">📊 Kết quả</h3>
+            <div className="dark:bg-card-dark light:bg-white dark:border-border-dark light:border-border-light border rounded-2xl p-6 shadow-sm">
+              <h3 className="text-lg font-bold mb-4 dark:text-white light:text-text-light">📊 Kết quả</h3>
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-slate-400 text-sm">Category:</span>
@@ -475,8 +474,8 @@ const AIConfigPage: React.FC = () => {
                   </span>
                 </div>
                 <div>
-                  <span className="text-slate-400 text-sm">Tiêu đề:</span>
-                  <p className="text-white text-sm mt-1">{testResult.title}</p>
+                  <span className="dark:text-slate-400 light:text-slate-500 text-sm">Tiêu đề:</span>
+                  <p className="dark:text-white light:text-text-light text-sm mt-1">{testResult.title}</p>
                 </div>
                 <div>
                   <span className="text-slate-400 text-sm">Tags:</span>
@@ -484,7 +483,7 @@ const AIConfigPage: React.FC = () => {
                     {testResult.tags?.map((tag, i) => (
                       <span
                         key={i}
-                        className="px-2 py-0.5 bg-slate-700 text-slate-300 text-xs rounded"
+                        className="px-2 py-0.5 dark:bg-slate-700 light:bg-slate-200 dark:text-slate-300 light:text-slate-600 text-xs rounded"
                       >
                         #{tag}
                       </span>

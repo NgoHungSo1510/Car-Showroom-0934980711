@@ -6,24 +6,71 @@
 @tailwind utilities;
 
 @layer base {
+
+  /* Dark mode (default) */
   body {
-    @apply bg-background-dark text-white font-display antialiased;
+    @apply font-display antialiased transition-colors duration-200;
+  }
+
+  .dark body,
+  body.dark,
+  :root.dark body {
+    @apply bg-background-dark text-white;
+  }
+
+  .light body,
+  body.light,
+  :root.light body {
+    @apply bg-background-light text-text-light;
+  }
+
+  /* Default to dark if no class */
+  :root:not(.light) body {
+    @apply bg-background-dark text-white;
   }
 }
 
 @layer utilities {
-  .custom-scrollbar::-webkit-scrollbar {
+
+  /* Dark mode scrollbar */
+  .dark .custom-scrollbar::-webkit-scrollbar {
     width: 4px;
   }
-  .custom-scrollbar::-webkit-scrollbar-track {
+
+  .dark .custom-scrollbar::-webkit-scrollbar-track {
     background: #0B0E14;
   }
-  .custom-scrollbar::-webkit-scrollbar-thumb {
+
+  .dark .custom-scrollbar::-webkit-scrollbar-thumb {
     background: #21262D;
     border-radius: 10px;
   }
-  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+
+  .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
     background: #30363D;
+  }
+
+  /* Light mode scrollbar */
+  .light .custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .light .custom-scrollbar::-webkit-scrollbar-track {
+    background: #F1F5F9;
+  }
+
+  .light .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #CBD5E1;
+    border-radius: 10px;
+  }
+
+  .light .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #94A3B8;
+  }
+
+  /* Mobile touch-friendly utilities */
+  .touch-target {
+    @apply min-h-[44px] min-w-[44px];
   }
 }
 
@@ -34,4 +81,76 @@
     'wght' 400,
     'GRAD' 0,
     'opsz' 24;
+}
+
+/* Theme-aware card backgrounds */
+.dark .theme-card {
+  @apply bg-card-dark border-border-dark;
+}
+
+.light .theme-card {
+  @apply bg-white border-border-light;
+}
+
+/* Theme-aware backgrounds */
+.dark .theme-bg {
+  @apply bg-background-dark;
+}
+
+.light .theme-bg {
+  @apply bg-background-light;
+}
+
+/* Theme-aware section backgrounds */
+.dark .theme-section {
+  @apply bg-background-dark;
+}
+
+.light .theme-section {
+  @apply bg-slate-50;
+}
+
+/* Theme-aware borders */
+.dark .theme-border {
+  @apply border-border-dark;
+}
+
+.light .theme-border {
+  @apply border-border-light;
+}
+
+/* Theme-aware text - muted */
+.dark .theme-text-muted {
+  @apply text-slate-400;
+}
+
+.light .theme-text-muted {
+  @apply text-slate-500;
+}
+
+/* Theme-aware text - primary heading */
+.dark .theme-text {
+  @apply text-white;
+}
+
+.light .theme-text {
+  @apply text-text-light;
+}
+
+/* Theme-aware inputs */
+.dark .theme-input {
+  @apply bg-background-dark border-border-dark text-white placeholder-slate-500;
+}
+
+.light .theme-input {
+  @apply bg-white border-border-light text-text-light placeholder-slate-400;
+}
+
+/* Theme-aware hover states */
+.dark .theme-hover:hover {
+  @apply bg-white/5;
+}
+
+.light .theme-hover:hover {
+  @apply bg-black/5;
 }

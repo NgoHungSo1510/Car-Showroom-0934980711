@@ -54,11 +54,19 @@ interface ISpecs {
   transmission?: string;
 }
 
+// Feature item for sections
+interface IFeatureItem {
+  icon?: string;
+  title: string;
+  description?: string;
+}
+
 // Section content (for interior/exterior)
 interface ICarSection {
   title?: string;
   description?: string;
   images: string[];
+  features?: IFeatureItem[];
 }
 
 // Color option with image
@@ -110,11 +118,21 @@ export interface ICar extends Document {
   updatedAt: Date;
 }
 
+const featureItemSchema = new Schema(
+  {
+    icon: { type: String },
+    title: { type: String, required: true, trim: true },
+    description: { type: String, trim: true },
+  },
+  { _id: false },
+);
+
 const carSectionSchema = new Schema(
   {
     title: { type: String, trim: true },
     description: { type: String, trim: true },
     images: { type: [String], default: [] },
+    features: { type: [featureItemSchema], default: [] },
   },
   { _id: false },
 );

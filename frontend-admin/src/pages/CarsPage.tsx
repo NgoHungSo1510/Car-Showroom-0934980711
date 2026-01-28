@@ -96,12 +96,12 @@ const CarsPage: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl md:text-2xl font-bold">Quản lý Showroom</h2>
-          <p className="text-slate-400 text-sm mt-1">Quản lý danh sách xe trong showroom</p>
+          <h2 className="text-xl md:text-2xl font-bold dark:text-white light:text-text-light">Quản lý Showroom</h2>
+          <p className="dark:text-slate-400 light:text-slate-500 text-sm mt-1">Quản lý danh sách xe trong showroom</p>
         </div>
         <a
           href="/cars/new"
-          className="flex items-center justify-center gap-2 px-4 py-2 bg-primary hover:bg-accent-blue text-white rounded-xl text-sm font-bold transition-all shadow-lg shadow-primary/20"
+          className="flex items-center justify-center gap-2 px-4 py-2.5 bg-primary hover:bg-accent-blue text-white rounded-xl text-sm font-bold transition-all shadow-lg shadow-primary/20 touch-target"
         >
           <span className="material-symbols-outlined text-[18px]">add</span>
           <span>Thêm xe</span>
@@ -109,7 +109,7 @@ const CarsPage: React.FC = () => {
       </div>
 
       {/* Search and Filters Toolbar */}
-      <div className="flex flex-wrap items-center gap-4 bg-card-dark border border-border-dark rounded-xl p-4">
+      <div className="flex flex-wrap items-center gap-3 md:gap-4 dark:bg-card-dark light:bg-white dark:border-border-dark light:border-border-light border rounded-xl p-4 shadow-sm">
         {/* Search */}
         <div className="relative flex-1 min-w-[200px]">
           <input
@@ -117,9 +117,9 @@ const CarsPage: React.FC = () => {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Tìm kiếm theo tên xe..."
-            className="w-full bg-background-dark border border-border-dark rounded-lg text-sm pl-10 pr-4 py-2 text-white placeholder-slate-500 focus:ring-primary focus:border-primary transition-all"
+            className="w-full dark:bg-background-dark light:bg-slate-50 dark:border-border-dark light:border-border-light border rounded-lg text-sm pl-10 pr-4 py-2.5 dark:text-white light:text-text-light placeholder-slate-400 focus:ring-primary focus:border-primary transition-all"
           />
-          <span className="material-symbols-outlined absolute left-3 top-2 text-slate-500 text-[20px]">
+          <span className="material-symbols-outlined absolute left-3 top-2.5 text-slate-400 text-[20px]">
             search
           </span>
         </div>
@@ -128,7 +128,7 @@ const CarsPage: React.FC = () => {
         <select
           value={brandFilter}
           onChange={(e) => setBrandFilter(e.target.value)}
-          className="bg-background-dark border border-border-dark rounded-lg text-sm px-4 py-2 text-white focus:ring-primary focus:border-primary transition-all"
+          className="dark:bg-background-dark light:bg-slate-50 dark:border-border-dark light:border-border-light border rounded-lg text-sm px-4 py-2.5 dark:text-white light:text-text-light focus:ring-primary focus:border-primary transition-all"
         >
           <option value="">Tất cả thương hiệu</option>
           {brands.map((brand: { _id: string; name: string }) => (
@@ -142,7 +142,7 @@ const CarsPage: React.FC = () => {
         <select
           value={typeFilter}
           onChange={(e) => setTypeFilter(e.target.value)}
-          className="bg-background-dark border border-border-dark rounded-lg text-sm px-4 py-2 text-white focus:ring-primary focus:border-primary transition-all"
+          className="dark:bg-background-dark light:bg-slate-50 dark:border-border-dark light:border-border-light border rounded-lg text-sm px-4 py-2.5 dark:text-white light:text-text-light focus:ring-primary focus:border-primary transition-all"
         >
           <option value="">Tất cả loại xe</option>
           {carTypes.map((type: { _id: string; name: string }) => (
@@ -156,7 +156,7 @@ const CarsPage: React.FC = () => {
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          className="bg-background-dark border border-border-dark rounded-lg text-sm px-4 py-2 text-white focus:ring-primary focus:border-primary transition-all"
+          className="dark:bg-background-dark light:bg-slate-50 dark:border-border-dark light:border-border-light border rounded-lg text-sm px-4 py-2.5 dark:text-white light:text-text-light focus:ring-primary focus:border-primary transition-all"
         >
           <option value="">Tất cả trạng thái</option>
           <option value="published">Công khai</option>
@@ -164,13 +164,13 @@ const CarsPage: React.FC = () => {
         </select>
 
         {/* Results count */}
-        <span className="text-xs text-slate-500">
+        <span className="text-xs dark:text-slate-500 light:text-slate-400">
           {filteredCars.length} / {cars.length} xe
         </span>
       </div>
 
       {/* Cars Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
         {filteredCars.length > 0 ? (
           filteredCars.map(
             (car: {
@@ -185,20 +185,20 @@ const CarsPage: React.FC = () => {
             }) => (
               <div
                 key={car._id}
-                className="bg-card-dark border border-border-dark rounded-2xl overflow-hidden group hover:border-primary/30 transition-colors"
+                className="dark:bg-card-dark light:bg-white dark:border-border-dark light:border-border-light border rounded-2xl overflow-hidden group hover:border-primary/30 transition-colors shadow-sm"
               >
                 {/* Image */}
                 <div
-                  className="h-40 bg-cover bg-center bg-border-dark flex items-center justify-center relative"
+                  className="h-40 bg-cover bg-center dark:bg-border-dark light:bg-slate-100 flex items-center justify-center relative"
                   style={car.thumbnail ? { backgroundImage: `url("${car.thumbnail}")` } : {}}
                 >
                   {!car.thumbnail && (
-                    <span className="material-symbols-outlined text-4xl text-slate-600">
+                    <span className="material-symbols-outlined text-4xl dark:text-slate-600 light:text-slate-300">
                       directions_car
                     </span>
                   )}
                   {car.model3D?.hasModel && (
-                    <div className="absolute top-2 right-2 px-2 py-1 bg-primary/90 rounded text-[10px] font-bold uppercase">
+                    <div className="absolute top-2 right-2 px-2 py-1 bg-primary/90 rounded text-[10px] font-bold uppercase text-white">
                       3D
                     </div>
                   )}
@@ -208,15 +208,14 @@ const CarsPage: React.FC = () => {
                 <div className="p-4">
                   <div className="flex items-start justify-between mb-2">
                     <div>
-                      <h3 className="font-bold text-white">{car.name}</h3>
-                      <p className="text-xs text-slate-400">{car.brand?.name || 'Chưa xác định'}</p>
+                      <h3 className="font-bold dark:text-white light:text-text-light">{car.name}</h3>
+                      <p className="text-xs dark:text-slate-400 light:text-slate-500">{car.brand?.name || 'Chưa xác định'}</p>
                     </div>
                     <span
-                      className={`px-2 py-1 text-[10px] font-bold rounded uppercase ${
-                        car.status === 'published'
-                          ? 'bg-emerald-500/10 text-emerald-400'
-                          : 'bg-amber-500/10 text-amber-400'
-                      }`}
+                      className={`px-2 py-1 text-[10px] font-bold rounded uppercase ${car.status === 'published'
+                          ? 'bg-emerald-500/10 text-emerald-500'
+                          : 'bg-amber-500/10 text-amber-500'
+                        }`}
                     >
                       {car.status === 'published' ? 'Công khai' : 'Nháp'}
                     </span>
@@ -224,21 +223,21 @@ const CarsPage: React.FC = () => {
 
                   <p className="text-primary font-bold">{formatPrice(car.price)}</p>
 
-                  <div className="flex items-center justify-between mt-4 pt-4 border-t border-border-dark">
-                    <div className="flex items-center gap-1 text-xs text-slate-400">
+                  <div className="flex items-center justify-between mt-4 pt-4 dark:border-border-dark light:border-border-light border-t">
+                    <div className="flex items-center gap-1 text-xs dark:text-slate-400 light:text-slate-500">
                       <span className="material-symbols-outlined text-[14px]">visibility</span>
                       {car.viewCount || 0}
                     </div>
                     <div className="flex items-center gap-2">
                       <a
                         href={`/cars/${car._id}`}
-                        className="p-2 hover:bg-primary/10 rounded-lg text-primary transition-colors"
+                        className="p-2 hover:bg-primary/10 rounded-lg text-primary transition-colors touch-target"
                       >
                         <span className="material-symbols-outlined text-[18px]">edit</span>
                       </a>
                       <button
                         onClick={() => handleDelete(car._id, car.name)}
-                        className="p-2 hover:bg-red-500/10 rounded-lg text-red-400 transition-colors"
+                        className="p-2 hover:bg-red-500/10 rounded-lg text-red-400 transition-colors touch-target"
                       >
                         <span className="material-symbols-outlined text-[18px]">delete</span>
                       </button>
@@ -249,11 +248,11 @@ const CarsPage: React.FC = () => {
             ),
           )
         ) : (
-          <div className="col-span-full bg-card-dark border border-border-dark rounded-2xl p-12 text-center">
-            <span className="material-symbols-outlined text-4xl text-slate-600 mb-4">
+          <div className="col-span-full dark:bg-card-dark light:bg-white dark:border-border-dark light:border-border-light border rounded-2xl p-12 text-center shadow-sm">
+            <span className="material-symbols-outlined text-4xl dark:text-slate-600 light:text-slate-300 mb-4">
               directions_car
             </span>
-            <p className="text-slate-500">
+            <p className="dark:text-slate-500 light:text-slate-400">
               {cars.length === 0 ? 'Chưa có xe nào.' : 'Không tìm thấy xe phù hợp.'}
             </p>
             {cars.length === 0 && (
@@ -269,3 +268,4 @@ const CarsPage: React.FC = () => {
 };
 
 export default CarsPage;
+

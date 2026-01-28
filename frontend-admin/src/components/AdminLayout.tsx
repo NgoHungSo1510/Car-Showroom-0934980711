@@ -11,10 +11,10 @@ const AdminLayout: React.FC = () => {
   // Show loading state while checking auth
   if (isLoading) {
     return (
-      <div className="bg-background-dark min-h-screen flex items-center justify-center">
+      <div className="theme-bg min-h-screen flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <div className="size-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-          <p className="text-slate-400">Loading...</p>
+          <p className="theme-text-muted">Đang tải...</p>
         </div>
       </div>
     );
@@ -26,7 +26,7 @@ const AdminLayout: React.FC = () => {
   }
 
   return (
-    <div className="bg-background-dark text-white min-h-screen font-display">
+    <div className="theme-bg dark:text-white light:text-text-light min-h-screen font-display">
       <div className="flex h-screen overflow-hidden">
         {/* Mobile Overlay */}
         {sidebarOpen && (
@@ -39,17 +39,17 @@ const AdminLayout: React.FC = () => {
         {/* Sidebar - hidden on mobile, slide in when open */}
         <div
           className={`
-                    fixed inset-y-0 left-0 z-50 transform transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0
-                    ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-                `}
+            fixed inset-y-0 left-0 z-50 transform transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0
+            ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+          `}
         >
           <Sidebar onClose={() => setSidebarOpen(false)} />
         </div>
 
         {/* Main Content Area */}
-        <main className="flex-1 flex flex-col overflow-hidden bg-[#05070A]">
+        <main className="flex-1 flex flex-col overflow-hidden dark:bg-[#05070A] light:bg-slate-50">
           <Header onMenuClick={() => setSidebarOpen(true)} />
-          <div className="flex-1 overflow-y-auto p-4 md:p-8 custom-scrollbar">
+          <div className="flex-1 overflow-y-auto p-3 md:p-6 lg:p-8 custom-scrollbar">
             <Outlet />
           </div>
         </main>
@@ -59,3 +59,4 @@ const AdminLayout: React.FC = () => {
 };
 
 export default AdminLayout;
+

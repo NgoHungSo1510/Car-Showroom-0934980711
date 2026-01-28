@@ -23,23 +23,19 @@ const SettingsPage: React.FC = () => {
     },
   });
 
-  // Populate form when data loads
   useEffect(() => {
     if (settingsData?.data) {
       const settings = settingsData.data;
-      // Default values for VinFast Miền Trung
       const newFormData: Record<string, string> = {
         zalo_phone: '0934980711',
         zalo_greeting: 'Xin chào! Tôi quan tâm đến xe và muốn được tư vấn.',
         site_name: 'VinFast Miền Trung',
-        site_logo:
-          'https://scontent.fsgn2-9.fna.fbcdn.net/v/t39.30808-1/600276409_122095441233178792_6328409761448512438_n.jpg?stp=dst-jpg_s200x200_tt6&_nc_cat=103&ccb=1-7&_nc_sid=2d3e12&_nc_ohc=AB83x1CB7xUQ7kNvwELaHCZ&_nc_oc=AdlmqCwrZkzXv23DWPG_xgirkrxSmcn8xToZZMjfRPvzztr1NS_Ann6uhVRF2qAKeJI&_nc_zt=24&_nc_ht=scontent.fsgn2-9.fna&_nc_gid=ALIiajMO5Olu-roahwswLQ&oh=00_AfrzG_QpqcHBG4onbqlr4FQXLWsOBGq71NfgxRv1OFMryw&oe=69776106',
+        site_logo: '',
         site_hotline: '0934 98 07 11',
         site_address_1: 'Vincom Đà Nẵng - 910A Ngô Quyền, Sơn Trà',
         site_address_2: 'Showroom 3S - 03 Phạm Hùng, Cẩm Lệ',
       };
 
-      // Override with saved values from database
       settings.forEach((s: { key: string; value: string }) => {
         if (s.key in newFormData && s.value) {
           newFormData[s.key] = s.value;
@@ -88,34 +84,34 @@ const SettingsPage: React.FC = () => {
     <div className="space-y-6 max-w-3xl">
       {/* Header */}
       <div>
-        <h2 className="text-2xl font-bold">Cài đặt</h2>
-        <p className="text-slate-400 text-sm mt-1">Cấu hình showroom của bạn</p>
+        <h2 className="text-2xl font-bold dark:text-white light:text-text-light">Cài đặt</h2>
+        <p className="dark:text-slate-400 light:text-slate-500 text-sm mt-1">Cấu hình showroom của bạn</p>
       </div>
 
       {/* General Settings */}
-      <div className="bg-card-dark border border-border-dark rounded-2xl p-6">
-        <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+      <div className="dark:bg-card-dark light:bg-white dark:border-border-dark light:border-border-light border rounded-2xl p-6 shadow-sm">
+        <h3 className="text-lg font-bold mb-4 flex items-center gap-2 dark:text-white light:text-text-light">
           <span className="material-symbols-outlined text-primary">settings</span>
           Cài đặt chung
         </h3>
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">Tên website</label>
+            <label className="block text-sm font-medium dark:text-slate-300 light:text-slate-600 mb-2">Tên website</label>
             <input
               type="text"
               value={formData.site_name}
               onChange={(e) => setFormData({ ...formData, site_name: e.target.value })}
-              className="w-full bg-background-dark border-border-dark rounded-lg px-4 py-3 text-white focus:ring-primary focus:border-primary"
+              className="w-full dark:bg-background-dark light:bg-slate-50 dark:border-border-dark light:border-border-light border rounded-lg px-4 py-3 dark:text-white light:text-text-light focus:ring-primary focus:border-primary"
               placeholder="VinFast Miền Trung"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">Logo (URL ảnh)</label>
+            <label className="block text-sm font-medium dark:text-slate-300 light:text-slate-600 mb-2">Logo (URL ảnh)</label>
             <input
               type="text"
               value={formData.site_logo}
               onChange={(e) => setFormData({ ...formData, site_logo: e.target.value })}
-              className="w-full bg-background-dark border-border-dark rounded-lg px-4 py-3 text-white focus:ring-primary focus:border-primary"
+              className="w-full dark:bg-background-dark light:bg-slate-50 dark:border-border-dark light:border-border-light border rounded-lg px-4 py-3 dark:text-white light:text-text-light focus:ring-primary focus:border-primary"
               placeholder="https://example.com/logo.png"
             />
             {formData.site_logo && (
@@ -123,20 +119,20 @@ const SettingsPage: React.FC = () => {
                 <img
                   src={formData.site_logo}
                   alt="Logo preview"
-                  className="h-12 w-12 rounded-full object-cover border border-border-dark"
+                  className="h-12 w-12 rounded-full object-cover dark:border-border-dark light:border-border-light border"
                   onError={(e) => ((e.target as HTMLImageElement).style.display = 'none')}
                 />
-                <span className="text-xs text-slate-500">Preview logo</span>
+                <span className="text-xs dark:text-slate-500 light:text-slate-400">Preview logo</span>
               </div>
             )}
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">Hotline</label>
+            <label className="block text-sm font-medium dark:text-slate-300 light:text-slate-600 mb-2">Hotline</label>
             <input
               type="text"
               value={formData.site_hotline}
               onChange={(e) => setFormData({ ...formData, site_hotline: e.target.value })}
-              className="w-full bg-background-dark border-border-dark rounded-lg px-4 py-3 text-white focus:ring-primary focus:border-primary"
+              className="w-full dark:bg-background-dark light:bg-slate-50 dark:border-border-dark light:border-border-light border rounded-lg px-4 py-3 dark:text-white light:text-text-light focus:ring-primary focus:border-primary"
               placeholder="0934 98 07 11"
             />
           </div>
@@ -144,29 +140,29 @@ const SettingsPage: React.FC = () => {
       </div>
 
       {/* Showroom Addresses */}
-      <div className="bg-card-dark border border-border-dark rounded-2xl p-6">
-        <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+      <div className="dark:bg-card-dark light:bg-white dark:border-border-dark light:border-border-light border rounded-2xl p-6 shadow-sm">
+        <h3 className="text-lg font-bold mb-4 flex items-center gap-2 dark:text-white light:text-text-light">
           <span className="material-symbols-outlined text-primary">location_on</span>
           Địa chỉ Showroom
         </h3>
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">Showroom 1</label>
+            <label className="block text-sm font-medium dark:text-slate-300 light:text-slate-600 mb-2">Showroom 1</label>
             <input
               type="text"
               value={formData.site_address_1}
               onChange={(e) => setFormData({ ...formData, site_address_1: e.target.value })}
-              className="w-full bg-background-dark border-border-dark rounded-lg px-4 py-3 text-white focus:ring-primary focus:border-primary"
+              className="w-full dark:bg-background-dark light:bg-slate-50 dark:border-border-dark light:border-border-light border rounded-lg px-4 py-3 dark:text-white light:text-text-light focus:ring-primary focus:border-primary"
               placeholder="Vincom Đà Nẵng - 910A Ngô Quyền, Sơn Trà"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">Showroom 2</label>
+            <label className="block text-sm font-medium dark:text-slate-300 light:text-slate-600 mb-2">Showroom 2</label>
             <input
               type="text"
               value={formData.site_address_2}
               onChange={(e) => setFormData({ ...formData, site_address_2: e.target.value })}
-              className="w-full bg-background-dark border-border-dark rounded-lg px-4 py-3 text-white focus:ring-primary focus:border-primary"
+              className="w-full dark:bg-background-dark light:bg-slate-50 dark:border-border-dark light:border-border-light border rounded-lg px-4 py-3 dark:text-white light:text-text-light focus:ring-primary focus:border-primary"
               placeholder="Showroom 3S - 03 Phạm Hùng, Cẩm Lệ"
             />
           </div>
@@ -174,39 +170,39 @@ const SettingsPage: React.FC = () => {
       </div>
 
       {/* Zalo Settings */}
-      <div className="bg-card-dark border border-border-dark rounded-2xl p-6">
-        <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+      <div className="dark:bg-card-dark light:bg-white dark:border-border-dark light:border-border-light border rounded-2xl p-6 shadow-sm">
+        <h3 className="text-lg font-bold mb-4 flex items-center gap-2 dark:text-white light:text-text-light">
           <span className="material-symbols-outlined text-primary">chat</span>
           Liên hệ Zalo
         </h3>
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
+            <label className="block text-sm font-medium dark:text-slate-300 light:text-slate-600 mb-2">
               Số điện thoại Zalo
             </label>
             <input
               type="text"
               value={formData.zalo_phone}
               onChange={(e) => setFormData({ ...formData, zalo_phone: e.target.value })}
-              className="w-full bg-background-dark border-border-dark rounded-lg px-4 py-3 text-white focus:ring-primary focus:border-primary"
+              className="w-full dark:bg-background-dark light:bg-slate-50 dark:border-border-dark light:border-border-light border rounded-lg px-4 py-3 dark:text-white light:text-text-light focus:ring-primary focus:border-primary"
               placeholder="0901234567"
             />
-            <p className="text-xs text-slate-500 mt-1">
+            <p className="text-xs dark:text-slate-500 light:text-slate-400 mt-1">
               Số này sẽ được dùng cho nút liên hệ Zalo thông minh
             </p>
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
+            <label className="block text-sm font-medium dark:text-slate-300 light:text-slate-600 mb-2">
               Lời chào mặc định
             </label>
             <textarea
               value={formData.zalo_greeting}
               onChange={(e) => setFormData({ ...formData, zalo_greeting: e.target.value })}
               rows={3}
-              className="w-full bg-background-dark border-border-dark rounded-lg px-4 py-3 text-white focus:ring-primary focus:border-primary resize-none"
+              className="w-full dark:bg-background-dark light:bg-slate-50 dark:border-border-dark light:border-border-light border rounded-lg px-4 py-3 dark:text-white light:text-text-light focus:ring-primary focus:border-primary resize-none"
               placeholder="Xin chào! Tôi quan tâm đến xe {car_name}..."
             />
-            <p className="text-xs text-slate-500 mt-1">
+            <p className="text-xs dark:text-slate-500 light:text-slate-400 mt-1">
               Sử dụng {'{car_name}'} làm placeholder cho tên xe
             </p>
           </div>
@@ -218,7 +214,7 @@ const SettingsPage: React.FC = () => {
         <button
           onClick={handleSave}
           disabled={updateMutation.isPending}
-          className="flex items-center gap-2 px-6 py-3 bg-primary hover:bg-accent-blue text-white rounded-xl font-bold transition-all shadow-lg shadow-primary/20 disabled:opacity-50"
+          className="flex items-center gap-2 px-6 py-3 bg-primary hover:bg-accent-blue text-white rounded-xl font-bold transition-all shadow-lg shadow-primary/20 disabled:opacity-50 touch-target"
         >
           {updateMutation.isPending ? (
             <>

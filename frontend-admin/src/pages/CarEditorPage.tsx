@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { carsAPI, brandsAPI, carTypesAPI, CarInput, ColorOption, uploadAPI } from '../services/api';
 import ImageUploader from '../components/ImageUploader';
+import ColorSuggestions from '../components/ColorSuggestions';
 import toast from 'react-hot-toast';
 
 const CarEditorPage: React.FC = () => {
@@ -145,10 +146,10 @@ const CarEditorPage: React.FC = () => {
   return (
     <div className="max-w-4xl">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold">{isEditing ? 'Chỉnh sửa xe' : 'Thêm xe mới'}</h2>
+        <h2 className="text-xl md:text-2xl font-bold dark:text-white light:text-text-light">{isEditing ? 'Chỉnh sửa xe' : 'Thêm xe mới'}</h2>
         <button
           onClick={() => navigate('/cars')}
-          className="text-slate-400 hover:text-white transition-colors"
+          className="dark:text-slate-400 light:text-slate-500 dark:hover:text-white light:hover:text-text-light transition-colors"
         >
           ← Quay lại
         </button>
@@ -156,27 +157,27 @@ const CarEditorPage: React.FC = () => {
 
       <form className="space-y-6">
         {/* Basic Info */}
-        <div className="bg-card-dark border border-border-dark rounded-2xl p-6">
-          <h3 className="text-lg font-bold mb-4">Thông tin cơ bản</h3>
+        <div className="dark:bg-card-dark light:bg-white dark:border-border-dark light:border-border-light border rounded-2xl p-6 shadow-sm">
+          <h3 className="text-lg font-bold mb-4 dark:text-white light:text-text-light">Thông tin cơ bản</h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-slate-300 mb-2">Tên xe *</label>
+              <label className="block text-sm font-medium dark:text-slate-300 light:text-slate-600 mb-2">Tên xe *</label>
               <input
                 type="text"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full bg-background-dark border-border-dark rounded-lg px-4 py-3 text-white focus:ring-primary focus:border-primary"
+                className="w-full dark:bg-background-dark light:bg-slate-50 dark:border-border-dark light:border-border-light border rounded-lg px-4 py-3 dark:text-white light:text-text-light focus:ring-primary focus:border-primary"
                 placeholder="VD: VinFast VF8 Plus"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">Hãng xe *</label>
+              <label className="block text-sm font-medium dark:text-slate-300 light:text-slate-600 mb-2">Hãng xe *</label>
               <select
                 value={formData.brand}
                 onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
-                className="w-full bg-background-dark border-border-dark rounded-lg px-4 py-3 text-white focus:ring-primary focus:border-primary"
+                className="w-full dark:bg-background-dark light:bg-slate-50 dark:border-border-dark light:border-border-light border rounded-lg px-4 py-3 dark:text-white light:text-text-light focus:ring-primary focus:border-primary"
               >
                 <option value="">-- Chọn hãng --</option>
                 {brands.map((brand: { _id: string; name: string }) => (
@@ -188,11 +189,11 @@ const CarEditorPage: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">Loại xe *</label>
+              <label className="block text-sm font-medium dark:text-slate-300 light:text-slate-600 mb-2">Loại xe *</label>
               <select
                 value={formData.carType}
                 onChange={(e) => setFormData({ ...formData, carType: e.target.value })}
-                className="w-full bg-background-dark border-border-dark rounded-lg px-4 py-3 text-white focus:ring-primary focus:border-primary"
+                className="w-full dark:bg-background-dark light:bg-slate-50 dark:border-border-dark light:border-border-light border rounded-lg px-4 py-3 dark:text-white light:text-text-light focus:ring-primary focus:border-primary"
               >
                 <option value="">-- Chọn loại --</option>
                 {carTypes.map((type: { _id: string; name: string }) => (
@@ -204,23 +205,23 @@ const CarEditorPage: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">Giá (VNĐ) *</label>
+              <label className="block text-sm font-medium dark:text-slate-300 light:text-slate-600 mb-2">Giá (VNĐ) *</label>
               <input
                 type="number"
                 value={formData.price}
                 onChange={(e) => setFormData({ ...formData, price: Number(e.target.value) })}
-                className="w-full bg-background-dark border-border-dark rounded-lg px-4 py-3 text-white focus:ring-primary focus:border-primary"
+                className="w-full dark:bg-background-dark light:bg-slate-50 dark:border-border-dark light:border-border-light border rounded-lg px-4 py-3 dark:text-white light:text-text-light focus:ring-primary focus:border-primary"
                 placeholder="500000000"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">Khoảng giá</label>
+              <label className="block text-sm font-medium dark:text-slate-300 light:text-slate-600 mb-2">Khoảng giá</label>
               <input
                 type="text"
                 value={formData.priceRange}
                 onChange={(e) => setFormData({ ...formData, priceRange: e.target.value })}
-                className="w-full bg-background-dark border-border-dark rounded-lg px-4 py-3 text-white focus:ring-primary focus:border-primary"
+                className="w-full dark:bg-background-dark light:bg-slate-50 dark:border-border-dark light:border-border-light border rounded-lg px-4 py-3 dark:text-white light:text-text-light focus:ring-primary focus:border-primary"
                 placeholder="VD: 500 - 700 triệu"
               />
             </div>
@@ -231,9 +232,9 @@ const CarEditorPage: React.FC = () => {
                   type="checkbox"
                   checked={formData.isFeatured}
                   onChange={(e) => setFormData({ ...formData, isFeatured: e.target.checked })}
-                  className="rounded border-border-dark bg-background-dark text-primary focus:ring-primary"
+                  className="rounded dark:border-border-dark light:border-border-light dark:bg-background-dark light:bg-white text-primary focus:ring-primary"
                 />
-                <span className="text-sm text-slate-300">Đánh dấu là xe nổi bật (Featured)</span>
+                <span className="text-sm dark:text-slate-300 light:text-slate-600">Đánh dấu là xe nổi bật (Featured)</span>
               </label>
             </div>
           </div>
@@ -248,12 +249,12 @@ const CarEditorPage: React.FC = () => {
         />
 
         {/* Gallery Images */}
-        <div className="bg-card-dark border border-border-dark rounded-2xl p-6">
+        <div className="dark:bg-card-dark light:bg-white dark:border-border-dark light:border-border-light border rounded-2xl p-6 shadow-sm">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-bold">Thư viện ảnh thực tế</h3>
-            <span className="text-sm text-slate-400">{formData.gallery?.length || 0} ảnh</span>
+            <h3 className="text-lg font-bold dark:text-white light:text-text-light">Thư viện ảnh thực tế</h3>
+            <span className="text-sm dark:text-slate-400 light:text-slate-500">{formData.gallery?.length || 0} ảnh</span>
           </div>
-          <p className="text-xs text-slate-500 mb-4">
+          <p className="text-xs dark:text-slate-500 light:text-slate-400 mb-4">
             Thêm các ảnh chụp thực tế của xe từ nhiều góc độ. Ảnh sẽ hiển thị trong gallery cho
             người dùng xem.
           </p>
@@ -320,7 +321,7 @@ const CarEditorPage: React.FC = () => {
               <input
                 type="text"
                 id="gallery-url-input"
-                className="flex-1 bg-background-dark border-border-dark rounded-lg px-4 py-2 text-white focus:ring-primary focus:border-primary text-sm"
+                className="flex-1 dark:bg-background-dark light:bg-slate-50 dark:border-border-dark light:border-border-light border rounded-lg px-4 py-2 dark:text-white light:text-text-light focus:ring-primary focus:border-primary text-sm"
                 placeholder="Hoặc nhập URL ảnh..."
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
@@ -363,7 +364,7 @@ const CarEditorPage: React.FC = () => {
               {formData.gallery.map((url, index) => (
                 <div
                   key={index}
-                  className="relative group aspect-video bg-background-dark rounded-lg overflow-hidden border border-border-dark"
+                  className="relative group aspect-video dark:bg-background-dark light:bg-slate-100 rounded-lg overflow-hidden dark:border-border-dark light:border-border-light border"
                 >
                   <img
                     src={url}
@@ -434,7 +435,7 @@ const CarEditorPage: React.FC = () => {
               ))}
             </div>
           ) : (
-            <div className="text-center py-8 text-slate-500">
+            <div className="text-center py-8 dark:text-slate-500 light:text-slate-400">
               <p className="text-4xl mb-2">🖼️</p>
               <p>Chưa có ảnh nào trong thư viện</p>
             </div>
@@ -442,20 +443,20 @@ const CarEditorPage: React.FC = () => {
         </div>
 
         {/* ==================== EXTERIOR SECTION ==================== */}
-        <div className="bg-card-dark border border-border-dark rounded-2xl p-6">
+        <div className="dark:bg-card-dark light:bg-white dark:border-border-dark light:border-border-light border rounded-2xl p-6 shadow-sm">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-bold">🚗 Ngoại thất</h3>
-            <span className="text-sm text-slate-400">
+            <h3 className="text-lg font-bold dark:text-white light:text-text-light">🚗 Ngoại thất</h3>
+            <span className="text-sm dark:text-slate-400 light:text-slate-500">
               {formData.exterior?.images?.length || 0} ảnh
             </span>
           </div>
-          <p className="text-xs text-slate-500 mb-4">
+          <p className="text-xs dark:text-slate-500 light:text-slate-400 mb-4">
             Thêm ảnh và mô tả về ngoại thất xe (thiết kế, đèn, mâm, gương...).
           </p>
 
           {/* Exterior Description */}
           <div className="mb-4">
-            <label className="block text-sm font-medium text-slate-300 mb-2">
+            <label className="block text-sm font-medium dark:text-slate-300 light:text-slate-600 mb-2">
               Mô tả ngoại thất
             </label>
             <textarea
@@ -467,7 +468,7 @@ const CarEditorPage: React.FC = () => {
                 })
               }
               rows={3}
-              className="w-full bg-background-dark border-border-dark rounded-lg px-4 py-3 text-white focus:ring-primary focus:border-primary resize-none"
+              className="w-full dark:bg-background-dark light:bg-slate-50 dark:border-border-dark light:border-border-light border rounded-lg px-4 py-3 dark:text-white light:text-text-light focus:ring-primary focus:border-primary resize-none"
               placeholder="Mô tả thiết kế ngoại thất..."
             />
           </div>
@@ -549,25 +550,25 @@ const CarEditorPage: React.FC = () => {
               ))}
             </div>
           ) : (
-            <div className="text-center py-4 text-slate-500 text-sm">Chưa có ảnh ngoại thất</div>
+            <div className="text-center py-4 dark:text-slate-500 light:text-slate-400 text-sm">Chưa có ảnh ngoại thất</div>
           )}
         </div>
 
         {/* ==================== INTERIOR SECTION ==================== */}
-        <div className="bg-card-dark border border-border-dark rounded-2xl p-6">
+        <div className="dark:bg-card-dark light:bg-white dark:border-border-dark light:border-border-light border rounded-2xl p-6 shadow-sm">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-bold">🛋️ Nội thất</h3>
-            <span className="text-sm text-slate-400">
+            <h3 className="text-lg font-bold dark:text-white light:text-text-light">🛋️ Nội thất</h3>
+            <span className="text-sm dark:text-slate-400 light:text-slate-500">
               {formData.interior?.images?.length || 0} ảnh
             </span>
           </div>
-          <p className="text-xs text-slate-500 mb-4">
+          <p className="text-xs dark:text-slate-500 light:text-slate-400 mb-4">
             Thêm ảnh và mô tả về nội thất xe (ghế, vô lăng, màn hình, không gian...).
           </p>
 
           {/* Interior Description */}
           <div className="mb-4">
-            <label className="block text-sm font-medium text-slate-300 mb-2">Mô tả nội thất</label>
+            <label className="block text-sm font-medium dark:text-slate-300 light:text-slate-600 mb-2">Mô tả nội thất</label>
             <textarea
               value={formData.interior?.description || ''}
               onChange={(e) =>
@@ -577,7 +578,7 @@ const CarEditorPage: React.FC = () => {
                 })
               }
               rows={3}
-              className="w-full bg-background-dark border-border-dark rounded-lg px-4 py-3 text-white focus:ring-primary focus:border-primary resize-none"
+              className="w-full dark:bg-background-dark light:bg-slate-50 dark:border-border-dark light:border-border-light border rounded-lg px-4 py-3 dark:text-white light:text-text-light focus:ring-primary focus:border-primary resize-none"
               placeholder="Mô tả nội thất, tiện nghi..."
             />
           </div>
@@ -635,7 +636,7 @@ const CarEditorPage: React.FC = () => {
               {formData.interior.images.map((url, index) => (
                 <div
                   key={index}
-                  className="relative group aspect-video bg-background-dark rounded-lg overflow-hidden border border-border-dark"
+                  className="relative group aspect-video dark:bg-background-dark light:bg-slate-100 rounded-lg overflow-hidden dark:border-border-dark light:border-border-light border"
                 >
                   <img
                     src={url}
@@ -659,213 +660,95 @@ const CarEditorPage: React.FC = () => {
               ))}
             </div>
           ) : (
-            <div className="text-center py-4 text-slate-500 text-sm">Chưa có ảnh nội thất</div>
+            <div className="text-center py-4 dark:text-slate-500 light:text-slate-400 text-sm">Chưa có ảnh nội thất</div>
           )}
         </div>
 
         {/* ==================== COLOR OPTIONS SECTION ==================== */}
-        <div className="bg-card-dark border border-border-dark rounded-2xl p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-bold">🎨 Tùy chọn màu sắc</h3>
-            <span className="text-sm text-slate-400">{formData.colorOptions?.length || 0} màu</span>
-          </div>
-          <p className="text-xs text-slate-500 mb-4">
-            Thêm các tùy chọn màu xe với ảnh minh họa tương ứng.
-          </p>
-
-          {/* Add New Color */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-4 p-4 bg-background-dark rounded-lg">
-            <div>
-              <label className="block text-xs text-slate-400 mb-1">Tên màu</label>
-              <input
-                type="text"
-                id="new-color-name"
-                className="w-full bg-card-dark border-border-dark rounded-lg px-3 py-2 text-white text-sm"
-                placeholder="VD: Trắng Ngọc Trai"
-              />
-            </div>
-            <div>
-              <label className="block text-xs text-slate-400 mb-1">Mã màu</label>
-              <div className="flex gap-2">
-                <input
-                  type="color"
-                  id="new-color-hex"
-                  className="w-12 h-10 rounded cursor-pointer"
-                  defaultValue="#FFFFFF"
-                />
-                <input
-                  type="text"
-                  id="new-color-hex-text"
-                  className="flex-1 bg-card-dark border-border-dark rounded-lg px-3 py-2 text-white text-sm"
-                  placeholder="#FFFFFF"
-                  onChange={(e) => {
-                    const colorInput = document.getElementById('new-color-hex') as HTMLInputElement;
-                    if (colorInput && e.target.value.match(/^#[0-9A-Fa-f]{6}$/)) {
-                      colorInput.value = e.target.value;
-                    }
-                  }}
-                />
-              </div>
-            </div>
-            <div>
-              <label className="block text-xs text-slate-400 mb-1">URL ảnh (tùy chọn)</label>
-              <input
-                type="text"
-                id="new-color-image"
-                className="w-full bg-card-dark border-border-dark rounded-lg px-3 py-2 text-white text-sm"
-                placeholder="https://..."
-              />
-            </div>
-            <div className="flex items-end">
-              <button
-                type="button"
-                onClick={() => {
-                  const nameInput = document.getElementById('new-color-name') as HTMLInputElement;
-                  const hexInput = document.getElementById('new-color-hex') as HTMLInputElement;
-                  const imageInput = document.getElementById('new-color-image') as HTMLInputElement;
-
-                  if (!nameInput.value.trim()) {
-                    toast.error('Vui lòng nhập tên màu');
-                    return;
-                  }
-
-                  const newColor: ColorOption = {
-                    name: nameInput.value.trim(),
-                    hexCode: hexInput.value || '#FFFFFF',
-                    image: imageInput.value.trim() || undefined,
-                  };
-
-                  setFormData({
-                    ...formData,
-                    colorOptions: [...(formData.colorOptions || []), newColor],
-                  });
-
-                  nameInput.value = '';
-                  hexInput.value = '#FFFFFF';
-                  imageInput.value = '';
-                  toast.success('Đã thêm màu');
-                }}
-                className="w-full px-4 py-2 bg-primary hover:bg-accent-blue text-white rounded-lg text-sm font-bold transition-colors"
-              >
-                + Thêm màu
-              </button>
-            </div>
-          </div>
-
-          {/* Color Options List */}
-          {formData.colorOptions && formData.colorOptions.length > 0 ? (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              {formData.colorOptions.map((color, index) => (
-                <div
-                  key={index}
-                  className="relative group bg-background-dark rounded-lg overflow-hidden border border-border-dark"
-                >
-                  {color.image ? (
-                    <img
-                      src={color.image}
-                      alt={color.name}
-                      className="w-full aspect-video object-cover"
-                    />
-                  ) : (
-                    <div
-                      className="w-full aspect-video flex items-center justify-center"
-                      style={{ backgroundColor: color.hexCode }}
-                    >
-                      <span className="text-2xl">🚗</span>
-                    </div>
-                  )}
-                  <div className="p-3">
-                    <div className="flex items-center gap-2">
-                      <div
-                        className="w-5 h-5 rounded-full border border-white/30"
-                        style={{ backgroundColor: color.hexCode }}
-                      />
-                      <span className="text-sm font-medium text-white">{color.name}</span>
-                    </div>
-                    <span className="text-xs text-slate-500">{color.hexCode}</span>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const newColors = formData.colorOptions!.filter((_, i) => i !== index);
-                      setFormData({ ...formData, colorOptions: newColors });
-                    }}
-                    className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded text-xs opacity-0 group-hover:opacity-100 transition-opacity"
-                  >
-                    ✕
-                  </button>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-4 text-slate-500 text-sm">Chưa có tùy chọn màu nào</div>
-          )}
-        </div>
+        <ColorSuggestions
+          colorOptions={formData.colorOptions || []}
+          carName={formData.name}
+          onAddColor={(color: ColorOption) => {
+            setFormData({
+              ...formData,
+              colorOptions: [...(formData.colorOptions || []), color],
+            });
+          }}
+          onRemoveColor={(index: number) => {
+            const newColors = formData.colorOptions!.filter((_, i) => i !== index);
+            setFormData({ ...formData, colorOptions: newColors });
+          }}
+          onUpdateColorImage={(index: number, imageUrl: string) => {
+            const newColors = [...(formData.colorOptions || [])];
+            newColors[index] = { ...newColors[index], image: imageUrl };
+            setFormData({ ...formData, colorOptions: newColors });
+          }}
+        />
 
         {/* Specs */}
-        <div className="bg-card-dark border border-border-dark rounded-2xl p-6">
-          <h3 className="text-lg font-bold mb-4">Thông số kỹ thuật</h3>
+        <div className="dark:bg-card-dark light:bg-white dark:border-border-dark light:border-border-light border rounded-2xl p-6 shadow-sm">
+          <h3 className="text-lg font-bold mb-4 dark:text-white light:text-text-light">Thông số kỹ thuật</h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">Động cơ</label>
+              <label className="block text-sm font-medium dark:text-slate-300 light:text-slate-600 mb-2">Động cơ</label>
               <input
                 type="text"
                 value={formData.specs?.engine || ''}
                 onChange={(e) => updateSpecs('engine', e.target.value)}
-                className="w-full bg-background-dark border-border-dark rounded-lg px-4 py-2 text-white focus:ring-primary focus:border-primary"
+                className="w-full dark:bg-background-dark light:bg-slate-50 dark:border-border-dark light:border-border-light border rounded-lg px-4 py-2 dark:text-white light:text-text-light focus:ring-primary focus:border-primary"
                 placeholder="VD: Điện, Xăng 2.0L"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">Công suất</label>
+              <label className="block text-sm font-medium dark:text-slate-300 light:text-slate-600 mb-2">Công suất</label>
               <input
                 type="text"
                 value={formData.specs?.power || ''}
                 onChange={(e) => updateSpecs('power', e.target.value)}
-                className="w-full bg-background-dark border-border-dark rounded-lg px-4 py-2 text-white focus:ring-primary focus:border-primary"
+                className="w-full dark:bg-background-dark light:bg-slate-50 dark:border-border-dark light:border-border-light border rounded-lg px-4 py-2 dark:text-white light:text-text-light focus:ring-primary focus:border-primary"
                 placeholder="VD: 402 HP"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">Mô-men xoắn</label>
+              <label className="block text-sm font-medium dark:text-slate-300 light:text-slate-600 mb-2">Mô-men xoắn</label>
               <input
                 type="text"
                 value={formData.specs?.torque || ''}
                 onChange={(e) => updateSpecs('torque', e.target.value)}
-                className="w-full bg-background-dark border-border-dark rounded-lg px-4 py-2 text-white focus:ring-primary focus:border-primary"
+                className="w-full dark:bg-background-dark light:bg-slate-50 dark:border-border-dark light:border-border-light border rounded-lg px-4 py-2 dark:text-white light:text-text-light focus:ring-primary focus:border-primary"
                 placeholder="VD: 640 Nm"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">
+              <label className="block text-sm font-medium dark:text-slate-300 light:text-slate-600 mb-2">
                 Tăng tốc 0-100
               </label>
               <input
                 type="text"
                 value={formData.specs?.acceleration || ''}
                 onChange={(e) => updateSpecs('acceleration', e.target.value)}
-                className="w-full bg-background-dark border-border-dark rounded-lg px-4 py-2 text-white focus:ring-primary focus:border-primary"
+                className="w-full dark:bg-background-dark light:bg-slate-50 dark:border-border-dark light:border-border-light border rounded-lg px-4 py-2 dark:text-white light:text-text-light focus:ring-primary focus:border-primary"
                 placeholder="VD: 5.5s"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">Tốc độ tối đa</label>
+              <label className="block text-sm font-medium dark:text-slate-300 light:text-slate-600 mb-2">Tốc độ tối đa</label>
               <input
                 type="text"
                 value={formData.specs?.topSpeed || ''}
                 onChange={(e) => updateSpecs('topSpeed', e.target.value)}
-                className="w-full bg-background-dark border-border-dark rounded-lg px-4 py-2 text-white focus:ring-primary focus:border-primary"
+                className="w-full dark:bg-background-dark light:bg-slate-50 dark:border-border-dark light:border-border-light border rounded-lg px-4 py-2 dark:text-white light:text-text-light focus:ring-primary focus:border-primary"
                 placeholder="VD: 200 km/h"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">Số chỗ ngồi</label>
+              <label className="block text-sm font-medium dark:text-slate-300 light:text-slate-600 mb-2">Số chỗ ngồi</label>
               <input
                 type="number"
                 value={formData.specs?.seats || ''}
                 onChange={(e) => updateSpecs('seats', Number(e.target.value))}
-                className="w-full bg-background-dark border-border-dark rounded-lg px-4 py-2 text-white focus:ring-primary focus:border-primary"
+                className="w-full dark:bg-background-dark light:bg-slate-50 dark:border-border-dark light:border-border-light border rounded-lg px-4 py-2 dark:text-white light:text-text-light focus:ring-primary focus:border-primary"
                 placeholder="5"
               />
             </div>
@@ -873,27 +756,27 @@ const CarEditorPage: React.FC = () => {
         </div>
 
         {/* Descriptions */}
-        <div className="bg-card-dark border border-border-dark rounded-2xl p-6">
-          <h3 className="text-lg font-bold mb-4">Mô tả</h3>
+        <div className="dark:bg-card-dark light:bg-white dark:border-border-dark light:border-border-light border rounded-2xl p-6 shadow-sm">
+          <h3 className="text-lg font-bold mb-4 dark:text-white light:text-text-light">Mô tả</h3>
 
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">
+              <label className="block text-sm font-medium dark:text-slate-300 light:text-slate-600 mb-2">
                 Mô tả ngắn (hiển thị trên card)
               </label>
               <textarea
                 value={formData.shortDescription}
                 onChange={(e) => setFormData({ ...formData, shortDescription: e.target.value })}
                 rows={2}
-                className="w-full bg-background-dark border-border-dark rounded-lg px-4 py-3 text-white focus:ring-primary focus:border-primary resize-none"
+                className="w-full dark:bg-background-dark light:bg-slate-50 dark:border-border-dark light:border-border-light border rounded-lg px-4 py-3 dark:text-white light:text-text-light focus:ring-primary focus:border-primary resize-none"
                 placeholder="Mô tả ngắn gọn về xe..."
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">
+              <label className="block text-sm font-medium dark:text-slate-300 light:text-slate-600 mb-2">
                 Mô tả chi tiết
               </label>
-              <p className="text-xs text-slate-500 mb-3">
+              <p className="text-xs dark:text-slate-500 light:text-slate-400 mb-3">
                 Nhập mô tả dạng văn bản thuần. Xuống dòng bằng Enter, hệ thống sẽ tự động format khi
                 hiển thị.
               </p>
@@ -901,7 +784,7 @@ const CarEditorPage: React.FC = () => {
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 rows={10}
-                className="w-full bg-background-dark border-border-dark rounded-lg px-4 py-3 text-white focus:ring-primary focus:border-primary resize-none leading-relaxed"
+                className="w-full dark:bg-background-dark light:bg-slate-50 dark:border-border-dark light:border-border-light border rounded-lg px-4 py-3 dark:text-white light:text-text-light focus:ring-primary focus:border-primary resize-none leading-relaxed"
                 placeholder={`Ví dụ:
 VinFast VF 8 là mẫu SUV điện thông minh đầu tiên của VinFast.
 
@@ -920,7 +803,7 @@ VinFast VF 8 là mẫu SUV điện thông minh đầu tiên của VinFast.
 - Hệ thống lái tự động cấp độ 2+
 - 11 túi khí an toàn`}
               />
-              <p className="text-xs text-slate-500 mt-2">
+              <p className="text-xs dark:text-slate-500 light:text-slate-400 mt-2">
                 {formData.description?.length || 0} ký tự
               </p>
             </div>
@@ -941,7 +824,7 @@ VinFast VF 8 là mẫu SUV điện thông minh đầu tiên của VinFast.
             type="button"
             onClick={(e) => handleSubmit(e, 'draft')}
             disabled={saveMutation.isPending}
-            className="py-3 px-6 border border-border-dark text-slate-400 hover:text-white rounded-xl font-bold transition-all disabled:opacity-50"
+            className="py-3 px-6 dark:border-border-dark light:border-border-light border dark:text-slate-400 light:text-slate-500 dark:hover:text-white light:hover:text-text-light rounded-xl font-bold transition-all disabled:opacity-50"
           >
             Lưu nháp
           </button>

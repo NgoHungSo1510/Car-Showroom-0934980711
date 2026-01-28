@@ -12,8 +12,6 @@ const CarTypesPage: React.FC = () => {
     description?: string;
   } | null>(null);
   const [formData, setFormData] = useState({ name: '', description: '' });
-
-  // Search state
   const [searchTerm, setSearchTerm] = useState('');
 
   const { data: typesData, isLoading } = useQuery({
@@ -56,7 +54,6 @@ const CarTypesPage: React.FC = () => {
 
   const carTypes = typesData?.data || [];
 
-  // Filtered car types
   const filteredCarTypes = useMemo(() => {
     return carTypes.filter((type: { name: string; description?: string }) => {
       const matchesSearch =
@@ -89,7 +86,6 @@ const CarTypesPage: React.FC = () => {
       toast.error('Vui lòng nhập tên loại xe');
       return;
     }
-
     if (editingType) {
       updateMutation.mutate({ id: editingType._id, data: formData });
     } else {
@@ -114,14 +110,14 @@ const CarTypesPage: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold">Quản lý loại xe</h2>
-          <p className="text-slate-400 text-sm mt-1">Quản lý các phân loại xe</p>
+          <h2 className="text-xl md:text-2xl font-bold dark:text-white light:text-text-light">Quản lý loại xe</h2>
+          <p className="dark:text-slate-400 light:text-slate-500 text-sm mt-1">Quản lý các phân loại xe</p>
         </div>
         <button
           onClick={() => openModal()}
-          className="flex items-center gap-2 px-4 py-2 bg-primary hover:bg-accent-blue text-white rounded-xl text-sm font-bold transition-all shadow-lg shadow-primary/20"
+          className="flex items-center justify-center gap-2 px-4 py-2.5 bg-primary hover:bg-accent-blue text-white rounded-xl text-sm font-bold transition-all shadow-lg shadow-primary/20 touch-target"
         >
           <span className="material-symbols-outlined text-[18px]">add</span>
           Thêm loại xe
@@ -129,20 +125,20 @@ const CarTypesPage: React.FC = () => {
       </div>
 
       {/* Search Toolbar */}
-      <div className="flex flex-wrap items-center gap-4 bg-card-dark border border-border-dark rounded-xl p-4">
+      <div className="flex flex-wrap items-center gap-4 dark:bg-card-dark light:bg-white dark:border-border-dark light:border-border-light border rounded-xl p-4 shadow-sm">
         <div className="relative flex-1 min-w-[200px]">
           <input
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Tìm kiếm theo tên hoặc mô tả..."
-            className="w-full bg-background-dark border border-border-dark rounded-lg text-sm pl-10 pr-4 py-2 text-white placeholder-slate-500 focus:ring-primary focus:border-primary transition-all"
+            className="w-full dark:bg-background-dark light:bg-slate-50 dark:border-border-dark light:border-border-light border rounded-lg text-sm pl-10 pr-4 py-2.5 dark:text-white light:text-text-light placeholder-slate-400 focus:ring-primary focus:border-primary transition-all"
           />
-          <span className="material-symbols-outlined absolute left-3 top-2 text-slate-500 text-[20px]">
+          <span className="material-symbols-outlined absolute left-3 top-2.5 text-slate-400 text-[20px]">
             search
           </span>
         </div>
-        <span className="text-xs text-slate-500">
+        <span className="text-xs dark:text-slate-500 light:text-slate-400">
           {filteredCarTypes.length} / {carTypes.length} loại xe
         </span>
       </div>
@@ -152,25 +148,25 @@ const CarTypesPage: React.FC = () => {
         {filteredCarTypes.map((type: { _id: string; name: string; description?: string }) => (
           <div
             key={type._id}
-            className="bg-card-dark border border-border-dark rounded-xl p-4 group hover:border-primary/30 transition-colors"
+            className="dark:bg-card-dark light:bg-white dark:border-border-dark light:border-border-light border rounded-xl p-4 group hover:border-primary/30 transition-colors shadow-sm"
           >
             <div className="flex items-start justify-between">
               <div>
-                <h3 className="font-bold text-white">{type.name}</h3>
+                <h3 className="font-bold dark:text-white light:text-text-light">{type.name}</h3>
                 {type.description && (
-                  <p className="text-xs text-slate-400 mt-1">{type.description}</p>
+                  <p className="text-xs dark:text-slate-400 light:text-slate-500 mt-1">{type.description}</p>
                 )}
               </div>
               <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                 <button
                   onClick={() => openModal(type)}
-                  className="p-2 hover:bg-primary/10 rounded-lg text-primary transition-colors"
+                  className="p-2 hover:bg-primary/10 rounded-lg text-primary transition-colors touch-target"
                 >
                   <span className="material-symbols-outlined text-[18px]">edit</span>
                 </button>
                 <button
                   onClick={() => handleDelete(type._id, type.name)}
-                  className="p-2 hover:bg-red-500/10 rounded-lg text-red-400 transition-colors"
+                  className="p-2 hover:bg-red-500/10 rounded-lg text-red-400 transition-colors touch-target"
                 >
                   <span className="material-symbols-outlined text-[18px]">delete</span>
                 </button>
@@ -182,31 +178,31 @@ const CarTypesPage: React.FC = () => {
 
       {/* Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-card-dark border border-border-dark rounded-2xl p-6 w-full max-w-md">
-            <h3 className="text-lg font-bold mb-4">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="dark:bg-card-dark light:bg-white dark:border-border-dark light:border-border-light border rounded-2xl p-6 w-full max-w-md shadow-xl">
+            <h3 className="text-lg font-bold mb-4 dark:text-white light:text-text-light">
               {editingType ? 'Chỉnh sửa loại xe' : 'Thêm loại xe'}
             </h3>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">
+                <label className="block text-sm font-medium dark:text-slate-300 light:text-slate-600 mb-2">
                   Tên loại xe *
                 </label>
                 <input
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full bg-background-dark border-border-dark rounded-lg px-4 py-2 text-white focus:ring-primary focus:border-primary"
+                  className="w-full dark:bg-background-dark light:bg-slate-50 dark:border-border-dark light:border-border-light border rounded-lg px-4 py-2.5 dark:text-white light:text-text-light focus:ring-primary focus:border-primary"
                   placeholder="VD: SUV"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">Mô tả</label>
+                <label className="block text-sm font-medium dark:text-slate-300 light:text-slate-600 mb-2">Mô tả</label>
                 <input
                   type="text"
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  className="w-full bg-background-dark border-border-dark rounded-lg px-4 py-2 text-white focus:ring-primary focus:border-primary"
+                  className="w-full dark:bg-background-dark light:bg-slate-50 dark:border-border-dark light:border-border-light border rounded-lg px-4 py-2.5 dark:text-white light:text-text-light focus:ring-primary focus:border-primary"
                   placeholder="VD: Xe thể thao đa dụng"
                 />
               </div>
@@ -214,14 +210,14 @@ const CarTypesPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="px-4 py-2 text-slate-400 hover:text-white transition-colors"
+                  className="px-4 py-2 dark:text-slate-400 light:text-slate-500 dark:hover:text-white light:hover:text-text-light transition-colors touch-target"
                 >
                   Hủy
                 </button>
                 <button
                   type="submit"
                   disabled={createMutation.isPending || updateMutation.isPending}
-                  className="px-4 py-2 bg-primary hover:bg-accent-blue text-white rounded-lg font-bold transition-all disabled:opacity-50"
+                  className="px-4 py-2 bg-primary hover:bg-accent-blue text-white rounded-lg font-bold transition-all disabled:opacity-50 touch-target"
                 >
                   {editingType ? 'Cập nhật' : 'Tạo mới'}
                 </button>
