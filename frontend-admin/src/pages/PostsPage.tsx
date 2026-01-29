@@ -53,7 +53,7 @@ const PostsPage: React.FC = () => {
 
   // Copy to clipboard and open Meta Business Suite
   const handleCopyAndOpenFB = async (post: Post) => {
-    const baseUrl = import.meta.env.VITE_CLIENT_URL || 'https://maihieu.vercel.app';
+    const baseUrl = import.meta.env.VITE_CLIENT_URL || 'https://car-showroom-0934980711.vercel.app';
     const categoryEmoji =
       post.category === 'news'
         ? '📰'
