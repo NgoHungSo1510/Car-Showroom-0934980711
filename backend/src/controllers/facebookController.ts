@@ -564,6 +564,7 @@ export const getSyncStatus = async (req: Request, res: Response) => {
 
     if (isConfigured) {
       try {
+        // Try fetching page info with fan_count (Page)
         const url = `https://graph.facebook.com/${FB_GRAPH_API_VERSION}/${pageId}?fields=id,name,fan_count,picture&access_token=${token}`;
         const response = await fetch(url);
 
@@ -571,12 +572,26 @@ export const getSyncStatus = async (req: Request, res: Response) => {
           pageInfo = await response.json();
           connectionStatus = 'connected';
         } else {
-          const error = await response.json();
-          connectionStatus = 'error';
-          console.error('FB connection error:', error);
+          // If error 100 (User node), try fetching as User (no fan_count)
+          const error = (await response.json()) as any;
+          if (error.error?.code === 100) {
+            const userUrl = `https://graph.facebook.com/${FB_GRAPH_API_VERSION}/${pageId}?fields=id,name,picture&access_token=${token}`;
+            const userResponse = await fetch(userUrl);
+            if (userResponse.ok) {
+              pageInfo = await userResponse.json();
+              connectionStatus = 'connected';
+            } else {
+              connectionStatus = 'error';
+              console.error('FB connection error (User fallback):', await userResponse.json());
+            }
+          } else {
+            connectionStatus = 'error';
+            console.error('FB connection error:', error);
+          }
         }
       } catch (err) {
         connectionStatus = 'error';
+        console.error('FB network error:', err);
       }
     }
 
@@ -697,7 +712,7 @@ export const getFacebookPosts = async (req: Request, res: Response) => {
  */
 export const syncSinglePost = async (req: Request, res: Response) => {
   try {
-    const { fbPostId, message, images, autoPublish = false } = req.body;
+    const { fbPostId, message, images, autoPublish = true } = req.body;
 
     if (!message) {
       return res.status(400).json({
@@ -795,7 +810,7 @@ export const syncSinglePost = async (req: Request, res: Response) => {
  */
 export const syncMultiplePosts = async (req: Request, res: Response) => {
   try {
-    const { posts, autoPublish = false } = req.body;
+    const { posts, autoPublish = true } = req.body;
 
     if (!posts || !Array.isArray(posts) || posts.length === 0) {
       return res.status(400).json({

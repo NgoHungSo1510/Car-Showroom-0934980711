@@ -5,6 +5,10 @@
     "installCommand": "npm install",
     "rewrites": [
         {
+            "source": "/cars/:slug",
+            "destination": "/api/car-detail"
+        },
+        {
             "source": "/(.*)",
             "destination": "/index.html"
         }

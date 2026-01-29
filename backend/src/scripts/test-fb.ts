@@ -9,7 +9,7 @@ const __dirname = path.dirname(__filename);
 dotenv.config({ path: path.join(__dirname, '../../.env') });
 
 import mongoose from 'mongoose';
-import Setting from '../models/Setting';
+import Setting from '../models/Setting.js';
 
 // Connect DB
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/car-showroom';
@@ -27,8 +27,7 @@ async function getFbConfig() {
 }
 
 console.log('--- Testing Facebook Configuration ---');
-console.log('FB_PAGE_ID:', FB_PAGE_ID);
-console.log('Token Length:', FB_PAGE_ACCESS_TOKEN?.length);
+console.log('--- Testing Facebook Configuration ---');
 
 async function testConnection() {
     try {
@@ -65,7 +64,8 @@ async function testConnection() {
         if (!postsRes.ok) {
             console.log('❌ Error Response:', JSON.stringify(postsData, null, 2));
         } else {
-            console.log('✅ Success! Found posts:', postsData.data?.length);
+            const data = (postsData as any).data;
+            console.log('✅ Success! Found posts:', data?.length);
         }
 
     } catch (error) {
