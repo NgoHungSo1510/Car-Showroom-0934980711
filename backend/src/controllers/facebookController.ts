@@ -1041,7 +1041,7 @@ export const publishToFacebook = async (req: Request, res: Response) => {
       });
     }
 
-    if (!FB_PAGE_ACCESS_TOKEN) {
+    if (!process.env.FB_PAGE_ACCESS_TOKEN) {
       return res.status(400).json({
         success: false,
         message: 'Facebook Page Access Token chưa được cấu hình',
@@ -1138,7 +1138,7 @@ export const publishToFacebook = async (req: Request, res: Response) => {
     }
 
     // Publish to Facebook
-    const pageId = FB_PAGE_ID || 'me';
+    const pageId = process.env.FB_PAGE_ID || 'me';
     let fbResponse: { id?: string };
 
     if (post.coverImage) {
@@ -1152,7 +1152,7 @@ export const publishToFacebook = async (req: Request, res: Response) => {
         body: JSON.stringify({
           url: post.coverImage,
           message: message,
-          access_token: FB_PAGE_ACCESS_TOKEN,
+          access_token: process.env.FB_PAGE_ACCESS_TOKEN,
         }),
       });
 
@@ -1173,7 +1173,7 @@ export const publishToFacebook = async (req: Request, res: Response) => {
         body: JSON.stringify({
           message: message,
           link: postUrl,
-          access_token: FB_PAGE_ACCESS_TOKEN,
+          access_token: process.env.FB_PAGE_ACCESS_TOKEN,
         }),
       });
 
@@ -1231,7 +1231,7 @@ export const publishBatchToFacebook = async (req: Request, res: Response) => {
       });
     }
 
-    if (!FB_PAGE_ACCESS_TOKEN) {
+    if (!process.env.FB_PAGE_ACCESS_TOKEN) {
       return res.status(400).json({
         success: false,
         message: 'Facebook Page Access Token chưa được cấu hình',
@@ -1285,14 +1285,14 @@ export const publishBatchToFacebook = async (req: Request, res: Response) => {
         }
 
         // Publish
-        const pageId = FB_PAGE_ID || 'me';
+        const pageId = process.env.FB_PAGE_ID || 'me';
         const url = post.coverImage
           ? `https://graph.facebook.com/${FB_GRAPH_API_VERSION}/${pageId}/photos`
           : `https://graph.facebook.com/${FB_GRAPH_API_VERSION}/${pageId}/feed`;
 
         const body = post.coverImage
-          ? { url: post.coverImage, message, access_token: FB_PAGE_ACCESS_TOKEN }
-          : { message, link: postUrl, access_token: FB_PAGE_ACCESS_TOKEN };
+          ? { url: post.coverImage, message, access_token: process.env.FB_PAGE_ACCESS_TOKEN }
+          : { message, link: postUrl, access_token: process.env.FB_PAGE_ACCESS_TOKEN };
 
         const response = await fetch(url, {
           method: 'POST',
