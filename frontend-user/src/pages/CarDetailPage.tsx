@@ -99,13 +99,13 @@ const CarDetailPage: React.FC = () => {
     );
   }
 
-  const tabs = [
+  const tabs = React.useMemo(() => [
     { id: 'overview' as TabType, label: 'Tổng quan', icon: '🚗', show: true },
     { id: 'exterior' as TabType, label: 'Ngoại thất', icon: '🚘', show: hasExterior },
     { id: 'interior' as TabType, label: 'Nội thất', icon: '🛋️', show: hasInterior },
     { id: 'colors' as TabType, label: 'Màu sắc', icon: '🎨', show: hasColors },
     { id: 'specs' as TabType, label: 'Thông số', icon: '⚙️', show: hasSpecs },
-  ].filter((tab) => tab.show);
+  ].filter((tab) => tab.show), [hasExterior, hasInterior, hasColors, hasSpecs]);
 
   // Scrollspy logic
   useEffect(() => {
