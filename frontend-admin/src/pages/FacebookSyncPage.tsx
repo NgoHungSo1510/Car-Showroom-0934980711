@@ -1,6 +1,12 @@
 import React, { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { facebookAPI, FacebookSyncStatus, FacebookPost, SyncedPost } from '../services/api';
+import {
+  facebookAPI,
+  FacebookSyncStatus,
+  FacebookPost,
+  SyncedPost,
+  settingsAPI,
+} from '../services/api';
 import toast from 'react-hot-toast';
 import { Link } from 'react-router-dom';
 
@@ -9,6 +15,40 @@ const FacebookSyncPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'unsynced' | 'synced' | 'settings'>('unsynced');
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [autoPublish, setAutoPublish] = useState(false);
+
+  // Config state
+  const [accessToken, setAccessToken] = useState('');
+  const [pageId, setPageId] = useState('');
+  const [showConfig, setShowConfig] = useState(false);
+
+  // Update config mutation
+  const updateConfigMutation = useMutation({
+    mutationFn: async (data: { token: string; pageId?: string }) => {
+      await settingsAPI.update(
+        'facebook_access_token',
+        data.token,
+        'Facebook Page Access Token',
+        'social',
+      );
+      if (data.pageId) {
+        await settingsAPI.update('facebook_page_id', data.pageId, 'Facebook Page ID', 'social');
+      }
+    },
+    onSuccess: () => {
+      toast.success('Đã lưu cấu hình thành công');
+      setShowConfig(false);
+      queryClient.invalidateQueries({ queryKey: ['facebook-sync-status'] });
+    },
+    onError: () => toast.error('Lỗi lưu cấu hình'),
+  });
+
+  const handleSaveConfig = () => {
+    if (!accessToken.trim()) {
+      toast.error('Vui lòng nhập Access Token');
+      return;
+    }
+    updateConfigMutation.mutate({ token: accessToken, pageId });
+  };
 
   // Auto sync settings
   const [autoSyncEnabled, setAutoSyncEnabled] = useState(false);
@@ -109,6 +149,14 @@ const FacebookSyncPage: React.FC = () => {
     },
   });
 
+  const handleSyncAll = () => {
+    if (unsyncedPosts.length === 0) {
+      toast.error('Không có bài nào để đồng bộ');
+      return;
+    }
+    syncMultipleMutation.mutate(unsyncedPosts);
+  };
+
   const status = statusData as FacebookSyncStatus | undefined;
   const unsyncedPosts = postsData?.posts?.filter((p) => !p.synced) || [];
 
@@ -139,14 +187,6 @@ const FacebookSyncPage: React.FC = () => {
     syncMultipleMutation.mutate(selectedPosts);
   };
 
-  const handleSyncAll = () => {
-    if (unsyncedPosts.length === 0) {
-      toast.error('Không có bài nào để đồng bộ');
-      return;
-    }
-    syncMultipleMutation.mutate(unsyncedPosts);
-  };
-
   const formatDate = (dateStr: string) => {
     return new Date(dateStr).toLocaleDateString('vi-VN', {
       day: '2-digit',
@@ -166,12 +206,20 @@ const FacebookSyncPage: React.FC = () => {
           <p className="text-slate-400 mt-1">Quản lý và đồng bộ bài viết từ Facebook Page</p>
         </div>
         <div className="flex gap-3">
-          <Link
-            to="/facebook-import"
+          <button
+            onClick={() => setShowConfig(!showConfig)}
+            className="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-sm font-bold transition-colors"
+          >
+            ⚙️ Cấu hình Token
+          </button>
+          <a
+            href="https://developers.facebook.com/tools/explorer/"
+            target="_blank"
+            rel="noopener noreferrer"
             className="px-4 py-2 bg-slate-600 hover:bg-slate-500 text-white rounded-lg text-sm font-bold transition-colors"
           >
-            ✏️ Nhập thủ công
-          </Link>
+            🔑 Lấy Token
+          </a>
           <button
             onClick={() => refetchPosts()}
             disabled={postsLoading}
@@ -181,6 +229,61 @@ const FacebookSyncPage: React.FC = () => {
           </button>
         </div>
       </div>
+
+      {/* Configuration Section */}
+      {(showConfig || status?.connectionStatus === 'error' || status?.connectionStatus === 'not_configured') && (
+        <div className="bg-card-dark border border-border-dark rounded-2xl p-6 mb-6">
+          <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+            🔑 Cấu hình kết nối
+            <a
+              href="https://developers.facebook.com/tools/explorer/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs font-normal text-primary hover:underline flex items-center gap-1 ml-auto sm:ml-2"
+            >
+              Lấy Token từ Graph API Explorer <span className="material-symbols-outlined text-[14px]">open_in_new</span>
+            </a>
+          </h3>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-2">
+                Facebook Page Access Token <span className="text-red-400">*</span>
+              </label>
+              <input
+                type="text"
+                value={accessToken}
+                onChange={(e) => setAccessToken(e.target.value)}
+                placeholder="EAAG..."
+                className="w-full px-4 py-2.5 bg-background-dark border border-border-dark rounded-xl text-white focus:ring-primary focus:border-primary"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-2">
+                Page ID (Tùy chọn)
+              </label>
+              <input
+                type="text"
+                value={pageId}
+                onChange={(e) => setPageId(e.target.value)}
+                placeholder="me"
+                className="w-full px-4 py-2.5 bg-background-dark border border-border-dark rounded-xl text-white focus:ring-primary focus:border-primary"
+              />
+              <p className="text-xs text-slate-500 mt-1">Để trống nếu Token đã thuộc về Page</p>
+            </div>
+          </div>
+
+          <div className="flex justify-end">
+            <button
+              onClick={handleSaveConfig}
+              disabled={updateConfigMutation.isPending}
+              className="px-6 py-2 bg-primary hover:bg-accent-blue text-white rounded-lg font-bold transition-all disabled:opacity-50"
+            >
+              {updateConfigMutation.isPending ? '⏳ Đang lưu...' : '💾 Lưu cấu hình'}
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Connection Status */}
       {statusLoading ? (
@@ -227,7 +330,7 @@ const FacebookSyncPage: React.FC = () => {
             <div>
               <p className="text-red-400 font-bold">Lỗi kết nối Facebook</p>
               <p className="text-slate-400 text-sm">
-                Access Token có thể đã hết hạn. Vui lòng tạo token mới.
+                Access Token có thể đã hết hạn hoặc không hợp lệ. Vui lòng cập nhật Token ở trên.
               </p>
             </div>
           </div>
@@ -239,7 +342,7 @@ const FacebookSyncPage: React.FC = () => {
             <div>
               <p className="text-amber-400 font-bold">Chưa cấu hình Facebook</p>
               <p className="text-slate-400 text-sm">
-                Vui lòng thêm FB_PAGE_ACCESS_TOKEN vào file .env
+                Vui lòng nhập Facebook Page Access Token ở trên để bắt đầu.
               </p>
             </div>
           </div>
@@ -256,7 +359,7 @@ const FacebookSyncPage: React.FC = () => {
               className={`px-5 py-2.5 rounded-xl font-bold transition-all ${activeTab === 'unsynced'
                 ? 'bg-primary text-white'
                 : 'bg-card-dark text-slate-400 hover:text-white'
-              }`}
+                }`}
             >
               📥 Chưa đồng bộ ({postsData?.unsynced || 0})
             </button>
@@ -265,7 +368,7 @@ const FacebookSyncPage: React.FC = () => {
               className={`px-5 py-2.5 rounded-xl font-bold transition-all ${activeTab === 'synced'
                 ? 'bg-primary text-white'
                 : 'bg-card-dark text-slate-400 hover:text-white'
-              }`}
+                }`}
             >
               ✅ Đã đồng bộ ({status?.syncedPostsCount || 0})
             </button>
@@ -274,7 +377,7 @@ const FacebookSyncPage: React.FC = () => {
               className={`px-5 py-2.5 rounded-xl font-bold transition-all ${activeTab === 'settings'
                 ? 'bg-primary text-white'
                 : 'bg-card-dark text-slate-400 hover:text-white'
-              }`}
+                }`}
             >
               ⚙️ Cài đặt
             </button>
@@ -351,7 +454,7 @@ const FacebookSyncPage: React.FC = () => {
                       className={`bg-card-dark border rounded-2xl p-5 transition-all ${selectedIds.has(post.id)
                         ? 'border-primary bg-primary/5'
                         : 'border-border-dark hover:border-primary/50'
-                      }`}
+                        }`}
                     >
                       <div className="flex gap-4">
                         {/* Checkbox */}
@@ -473,7 +576,7 @@ const FacebookSyncPage: React.FC = () => {
                                   : post.category === 'event'
                                     ? 'bg-purple-500/20 text-purple-400'
                                     : 'bg-amber-500/20 text-amber-400'
-                              }`}
+                                }`}
                             >
                               {post.category === 'news'
                                 ? 'Tin tức'
@@ -489,7 +592,7 @@ const FacebookSyncPage: React.FC = () => {
                               className={`px-2 py-1 text-xs font-bold rounded ${post.status === 'published'
                                 ? 'bg-emerald-500/20 text-emerald-400'
                                 : 'bg-slate-500/20 text-slate-400'
-                              }`}
+                                }`}
                             >
                               {post.status === 'published' ? 'Đã xuất bản' : 'Nháp'}
                             </span>

@@ -264,9 +264,20 @@ export const testAI = async (req: Request, res: Response) => {
 };
 
 // Facebook Graph API configuration
-const FB_PAGE_ACCESS_TOKEN = process.env.FB_PAGE_ACCESS_TOKEN;
-const FB_PAGE_ID = process.env.FB_PAGE_ID;
 const FB_GRAPH_API_VERSION = 'v18.0';
+
+// Helper to get FB configuration
+async function getFbConfig() {
+  const [tokenSetting, pageIdSetting] = await Promise.all([
+    import('../models/Setting.js').then((m) => m.default.findOne({ key: 'facebook_access_token' })),
+    import('../models/Setting.js').then((m) => m.default.findOne({ key: 'facebook_page_id' })),
+  ]);
+
+  const token = tokenSetting?.value || process.env.FB_PAGE_ACCESS_TOKEN;
+  const pageId = pageIdSetting?.value || process.env.FB_PAGE_ID || 'me';
+
+  return { token, pageId };
+}
 
 interface FacebookPost {
   id: string;
@@ -295,6 +306,8 @@ interface FacebookAPIResponse {
     cursors: {
       before: string;
       after: string;
+      previous?: string;
+      next?: string;
     };
     next?: string;
   };
@@ -304,13 +317,14 @@ interface FacebookAPIResponse {
  * Fetch posts from Facebook Page using Graph API
  */
 async function fetchFacebookPosts(limit: number = 10): Promise<FacebookPost[]> {
-  if (!FB_PAGE_ACCESS_TOKEN) {
+  const { token, pageId } = await getFbConfig();
+
+  if (!token) {
     throw new Error('FB_PAGE_ACCESS_TOKEN is not configured');
   }
 
-  const pageId = FB_PAGE_ID || 'me';
   const fields = 'id,message,created_time,full_picture,attachments{media,subattachments}';
-  const url = `https://graph.facebook.com/${FB_GRAPH_API_VERSION}/${pageId}/posts?fields=${fields}&limit=${limit}&access_token=${FB_PAGE_ACCESS_TOKEN}`;
+  const url = `https://graph.facebook.com/${FB_GRAPH_API_VERSION}/${pageId}/posts?fields=${fields}&limit=${limit}&access_token=${token}`;
 
   const response = await fetch(url);
 
@@ -371,12 +385,13 @@ const syncHistory: SyncRecord[] = [];
 export const syncFromFacebookPage = async (req: Request, res: Response) => {
   try {
     const { limit = 10, autoPublish = false } = req.body;
+    const { token } = await getFbConfig();
 
-    if (!FB_PAGE_ACCESS_TOKEN) {
+    if (!token) {
       return res.status(400).json({
         success: false,
         message:
-          'Facebook Page Access Token chưa được cấu hình. Vui lòng thêm FB_PAGE_ACCESS_TOKEN vào .env',
+          'Facebook Page Access Token chưa được cấu hình. Vui lòng thêm vào Cài đặt hoặc file .env',
       });
     }
 
@@ -532,7 +547,8 @@ export const syncFromFacebookPage = async (req: Request, res: Response) => {
  */
 export const getSyncStatus = async (req: Request, res: Response) => {
   try {
-    const isConfigured = !!FB_PAGE_ACCESS_TOKEN;
+    const { token, pageId } = await getFbConfig();
+    const isConfigured = !!token;
 
     // Test connection if configured
     let connectionStatus = 'not_configured';
@@ -540,8 +556,7 @@ export const getSyncStatus = async (req: Request, res: Response) => {
 
     if (isConfigured) {
       try {
-        const pageId = FB_PAGE_ID || 'me';
-        const url = `https://graph.facebook.com/${FB_GRAPH_API_VERSION}/${pageId}?fields=id,name,fan_count,picture&access_token=${FB_PAGE_ACCESS_TOKEN}`;
+        const url = `https://graph.facebook.com/${FB_GRAPH_API_VERSION}/${pageId}?fields=id,name,fan_count,picture&access_token=${token}`;
         const response = await fetch(url);
 
         if (response.ok) {
@@ -608,8 +623,9 @@ let autoSyncInterval: NodeJS.Timeout | null = null;
 export const getFacebookPosts = async (req: Request, res: Response) => {
   try {
     const limit = parseInt(req.query.limit as string) || 50;
+    const { token } = await getFbConfig();
 
-    if (!FB_PAGE_ACCESS_TOKEN) {
+    if (!token) {
       return res.status(400).json({
         success: false,
         message: 'Facebook Page Access Token chưa được cấu hình',

@@ -34,6 +34,7 @@ const App: React.FC = () => {
         <Route path="/car-types" element={<CarTypesPage />} />
         <Route path="/notifications" element={<NotificationsPage />} />
         <Route path="/facebook-sync" element={<FacebookSyncPage />} />
+        <Route path="/facebook-import" element={<FacebookImportPage />} />
         <Route path="/ai-test" element={<FacebookImportPage />} />
         <Route path="/ai-config" element={<AIConfigPage />} />
         <Route path="/settings" element={<SettingsPage />} />

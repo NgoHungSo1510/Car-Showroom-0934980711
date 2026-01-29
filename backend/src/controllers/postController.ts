@@ -96,30 +96,47 @@ export const getRelatedPosts = asyncHandler(async (req: Request, res: Response) 
 // @route   GET /api/admin/posts
 // @access  Private
 export const getAdminPosts = asyncHandler(async (req: Request, res: Response) => {
-  const { category, status, page = 1, limit = 20, sort = '-createdAt', search } = req.query;
+  const { category, status, page = 1, limit = 20, search } = req.query;
 
-  // Build query
-  const query: Record<string, unknown> = {};
-
-  if (category) query.category = category;
-  if (status) query.status = status;
-  if (search) {
-    query.title = { $regex: search, $options: 'i' };
-  }
-
-  // Execute query
   const pageNum = Number(page);
   const limitNum = Number(limit);
   const skip = (pageNum - 1) * limitNum;
 
-  const [posts, total] = await Promise.all([
-    Post.find(query)
-      .populate('relatedCar', 'name slug')
-      .populate('createdBy', 'fullName')
-      .sort(sort as string)
-      .skip(skip)
-      .limit(limitNum),
-    Post.countDocuments(query),
+  // Build match stage
+  const matchStage: any = {};
+  if (category) matchStage.category = category;
+  if (status) matchStage.status = status;
+  if (search) {
+    matchStage.title = { $regex: search, $options: 'i' };
+  }
+
+  // Aggregation pipeline
+  const pipeline: any[] = [
+    { $match: matchStage },
+    {
+      $addFields: {
+        sortDate: { $ifNull: ['$publishedAt', '$createdAt'] },
+      },
+    },
+    { $sort: { sortDate: -1 } },
+    {
+      $facet: {
+        metadata: [{ $count: 'total' }],
+        data: [{ $skip: skip }, { $limit: limitNum }],
+      },
+    },
+  ];
+
+  const result = await Post.aggregate(pipeline);
+
+  const metadata = result[0].metadata;
+  const total = metadata.length > 0 ? metadata[0].total : 0;
+  let posts = result[0].data;
+
+  // Populate references
+  posts = await Post.populate(posts, [
+    { path: 'relatedCar', select: 'name slug' },
+    { path: 'createdBy', select: 'fullName' },
   ]);
 
   res.status(200).json({

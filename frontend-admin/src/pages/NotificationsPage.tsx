@@ -130,8 +130,8 @@ const NotificationsPage: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold">Thông báo tư vấn</h2>
-          <p className="text-slate-400 text-sm mt-1">
+          <h2 className="text-2xl font-bold dark:text-white light:text-slate-900">Thông báo tư vấn</h2>
+          <p className="dark:text-slate-400 light:text-slate-500 text-sm mt-1">
             Danh sách yêu cầu tư vấn qua Zalo ({unreadCount} chưa đọc)
           </p>
         </div>
@@ -139,7 +139,7 @@ const NotificationsPage: React.FC = () => {
           <button
             onClick={() => markAllAsReadMutation.mutate()}
             disabled={markAllAsReadMutation.isPending}
-            className="flex items-center gap-2 px-4 py-2 bg-card-dark border border-border-dark hover:border-primary/30 text-white rounded-xl text-sm font-bold transition-all"
+            className="flex items-center gap-2 px-4 py-2 dark:bg-card-dark light:bg-white border dark:border-border-dark light:border-border-light hover:border-primary/30 dark:text-white light:text-slate-700 rounded-xl text-sm font-bold transition-all shadow-sm"
           >
             <span className="material-symbols-outlined text-[18px]">done_all</span>
             Đánh dấu đã đọc tất cả
@@ -153,13 +153,12 @@ const NotificationsPage: React.FC = () => {
           notifications.map((notification: Notification) => (
             <div
               key={notification._id}
-              className={`bg-card-dark border rounded-xl p-4 flex items-center gap-4 transition-all cursor-pointer hover:border-primary/30 ${
-                notification.isRead ? 'border-border-dark' : 'border-primary/50 bg-primary/5'
-              }`}
+              className={`dark:bg-card-dark light:bg-white border rounded-xl p-4 flex items-center gap-4 transition-all cursor-pointer hover:border-primary/30 shadow-sm ${notification.isRead ? 'dark:border-border-dark light:border-border-light' : 'border-primary/50 bg-primary/5'
+                }`}
               onClick={() => handleViewDetail(notification)}
             >
               {/* Thumbnail */}
-              <div className="size-16 rounded-lg bg-border-dark flex-shrink-0 overflow-hidden">
+              <div className="size-16 rounded-lg dark:bg-border-dark light:bg-slate-100 flex-shrink-0 overflow-hidden">
                 {notification.refThumbnail ? (
                   <img src={notification.refThumbnail} alt="" className="size-full object-cover" />
                 ) : (
@@ -175,20 +174,19 @@ const NotificationsPage: React.FC = () => {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
                   <span
-                    className={`px-2 py-0.5 text-[10px] font-bold rounded uppercase tracking-tighter ${
-                      notification.type === 'contact_car'
+                    className={`px-2 py-0.5 text-[10px] font-bold rounded uppercase tracking-tighter ${notification.type === 'contact_car'
                         ? 'bg-blue-500/10 text-blue-400'
                         : 'bg-purple-500/10 text-purple-400'
-                    }`}
+                      }`}
                   >
                     {notification.type === 'contact_car' ? 'Xe' : 'Bài viết'}
                   </span>
                   {!notification.isRead && <span className="size-2 rounded-full bg-primary"></span>}
                 </div>
-                <p className="font-bold text-white truncate">
+                <p className="font-bold dark:text-white light:text-slate-900 truncate">
                   Yêu cầu tư vấn: {notification.refTitle}
                 </p>
-                <p className="text-sm text-slate-400">
+                <p className="text-sm dark:text-slate-400 light:text-slate-500">
                   User liên hệ qua Zalo lúc {formatDate(notification.createdAt)}
                 </p>
               </div>
@@ -215,7 +213,7 @@ const NotificationsPage: React.FC = () => {
             </div>
           ))
         ) : (
-          <div className="bg-card-dark border border-border-dark rounded-2xl p-12 text-center">
+          <div className="dark:bg-card-dark light:bg-white border dark:border-border-dark light:border-border-light rounded-2xl p-12 text-center shadow-sm">
             <span className="material-symbols-outlined text-4xl text-slate-600 mb-4">
               notifications_off
             </span>
@@ -227,24 +225,23 @@ const NotificationsPage: React.FC = () => {
       {/* Detail Modal */}
       {isDetailModalOpen && selectedNotification && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-card-dark border border-border-dark rounded-2xl w-full max-w-2xl max-h-[80vh] overflow-y-auto">
+          <div className="dark:bg-card-dark light:bg-white border dark:border-border-dark light:border-border-light rounded-2xl w-full max-w-2xl max-h-[80vh] overflow-y-auto shadow-2xl">
             {/* Modal Header */}
-            <div className="p-6 border-b border-border-dark flex items-center justify-between">
+            <div className="p-6 border-b dark:border-border-dark light:border-border-light flex items-center justify-between">
               <div>
                 <span
-                  className={`px-2 py-0.5 text-[10px] font-bold rounded uppercase tracking-tighter ${
-                    selectedNotification.type === 'contact_car'
+                  className={`px-2 py-0.5 text-[10px] font-bold rounded uppercase tracking-tighter ${selectedNotification.type === 'contact_car'
                       ? 'bg-blue-500/10 text-blue-400'
                       : 'bg-purple-500/10 text-purple-400'
-                  }`}
+                    }`}
                 >
                   {selectedNotification.type === 'contact_car' ? 'Tư vấn xe' : 'Tư vấn bài viết'}
                 </span>
-                <h3 className="text-lg font-bold mt-2">Chi tiết yêu cầu tư vấn</h3>
+                <h3 className="text-lg font-bold mt-2 dark:text-white light:text-slate-900">Chi tiết yêu cầu tư vấn</h3>
               </div>
               <button
                 onClick={() => setIsDetailModalOpen(false)}
-                className="p-2 hover:bg-border-dark rounded-lg transition-colors"
+                className="p-2 dark:hover:bg-border-dark light:hover:bg-slate-100 rounded-lg transition-colors"
               >
                 <span className="material-symbols-outlined">close</span>
               </button>
@@ -260,7 +257,7 @@ const NotificationsPage: React.FC = () => {
 
               {/* Referenced Item */}
               {selectedNotification.refData && (
-                <div className="bg-background-dark rounded-xl p-4">
+                <div className="dark:bg-background-dark light:bg-slate-50 rounded-xl p-4">
                   <p className="text-xs text-slate-500 uppercase font-bold tracking-wider mb-3">
                     {selectedNotification.type === 'contact_car'
                       ? 'Thông tin xe'
@@ -277,7 +274,7 @@ const NotificationsPage: React.FC = () => {
                         />
                       )}
                       <div>
-                        <h4 className="font-bold text-white text-lg">
+                        <h4 className="font-bold dark:text-white light:text-slate-900 text-lg">
                           {selectedNotification.refData.name}
                         </h4>
                         <p className="text-sm text-slate-400">
@@ -312,7 +309,7 @@ const NotificationsPage: React.FC = () => {
                         <span className="px-2 py-0.5 text-[10px] font-bold rounded uppercase tracking-tighter bg-amber-500/10 text-amber-400">
                           {selectedNotification.refData.category}
                         </span>
-                        <h4 className="font-bold text-white text-lg mt-1">
+                        <h4 className="font-bold dark:text-white light:text-slate-900 text-lg mt-1">
                           {selectedNotification.refData.title}
                         </h4>
                         {selectedNotification.refData.excerpt && (
@@ -334,7 +331,7 @@ const NotificationsPage: React.FC = () => {
             </div>
 
             {/* Modal Footer */}
-            <div className="p-6 border-t border-border-dark flex justify-end gap-3">
+            <div className="p-6 border-t dark:border-border-dark light:border-border-light flex justify-end gap-3">
               <button
                 onClick={() => {
                   if (confirm('Xóa thông báo này?')) {

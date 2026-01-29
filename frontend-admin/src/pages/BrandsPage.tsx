@@ -1,6 +1,6 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { brandsAPI } from '../services/api';
+import { brandsAPI, uploadAPI } from '../services/api';
 import toast from 'react-hot-toast';
 
 const BrandsPage: React.FC = () => {
@@ -10,9 +10,12 @@ const BrandsPage: React.FC = () => {
     _id: string;
     name: string;
     country?: string;
+    logo?: string;
   } | null>(null);
-  const [formData, setFormData] = useState({ name: '', country: '' });
+  const [formData, setFormData] = useState({ name: '', country: '', logo: '' });
   const [searchTerm, setSearchTerm] = useState('');
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { data: brandsData, isLoading } = useQuery({
     queryKey: ['admin-brands'],
@@ -23,7 +26,7 @@ const BrandsPage: React.FC = () => {
   });
 
   const createMutation = useMutation({
-    mutationFn: (data: { name: string; country?: string }) => brandsAPI.create(data),
+    mutationFn: (data: { name: string; country?: string; logo?: string }) => brandsAPI.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-brands'] });
       toast.success('Đã tạo thương hiệu thành công');
@@ -33,8 +36,13 @@ const BrandsPage: React.FC = () => {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: { name?: string; country?: string } }) =>
-      brandsAPI.update(id, data),
+    mutationFn: ({
+      id,
+      data,
+    }: {
+      id: string;
+      data: { name?: string; country?: string; logo?: string };
+    }) => brandsAPI.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-brands'] });
       toast.success('Đã cập nhật thương hiệu thành công');
@@ -52,6 +60,25 @@ const BrandsPage: React.FC = () => {
     onError: () => toast.error('Không thể xóa thương hiệu'),
   });
 
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    try {
+      const response = await uploadAPI.uploadImage(file);
+      if (response.data.success) {
+        setFormData((prev) => ({ ...prev, logo: response.data.data.url }));
+        toast.success('Đã tải ảnh lên');
+      }
+    } catch (error) {
+      console.error('Upload failed:', error);
+      toast.error('Tải ảnh thất bại');
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
   const brands = brandsData?.data || [];
 
   const filteredBrands = useMemo(() => {
@@ -63,13 +90,13 @@ const BrandsPage: React.FC = () => {
     });
   }, [brands, searchTerm]);
 
-  const openModal = (brand?: { _id: string; name: string; country?: string }) => {
+  const openModal = (brand?: { _id: string; name: string; country?: string; logo?: string }) => {
     if (brand) {
       setEditingBrand(brand);
-      setFormData({ name: brand.name, country: brand.country || '' });
+      setFormData({ name: brand.name, country: brand.country || '', logo: brand.logo || '' });
     } else {
       setEditingBrand(null);
-      setFormData({ name: '', country: '' });
+      setFormData({ name: '', country: '', logo: '' });
     }
     setIsModalOpen(true);
   };
@@ -77,7 +104,7 @@ const BrandsPage: React.FC = () => {
   const closeModal = () => {
     setIsModalOpen(false);
     setEditingBrand(null);
-    setFormData({ name: '', country: '' });
+    setFormData({ name: '', country: '', logo: '' });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -112,8 +139,12 @@ const BrandsPage: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl md:text-2xl font-bold dark:text-white light:text-text-light">Quản lý thương hiệu</h2>
-          <p className="dark:text-slate-400 light:text-slate-500 text-sm mt-1">Quản lý các hãng xe</p>
+          <h2 className="text-xl md:text-2xl font-bold dark:text-white light:text-text-light">
+            Quản lý thương hiệu
+          </h2>
+          <p className="dark:text-slate-400 light:text-slate-500 text-sm mt-1">
+            Quản lý các hãng xe và logo
+          </p>
         </div>
         <button
           onClick={() => openModal()}
@@ -146,14 +177,33 @@ const BrandsPage: React.FC = () => {
       {/* Brands Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {filteredBrands.map(
-          (brand: { _id: string; name: string; country?: string; isActive: boolean }) => (
+          (brand: {
+            _id: string;
+            name: string;
+            country?: string;
+            logo?: string;
+            isActive: boolean;
+          }) => (
             <div
               key={brand._id}
               className="dark:bg-card-dark light:bg-white dark:border-border-dark light:border-border-light border rounded-xl p-4 flex items-center justify-between group hover:border-primary/30 transition-colors shadow-sm"
             >
-              <div>
-                <h3 className="font-bold dark:text-white light:text-text-light">{brand.name}</h3>
-                {brand.country && <p className="text-xs dark:text-slate-400 light:text-slate-500">{brand.country}</p>}
+              <div className="flex items-center gap-3">
+                <div className="size-10 rounded-lg bg-slate-100 flex items-center justify-center overflow-hidden border border-slate-200">
+                  {brand.logo ? (
+                    <img src={brand.logo} alt={brand.name} className="size-full object-contain p-1" />
+                  ) : (
+                    <span className="material-symbols-outlined text-slate-400">image</span>
+                  )}
+                </div>
+                <div>
+                  <h3 className="font-bold dark:text-white light:text-text-light">{brand.name}</h3>
+                  {brand.country && (
+                    <p className="text-xs dark:text-slate-400 light:text-slate-500">
+                      {brand.country}
+                    </p>
+                  )}
+                </div>
               </div>
               <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                 <button
@@ -182,6 +232,44 @@ const BrandsPage: React.FC = () => {
               {editingBrand ? 'Chỉnh sửa thương hiệu' : 'Thêm thương hiệu'}
             </h3>
             <form onSubmit={handleSubmit} className="space-y-4">
+              {/* Logo Upload */}
+              <div className="flex justify-center">
+                <div
+                  className="relative size-24 rounded-xl border-2 border-dashed dark:border-slate-700 light:border-slate-300 flex items-center justify-center cursor-pointer hover:border-primary transition-colors overflow-hidden group"
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  {formData.logo ? (
+                    <>
+                      <img
+                        src={formData.logo}
+                        alt="Logo"
+                        className="size-full object-contain p-2"
+                      />
+                      <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        <span className="material-symbols-outlined text-white">edit</span>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="text-center">
+                      <span className="material-symbols-outlined text-slate-400">cloud_upload</span>
+                      <p className="text-[10px] text-slate-500 mt-1">Upload Logo</p>
+                    </div>
+                  )}
+                  {isUploading && (
+                    <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                      <div className="size-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    </div>
+                  )}
+                </div>
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  className="hidden"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                />
+              </div>
+
               <div>
                 <label className="block text-sm font-medium dark:text-slate-300 light:text-slate-600 mb-2">
                   Tên thương hiệu *
@@ -195,7 +283,9 @@ const BrandsPage: React.FC = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium dark:text-slate-300 light:text-slate-600 mb-2">Quốc gia</label>
+                <label className="block text-sm font-medium dark:text-slate-300 light:text-slate-600 mb-2">
+                  Quốc gia
+                </label>
                 <input
                   type="text"
                   value={formData.country}
@@ -214,7 +304,7 @@ const BrandsPage: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  disabled={createMutation.isPending || updateMutation.isPending}
+                  disabled={createMutation.isPending || updateMutation.isPending || isUploading}
                   className="px-4 py-2 bg-primary hover:bg-accent-blue text-white rounded-lg font-bold transition-all disabled:opacity-50 touch-target"
                 >
                   {editingBrand ? 'Cập nhật' : 'Tạo mới'}
