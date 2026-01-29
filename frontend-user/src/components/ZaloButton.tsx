@@ -86,7 +86,7 @@ const ZaloButton: React.FC<ZaloButtonProps> = ({
   return (
     <button
       onClick={handleClick}
-      className="fixed bottom-6 right-6 z-50 group"
+      className="fixed bottom-24 right-6 z-50 group"
       aria-label="Chat Zalo"
     >
       {/* Pulse animation */}

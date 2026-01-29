@@ -77,6 +77,9 @@ const CarDetailPage: React.FC = () => {
   const hasColors = (car?.colorOptions?.length ?? 0) > 0;
   const hasSpecs = car?.specs && Object.values(car.specs).some((v) => v);
 
+  // Scrollspy logic moved after tabs definition
+
+
   if (isLoading) {
     return (
       <div className="pt-24 pb-16 flex items-center justify-center min-h-screen">
@@ -103,6 +106,31 @@ const CarDetailPage: React.FC = () => {
     { id: 'colors' as TabType, label: 'Màu sắc', icon: '🎨', show: hasColors },
     { id: 'specs' as TabType, label: 'Thông số', icon: '⚙️', show: hasSpecs },
   ].filter((tab) => tab.show);
+
+  // Scrollspy logic
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const id = entry.target.id.replace('section-', '') as TabType;
+            setActiveTab(id);
+          }
+        });
+      },
+      {
+        rootMargin: '-100px 0px -70% 0px', // Trigger when section is near top
+        threshold: 0,
+      },
+    );
+
+    tabs.forEach((tab) => {
+      const element = document.getElementById(`section-${tab.id}`);
+      if (element) observer.observe(element);
+    });
+
+    return () => observer.disconnect();
+  }, [car, tabs]); // Re-run when car data changes/tabs load
 
   return (
     <div className="pb-16">
@@ -185,28 +213,40 @@ const CarDetailPage: React.FC = () => {
           <p className="text-2xl font-bold text-primary">{formatPrice(car.price)}</p>
         </div>
 
-        {/* Tabs Navigation */}
-        <div className="flex overflow-x-auto gap-2 mb-6 pb-2 scrollbar-hide">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap transition-all ${
-                activeTab === tab.id
-                  ? 'bg-primary text-text-primary font-bold'
-                  : 'bg-surface text-text-secondary hover:bg-surface-hover'
-              }`}
-            >
-              <span>{tab.icon}</span>
-              {tab.label}
-            </button>
-          ))}
+        {/* Tabs Navigation - Sticky */}
+        <div className="sticky top-[64px] z-30 -mx-4 px-4 mb-6 bg-background/80 backdrop-blur-md border-b border-border/50">
+          <div className="flex overflow-x-auto gap-2 py-3 scrollbar-hide">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => {
+                  const element = document.getElementById(`section-${tab.id}`);
+                  if (element) {
+                    const offset = 130;
+                    const elementPosition = element.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - offset;
+                    window.scrollTo({
+                      top: offsetPosition,
+                      behavior: 'smooth',
+                    });
+                  }
+                }}
+                className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap transition-all ${activeTab === tab.id
+                  ? 'bg-primary text-white font-bold shadow-lg shadow-primary/30'
+                  : 'bg-surface/50 text-text-secondary hover:bg-surface hover:text-text-primary'
+                  }`}
+              >
+                <span>{tab.icon}</span>
+                {tab.label}
+              </button>
+            ))}
+          </div>
         </div>
 
-        {/* Tab Content */}
-        <div className="min-h-[400px]">
-          {/* OVERVIEW TAB */}
-          {activeTab === 'overview' && (
+        {/* Tab Content - All Sections Visible */}
+        <div className="space-y-16 pb-10">
+          {/* OVERVIEW SECTION */}
+          <section id="section-overview" className="scroll-mt-32">
             <div className="space-y-8">
               {/* 3D Viewer */}
               <ThreeDViewer
@@ -260,224 +300,235 @@ const CarDetailPage: React.FC = () => {
                 <ImageGallery images={car.gallery} carName={car.name} />
               )}
             </div>
-          )}
+          </section>
 
-          {/* EXTERIOR TAB */}
-          {activeTab === 'exterior' && car.exterior && (
-            <div className="space-y-6">
-              {car.exterior.description && (
-                <div className="glass rounded-2xl p-6">
-                  <h2 className="text-xl font-bold text-text-primary mb-4">🚘 Ngoại thất</h2>
-                  <p className="text-text-secondary leading-relaxed whitespace-pre-wrap">
-                    {car.exterior.description}
-                  </p>
-                </div>
-              )}
-              {car.exterior.images && car.exterior.images.length > 0 && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {car.exterior.images.map((img: string, idx: number) => (
-                    <div key={idx} className="rounded-xl overflow-hidden">
-                      <img
-                        src={img}
-                        alt={`Ngoại thất ${idx + 1}`}
-                        className="w-full h-64 object-cover hover:scale-105 transition-transform cursor-pointer"
-                      />
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* INTERIOR TAB */}
-          {activeTab === 'interior' && car.interior && (
-            <div className="space-y-6">
-              {car.interior.description && (
-                <div className="glass rounded-2xl p-6">
-                  <h2 className="text-xl font-bold text-text-primary mb-4">🛋️ Nội thất</h2>
-                  <p className="text-text-secondary leading-relaxed whitespace-pre-wrap">
-                    {car.interior.description}
-                  </p>
-                </div>
-              )}
-              {car.interior.images && car.interior.images.length > 0 && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {car.interior.images.map((img: string, idx: number) => (
-                    <div key={idx} className="rounded-xl overflow-hidden">
-                      <img
-                        src={img}
-                        alt={`Nội thất ${idx + 1}`}
-                        className="w-full h-64 object-cover hover:scale-105 transition-transform cursor-pointer"
-                      />
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* COLORS TAB */}
-          {activeTab === 'colors' && car.colorOptions && car.colorOptions.length > 0 && (
-            <div className="space-y-6">
-              <div className="glass rounded-2xl p-6">
-                <h2 className="text-xl font-bold text-text-primary mb-4">🎨 Tùy chọn màu sắc</h2>
-                <p className="text-text-secondary mb-6">
-                  {car.name} có {car.colorOptions.length} tùy chọn màu. Chọn màu bên dưới để xem
-                  hình ảnh minh họa.
-                </p>
-
-                {/* Color Swatches */}
-                <div className="flex flex-wrap gap-3 mb-6">
-                  {car.colorOptions.map(
-                    (color: { name: string; hexCode: string; image?: string }, idx: number) => (
-                      <button
-                        key={idx}
-                        onClick={() => setSelectedColorIndex(idx)}
-                        className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-all ${
-                          selectedColorIndex === idx
-                            ? 'border-primary bg-primary/10'
-                            : 'border-border hover:border-primary/50'
-                        }`}
-                      >
-                        <div
-                          className="w-6 h-6 rounded-full border border-border"
-                          style={{ backgroundColor: color.hexCode }}
-                        />
-                        <span
-                          className={
-                            selectedColorIndex === idx
-                              ? 'text-primary font-bold'
-                              : 'text-text-secondary'
-                          }
-                        >
-                          {color.name}
-                        </span>
-                      </button>
-                    ),
-                  )}
-                </div>
-
-                {/* Selected Color Image */}
-                {car.colorOptions[selectedColorIndex]?.image ? (
-                  <div className="rounded-2xl overflow-hidden">
-                    <img
-                      src={car.colorOptions[selectedColorIndex].image}
-                      alt={car.colorOptions[selectedColorIndex].name}
-                      className="w-full h-80 object-cover"
-                    />
-                  </div>
-                ) : (
-                  <div
-                    className="w-full h-80 rounded-2xl flex items-center justify-center"
-                    style={{
-                      backgroundColor: car.colorOptions[selectedColorIndex]?.hexCode || '#333',
-                    }}
-                  >
-                    <span className="text-6xl">🚗</span>
+          {/* EXTERIOR SECTION */}
+          {hasExterior && (
+            <section id="section-exterior" className="scroll-mt-32">
+              <div className="space-y-6">
+                <h2 className="text-2xl font-bold text-text-primary flex items-center gap-2">
+                  <span className="text-3xl">🚘</span> Ngoại thất
+                </h2>
+                {car.exterior?.description && (
+                  <div className="glass rounded-2xl p-6">
+                    <p className="text-text-secondary leading-relaxed whitespace-pre-wrap">
+                      {car.exterior.description}
+                    </p>
                   </div>
                 )}
-                <p className="text-center mt-4 text-text-primary font-bold">
-                  {car.colorOptions[selectedColorIndex]?.name}
-                </p>
+                {car.exterior?.images && car.exterior.images.length > 0 && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {car.exterior.images.map((img: string, idx: number) => (
+                      <div key={idx} className="rounded-xl overflow-hidden group">
+                        <img
+                          src={img}
+                          alt={`Ngoại thất ${idx + 1}`}
+                          className="w-full h-64 object-cover group-hover:scale-105 transition-transform cursor-pointer"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
-            </div>
+            </section>
           )}
 
-          {/* SPECS TAB */}
-          {activeTab === 'specs' && car.specs && (
-            <div className="glass rounded-2xl overflow-hidden">
-              <h2 className="text-xl font-bold text-text-primary p-6 border-b border-border">
-                ⚙️ Thông số kỹ thuật
-              </h2>
-              <table className="w-full">
-                <tbody className="divide-y divide-border">
-                  {car.specs.engine && (
-                    <tr>
-                      <td className="px-6 py-4 text-text-secondary">Động cơ</td>
-                      <td className="px-6 py-4 text-text-primary font-medium">
-                        {car.specs.engine}
-                      </td>
-                    </tr>
+          {/* INTERIOR SECTION */}
+          {hasInterior && (
+            <section id="section-interior" className="scroll-mt-32">
+              <div className="space-y-6">
+                <h2 className="text-2xl font-bold text-text-primary flex items-center gap-2">
+                  <span className="text-3xl">🛋️</span> Nội thất
+                </h2>
+                {car.interior?.description && (
+                  <div className="glass rounded-2xl p-6">
+                    <p className="text-text-secondary leading-relaxed whitespace-pre-wrap">
+                      {car.interior.description}
+                    </p>
+                  </div>
+                )}
+                {car.interior?.images && car.interior.images.length > 0 && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {car.interior.images.map((img: string, idx: number) => (
+                      <div key={idx} className="rounded-xl overflow-hidden group">
+                        <img
+                          src={img}
+                          alt={`Nội thất ${idx + 1}`}
+                          className="w-full h-64 object-cover group-hover:scale-105 transition-transform cursor-pointer"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </section>
+          )}
+
+          {/* COLORS SECTION */}
+          {hasColors && (
+            <section id="section-colors" className="scroll-mt-32">
+              <div className="space-y-6">
+                <div className="glass rounded-2xl p-6">
+                  <h2 className="text-xl font-bold text-text-primary mb-4">🎨 Tùy chọn màu sắc</h2>
+                  <p className="text-text-secondary mb-6">
+                    {car.name} có {car.colorOptions?.length || 0} tùy chọn màu. Chọn màu bên dưới để xem
+                    hình ảnh minh họa.
+                  </p>
+
+                  {/* Color Swatches */}
+                  <div className="flex flex-wrap gap-3 mb-6">
+                    {car.colorOptions?.map(
+                      (color: { name: string; hexCode: string; image?: string }, idx: number) => (
+                        <button
+                          key={idx}
+                          onClick={() => setSelectedColorIndex(idx)}
+                          className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-all ${selectedColorIndex === idx
+                            ? 'border-primary bg-primary/10'
+                            : 'border-border hover:border-primary/50'
+                            }`}
+                        >
+                          <div
+                            className="w-6 h-6 rounded-full border border-border"
+                            style={{ backgroundColor: color.hexCode }}
+                          />
+                          <span
+                            className={
+                              selectedColorIndex === idx
+                                ? 'text-primary font-bold'
+                                : 'text-text-secondary'
+                            }
+                          >
+                            {color.name}
+                          </span>
+                        </button>
+                      ),
+                    )}
+                  </div>
+
+                  {/* Selected Color Image */}
+                  {car.colorOptions?.[selectedColorIndex]?.image ? (
+                    <div className="rounded-2xl overflow-hidden shadow-lg">
+                      <img
+                        src={car.colorOptions[selectedColorIndex].image}
+                        alt={car.colorOptions[selectedColorIndex].name}
+                        className="w-full h-80 object-cover transition-all duration-500"
+                      />
+                    </div>
+                  ) : (
+                    <div
+                      className="w-full h-80 rounded-2xl flex items-center justify-center shadow-inner"
+                      style={{
+                        backgroundColor: car.colorOptions?.[selectedColorIndex]?.hexCode || '#333',
+                      }}
+                    >
+                      <span className="text-6xl animate-bounce">🚗</span>
+                    </div>
                   )}
-                  {car.specs.power && (
-                    <tr>
-                      <td className="px-6 py-4 text-text-secondary">Công suất</td>
-                      <td className="px-6 py-4 text-text-primary font-medium">{car.specs.power}</td>
-                    </tr>
-                  )}
-                  {car.specs.torque && (
-                    <tr>
-                      <td className="px-6 py-4 text-text-secondary">Mô-men xoắn</td>
-                      <td className="px-6 py-4 text-text-primary font-medium">
-                        {car.specs.torque}
-                      </td>
-                    </tr>
-                  )}
-                  {car.specs.acceleration && (
-                    <tr>
-                      <td className="px-6 py-4 text-text-secondary">Tăng tốc 0-100km/h</td>
-                      <td className="px-6 py-4 text-text-primary font-medium">
-                        {car.specs.acceleration}
-                      </td>
-                    </tr>
-                  )}
-                  {car.specs.topSpeed && (
-                    <tr>
-                      <td className="px-6 py-4 text-text-secondary">Tốc độ tối đa</td>
-                      <td className="px-6 py-4 text-text-primary font-medium">
-                        {car.specs.topSpeed}
-                      </td>
-                    </tr>
-                  )}
-                  {car.specs.range && (
-                    <tr>
-                      <td className="px-6 py-4 text-text-secondary">Quãng đường</td>
-                      <td className="px-6 py-4 text-text-primary font-medium">{car.specs.range}</td>
-                    </tr>
-                  )}
-                  {car.specs.fuelConsumption && (
-                    <tr>
-                      <td className="px-6 py-4 text-text-secondary">Tiêu hao nhiên liệu</td>
-                      <td className="px-6 py-4 text-text-primary font-medium">
-                        {car.specs.fuelConsumption}
-                      </td>
-                    </tr>
-                  )}
-                  {car.specs.seats && (
-                    <tr>
-                      <td className="px-6 py-4 text-text-secondary">Số chỗ ngồi</td>
-                      <td className="px-6 py-4 text-text-primary font-medium">
-                        {car.specs.seats} chỗ
-                      </td>
-                    </tr>
-                  )}
-                  {car.specs.dimensions && (
-                    <tr>
-                      <td className="px-6 py-4 text-text-secondary">Kích thước (DxRxC)</td>
-                      <td className="px-6 py-4 text-text-primary font-medium">
-                        {car.specs.dimensions}
-                      </td>
-                    </tr>
-                  )}
-                  {car.specs.weight && (
-                    <tr>
-                      <td className="px-6 py-4 text-text-secondary">Trọng lượng</td>
-                      <td className="px-6 py-4 text-text-primary font-medium">
-                        {car.specs.weight}
-                      </td>
-                    </tr>
-                  )}
-                  {car.specs.transmission && (
-                    <tr>
-                      <td className="px-6 py-4 text-text-secondary">Hộp số</td>
-                      <td className="px-6 py-4 text-text-primary font-medium">
-                        {car.specs.transmission}
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
+                  <p className="text-center mt-4 text-text-primary font-bold text-lg">
+                    {car.colorOptions?.[selectedColorIndex]?.name}
+                  </p>
+                </div>
+              </div>
+            </section>
+          )}
+
+          {/* SPECS SECTION */}
+          {hasSpecs && (
+            <section id="section-specs" className="scroll-mt-32">
+              <div className="glass rounded-2xl overflow-hidden">
+                <h2 className="text-xl font-bold text-text-primary p-6 border-b border-border flex items-center gap-2">
+                  <span className="text-2xl">⚙️</span> Thông số kỹ thuật
+                </h2>
+                <table className="w-full">
+                  <tbody className="divide-y divide-border">
+                    {car.specs.engine && (
+                      <tr>
+                        <td className="px-6 py-4 text-text-secondary">Động cơ</td>
+                        <td className="px-6 py-4 text-text-primary font-medium">
+                          {car.specs.engine}
+                        </td>
+                      </tr>
+                    )}
+                    {car.specs.power && (
+                      <tr>
+                        <td className="px-6 py-4 text-text-secondary">Công suất</td>
+                        <td className="px-6 py-4 text-text-primary font-medium">{car.specs.power}</td>
+                      </tr>
+                    )}
+                    {car.specs.torque && (
+                      <tr>
+                        <td className="px-6 py-4 text-text-secondary">Mô-men xoắn</td>
+                        <td className="px-6 py-4 text-text-primary font-medium">
+                          {car.specs.torque}
+                        </td>
+                      </tr>
+                    )}
+                    {car.specs.acceleration && (
+                      <tr>
+                        <td className="px-6 py-4 text-text-secondary">Tăng tốc 0-100km/h</td>
+                        <td className="px-6 py-4 text-text-primary font-medium">
+                          {car.specs.acceleration}
+                        </td>
+                      </tr>
+                    )}
+                    {car.specs.topSpeed && (
+                      <tr>
+                        <td className="px-6 py-4 text-text-secondary">Tốc độ tối đa</td>
+                        <td className="px-6 py-4 text-text-primary font-medium">
+                          {car.specs.topSpeed}
+                        </td>
+                      </tr>
+                    )}
+                    {car.specs.range && (
+                      <tr>
+                        <td className="px-6 py-4 text-text-secondary">Quãng đường</td>
+                        <td className="px-6 py-4 text-text-primary font-medium">{car.specs.range}</td>
+                      </tr>
+                    )}
+                    {car.specs.fuelConsumption && (
+                      <tr>
+                        <td className="px-6 py-4 text-text-secondary">Tiêu hao nhiên liệu</td>
+                        <td className="px-6 py-4 text-text-primary font-medium">
+                          {car.specs.fuelConsumption}
+                        </td>
+                      </tr>
+                    )}
+                    {car.specs.seats && (
+                      <tr>
+                        <td className="px-6 py-4 text-text-secondary">Số chỗ ngồi</td>
+                        <td className="px-6 py-4 text-text-primary font-medium">
+                          {car.specs.seats} chỗ
+                        </td>
+                      </tr>
+                    )}
+                    {car.specs.dimensions && (
+                      <tr>
+                        <td className="px-6 py-4 text-text-secondary">Kích thước (DxRxC)</td>
+                        <td className="px-6 py-4 text-text-primary font-medium">
+                          {car.specs.dimensions}
+                        </td>
+                      </tr>
+                    )}
+                    {car.specs.weight && (
+                      <tr>
+                        <td className="px-6 py-4 text-text-secondary">Trọng lượng</td>
+                        <td className="px-6 py-4 text-text-primary font-medium">
+                          {car.specs.weight}
+                        </td>
+                      </tr>
+                    )}
+                    {car.specs.transmission && (
+                      <tr>
+                        <td className="px-6 py-4 text-text-secondary">Hộp số</td>
+                        <td className="px-6 py-4 text-text-primary font-medium">
+                          {car.specs.transmission}
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </section>
           )}
         </div>
 

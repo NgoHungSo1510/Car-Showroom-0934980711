@@ -194,11 +194,13 @@ const HomePage: React.FC = () => {
 
               {/* Post Footer */}
               <div className="p-5 flex flex-col gap-4">
-                {post.excerpt && post.coverImage && (
-                  <p className="text-text-secondary text-sm leading-relaxed line-clamp-2">
-                    {post.excerpt}
-                  </p>
-                )}
+                <Link to={`/posts/${post.slug}`} className="block">
+                  {post.excerpt && post.coverImage && (
+                    <p className="text-text-secondary text-sm leading-relaxed line-clamp-2 hover:text-text-primary transition-colors">
+                      {post.excerpt}
+                    </p>
+                  )}
+                </Link>
 
                 {/* Category and Time - moved here */}
                 <div className="flex items-center gap-3">
@@ -216,20 +218,28 @@ const HomePage: React.FC = () => {
                 {post.relatedCar && (
                   <Link
                     to={`/cars/${post.relatedCar.slug}`}
-                    className="flex items-center gap-3 p-3 bg-surface-hover rounded-lg hover:bg-surface-hover transition-colors"
+                    className="flex items-center gap-3 p-3 bg-surface-hover rounded-lg hover:bg-surface-active transition-colors"
                   >
-                    {post.relatedCar.thumbnail && (
+                    {post.relatedCar.thumbnail ? (
                       <img
                         src={post.relatedCar.thumbnail}
                         alt={post.relatedCar.name}
                         className="w-16 h-10 object-cover rounded"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).style.display = 'none';
+                        }}
                       />
+                    ) : (
+                      // Fallback icon if no thumbnail
+                      <div className="w-16 h-10 bg-surface rounded flex items-center justify-center text-xs text-text-secondary">
+                        🚗
+                      </div>
                     )}
                     <div className="flex-1">
                       <p className="text-xs text-text-secondary">Xe liên quan</p>
                       <p className="text-sm font-bold text-text-primary">{post.relatedCar.name}</p>
                     </div>
-                    <span className="text-primary text-xs font-bold">Xem 3D →</span>
+                    <span className="text-primary text-xs font-bold">Xem xe →</span>
                   </Link>
                 )}
 
@@ -247,19 +257,24 @@ const HomePage: React.FC = () => {
                       </svg>
                       <span className="text-xs font-bold">{post.viewCount || 0}</span>
                     </button>
-                    <button className="flex items-center gap-1.5 text-text-secondary hover:text-primary transition-colors">
-                      <svg className="size-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-                        />
-                      </svg>
-                      <span className="text-xs font-bold">Bình luận</span>
-                    </button>
+                    {/* Comments button removed or kept as visual only */}
                   </div>
-                  <button className="flex items-center gap-1.5 text-text-secondary hover:text-primary transition-colors">
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      const url = `${window.location.origin}/posts/${post.slug}`;
+                      if (navigator.share) {
+                        navigator.share({
+                          title: post.title,
+                          text: post.excerpt,
+                          url: url,
+                        }).catch(console.error);
+                      } else {
+                        navigator.clipboard.writeText(url).then(() => alert('Đã sao chép liên kết!'));
+                      }
+                    }}
+                    className="flex items-center gap-1.5 text-text-secondary hover:text-primary transition-colors"
+                  >
                     <svg className="size-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path
                         strokeLinecap="round"
