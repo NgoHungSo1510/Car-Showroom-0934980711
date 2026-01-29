@@ -21,6 +21,27 @@ const FacebookSyncPage: React.FC = () => {
   const [pageId, setPageId] = useState('');
   const [showConfig, setShowConfig] = useState(false);
 
+  // Load existing settings
+  const { data: settingsData } = useQuery({
+    queryKey: ['admin-settings'],
+    queryFn: async () => {
+      const response = await settingsAPI.getAll();
+      return response.data;
+    },
+  });
+
+  // Populate form when settings load
+  React.useEffect(() => {
+    if (settingsData?.data) {
+      const settings = settingsData.data;
+      const fbToken = settings.find((s: any) => s.key === 'facebook_access_token')?.value;
+      const fbPageId = settings.find((s: any) => s.key === 'facebook_page_id')?.value;
+
+      if (fbToken) setAccessToken(fbToken);
+      if (fbPageId) setPageId(fbPageId);
+    }
+  }, [settingsData]);
+
   // Update config mutation
   const updateConfigMutation = useMutation({
     mutationFn: async (data: { token: string; pageId?: string }) => {

@@ -209,8 +209,10 @@ const SettingsPage: React.FC = () => {
         </div>
       </div>
 
+
+
       {/* Save Button */}
-      <div className="flex justify-end">
+      <div className="flex justify-end pb-10">
         <button
           onClick={handleSave}
           disabled={updateMutation.isPending}

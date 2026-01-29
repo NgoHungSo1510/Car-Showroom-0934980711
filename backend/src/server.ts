@@ -79,6 +79,11 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'API is running' });
 });
 
+// Root route for deployment health check
+app.get('/', (req, res) => {
+  res.send('API is running');
+});
+
 // Error handling
 app.use(notFound);
 app.use(errorHandler);

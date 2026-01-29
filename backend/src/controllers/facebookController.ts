@@ -326,11 +326,19 @@ async function fetchFacebookPosts(limit: number = 10): Promise<FacebookPost[]> {
   const fields = 'id,message,created_time,full_picture,attachments{media,subattachments}';
   const url = `https://graph.facebook.com/${FB_GRAPH_API_VERSION}/${pageId}/posts?fields=${fields}&limit=${limit}&access_token=${token}`;
 
+  console.log(`📡 Fetching FB posts from: https://graph.facebook.com/${FB_GRAPH_API_VERSION}/${pageId}/posts...`);
+
   const response = await fetch(url);
 
   if (!response.ok) {
-    const error = (await response.json()) as { error?: { message?: string } };
-    throw new Error(error.error?.message || 'Failed to fetch Facebook posts');
+    const errorText = await response.text();
+    console.error('❌ FB API Error:', response.status, errorText);
+    try {
+      const errorJson = JSON.parse(errorText);
+      throw new Error(errorJson.error?.message || `FB API Error: ${response.statusText}`);
+    } catch (e) {
+      throw new Error(`FB API Error (${response.status}): ${errorText}`);
+    }
   }
 
   const data = (await response.json()) as FacebookAPIResponse;
