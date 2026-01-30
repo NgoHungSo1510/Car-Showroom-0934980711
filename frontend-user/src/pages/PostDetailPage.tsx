@@ -84,87 +84,87 @@ const PostDetailPage: React.FC = () => {
   // Render a single content block
   const renderContentBlock = (block: ContentBlock, index: number) => {
     switch (block.type) {
-    case 'text':
-      return (
-        <div
-          key={index}
-          className="text-text-secondary text-lg leading-relaxed whitespace-pre-wrap"
-        >
-          {block.content}
-        </div>
-      );
-
-    case 'image':
-      return (
-        <figure key={index} className="my-8">
-          <img src={block.url} alt={block.caption || ''} className="w-full rounded-xl" />
-          {block.caption && (
-            <figcaption className="text-center text-sm text-text-secondary mt-3 italic">
-              {block.caption}
-            </figcaption>
-          )}
-        </figure>
-      );
-
-    case 'video': {
-      const youtubeId = block.url ? getYouTubeId(block.url) : null;
-      return (
-        <figure key={index} className="my-8">
-          {youtubeId ? (
-            <div className="aspect-video rounded-xl overflow-hidden">
-              <iframe
-                src={`https://www.youtube.com/embed/${youtubeId}`}
-                title={block.caption || 'Video'}
-                className="w-full h-full"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
-            </div>
-          ) : (
-            <video src={block.url} controls className="w-full rounded-xl" />
-          )}
-          {block.caption && (
-            <figcaption className="text-center text-sm text-text-secondary mt-3 italic">
-              {block.caption}
-            </figcaption>
-          )}
-        </figure>
-      );
-    }
-
-    case 'car':
-      if (!block.car) return null;
-      return (
-        <div key={index} className="my-8">
-          <Link
-            to={`/cars/${block.car.slug}`}
-            className="flex items-center gap-4 p-4 glass rounded-2xl hover:border-primary transition-colors group"
+      case 'text':
+        return (
+          <div
+            key={index}
+            className="text-text-secondary text-lg leading-relaxed whitespace-pre-wrap"
           >
-            {block.car.thumbnail && (
-              <img
-                src={block.car.thumbnail}
-                alt={block.car.name}
-                className="w-32 h-20 object-cover rounded-lg"
-              />
-            )}
-            <div className="flex-1">
-              {block.description && (
-                <p className="text-xs text-primary font-bold mb-1">{block.description}</p>
-              )}
-              <p className="text-lg font-bold text-text-primary group-hover:text-primary transition-colors">
-                {block.car.name}
-              </p>
-              {block.car.price && (
-                <p className="text-sm text-text-secondary">Từ {formatPrice(block.car.price)}</p>
-              )}
-            </div>
-            <span className="btn-primary py-2 px-4 text-sm">Xem 3D ngay →</span>
-          </Link>
-        </div>
-      );
+            {block.content}
+          </div>
+        );
 
-    default:
-      return null;
+      case 'image':
+        return (
+          <figure key={index} className="my-8">
+            <img src={block.url} alt={block.caption || ''} className="w-full rounded-xl" />
+            {block.caption && (
+              <figcaption className="text-center text-sm text-text-secondary mt-3 italic">
+                {block.caption}
+              </figcaption>
+            )}
+          </figure>
+        );
+
+      case 'video': {
+        const youtubeId = block.url ? getYouTubeId(block.url) : null;
+        return (
+          <figure key={index} className="my-8">
+            {youtubeId ? (
+              <div className="aspect-video rounded-xl overflow-hidden">
+                <iframe
+                  src={`https://www.youtube.com/embed/${youtubeId}`}
+                  title={block.caption || 'Video'}
+                  className="w-full h-full"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              </div>
+            ) : (
+              <video src={block.url} controls className="w-full rounded-xl" />
+            )}
+            {block.caption && (
+              <figcaption className="text-center text-sm text-text-secondary mt-3 italic">
+                {block.caption}
+              </figcaption>
+            )}
+          </figure>
+        );
+      }
+
+      case 'car':
+        if (!block.car) return null;
+        return (
+          <div key={index} className="my-8">
+            <Link
+              to={`/cars/${block.car.slug}`}
+              className="flex items-center gap-4 p-4 glass border border-border rounded-2xl hover:border-primary transition-colors group"
+            >
+              {block.car.thumbnail && (
+                <img
+                  src={block.car.thumbnail}
+                  alt={block.car.name}
+                  className="w-32 h-20 object-cover rounded-lg"
+                />
+              )}
+              <div className="flex-1">
+                {block.description && (
+                  <p className="text-xs text-primary font-bold mb-1">{block.description}</p>
+                )}
+                <p className="text-lg font-bold text-text-primary group-hover:text-primary transition-colors">
+                  {block.car.name}
+                </p>
+                {block.car.price && (
+                  <p className="text-sm text-text-secondary">Từ {formatPrice(block.car.price)}</p>
+                )}
+              </div>
+              <span className="btn-primary py-2 px-4 text-sm">Xem 3D ngay →</span>
+            </Link>
+          </div>
+        );
+
+      default:
+        return null;
     }
   };
 
@@ -312,7 +312,7 @@ const PostDetailPage: React.FC = () => {
           <div className="max-w-4xl mx-auto mb-10">
             <Link
               to={`/cars/${post.relatedCar.slug}`}
-              className="flex items-center gap-4 p-4 glass rounded-2xl hover:border-primary transition-colors group"
+              className="flex items-center gap-4 p-4 glass border border-border rounded-2xl hover:border-primary transition-colors group"
             >
               {post.relatedCar.thumbnail && (
                 <img

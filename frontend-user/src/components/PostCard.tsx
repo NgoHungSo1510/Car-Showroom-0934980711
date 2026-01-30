@@ -68,7 +68,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, index = 0 }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.1 }}
-      className="card group"
+      className="card group border border-border"
     >
       <Link to={`/posts/${post.slug}`} className="block">
         {/* Image */}
