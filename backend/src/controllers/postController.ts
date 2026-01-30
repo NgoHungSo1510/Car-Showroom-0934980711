@@ -23,7 +23,11 @@ export const getPosts = asyncHandler(async (req: Request, res: Response) => {
 
   const [posts, total] = await Promise.all([
     Post.find(query)
-      .populate('relatedCar', 'name slug thumbnail')
+      .populate({
+        path: 'relatedCar',
+        select: 'name slug thumbnail brand',
+        populate: { path: 'brand', select: 'name logo' }
+      })
       .populate('createdBy', 'fullName avatar')
       .select(
         'title slug excerpt coverImage category tags publishedAt createdAt viewCount relatedCar eventStartDate eventEndDate discountAmount discountPercent discountDescription',
@@ -53,7 +57,11 @@ export const getPost = asyncHandler(async (req: Request, res: Response) => {
   const { slug } = req.params;
 
   const post = await Post.findOne({ slug, status: 'published' })
-    .populate('relatedCar', 'name slug thumbnail model3D.hasModel price')
+    .populate({
+      path: 'relatedCar',
+      select: 'name slug thumbnail brand model3D.hasModel price',
+      populate: { path: 'brand', select: 'name logo' }
+    })
     .populate('createdBy', 'fullName avatar');
 
   if (!post) {
@@ -158,7 +166,11 @@ export const getAdminPost = asyncHandler(async (req: Request, res: Response) => 
   const { id } = req.params;
 
   const post = await Post.findById(id)
-    .populate('relatedCar', 'name slug thumbnail')
+    .populate({
+      path: 'relatedCar',
+      select: 'name slug thumbnail brand',
+      populate: { path: 'brand', select: 'name logo' }
+    })
     .populate('createdBy', 'fullName avatar');
 
   if (!post) {
@@ -196,7 +208,11 @@ export const updatePost = asyncHandler(async (req: Request, res: Response) => {
     new: true,
     runValidators: true,
   })
-    .populate('relatedCar', 'name slug thumbnail')
+    .populate({
+      path: 'relatedCar',
+      select: 'name slug thumbnail brand',
+      populate: { path: 'brand', select: 'name logo' }
+    })
     .populate('createdBy', 'fullName avatar');
 
   if (!post) {

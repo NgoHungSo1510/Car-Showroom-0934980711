@@ -77,7 +77,7 @@ const CarDetailPage: React.FC = () => {
   const hasColors = (car?.colorOptions?.length ?? 0) > 0;
   const hasSpecs = car?.specs && Object.values(car.specs).some((v) => v);
 
-  // Memoize tabs - MUST be called before any conditional returns
+  // Memoize tabs - MUST be before any conditional returns
   const tabs = React.useMemo(() => [
     { id: 'overview' as TabType, label: 'Tổng quan', icon: '🚗', show: true },
     { id: 'exterior' as TabType, label: 'Ngoại thất', icon: '🚘', show: hasExterior },
@@ -86,9 +86,9 @@ const CarDetailPage: React.FC = () => {
     { id: 'specs' as TabType, label: 'Thông số', icon: '⚙️', show: hasSpecs },
   ].filter((tab) => tab.show), [hasExterior, hasInterior, hasColors, hasSpecs]);
 
-  // Scrollspy logic - MUST be called before any conditional returns
+  // Scrollspy logic - MUST be before any conditional returns
   useEffect(() => {
-    if (!car) return; // Guard inside effect instead of conditional hook call
+    if (!car) return;
 
     const observer = new IntersectionObserver(
       (entries) => {

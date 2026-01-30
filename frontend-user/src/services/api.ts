@@ -123,6 +123,10 @@ export interface Post {
     name: string;
     slug: string;
     thumbnail?: string;
+    brand?: {
+      name: string;
+      logo?: string;
+    };
   };
   contentBlocks?: ContentBlock[];
   // Event fields

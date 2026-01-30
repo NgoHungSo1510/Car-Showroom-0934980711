@@ -314,12 +314,16 @@ const PostDetailPage: React.FC = () => {
               to={`/cars/${post.relatedCar.slug}`}
               className="flex items-center gap-4 p-4 bg-surface border border-white/20 rounded-2xl hover:border-primary transition-colors group"
             >
-              {post.relatedCar.thumbnail && (
+              {post.relatedCar.brand?.logo ? (
                 <img
-                  src={post.relatedCar.thumbnail}
-                  alt={post.relatedCar.name}
-                  className="w-24 h-16 object-cover rounded-lg"
+                  src={post.relatedCar.brand.logo}
+                  alt={post.relatedCar.brand.name}
+                  className="w-12 h-12 object-contain"
                 />
+              ) : (
+                <div className="w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center">
+                  <span className="text-2xl">🚗</span>
+                </div>
               )}
               <div className="flex-1">
                 <p className="text-xs text-text-secondary mb-1">Xe được nhắc đến trong bài</p>
@@ -327,7 +331,7 @@ const PostDetailPage: React.FC = () => {
                   {post.relatedCar.name}
                 </p>
               </div>
-              <span className="btn-primary py-2 px-4 text-sm">Xem 3D ngay</span>
+              <span className="py-2 px-4 text-sm font-bold text-white bg-primary rounded-lg hover:bg-primary/80 transition-colors">Xem chi tiết</span>
             </Link>
           </div>
         )}
