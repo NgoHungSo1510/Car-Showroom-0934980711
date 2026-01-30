@@ -77,9 +77,43 @@ const CarDetailPage: React.FC = () => {
   const hasColors = (car?.colorOptions?.length ?? 0) > 0;
   const hasSpecs = car?.specs && Object.values(car.specs).some((v) => v);
 
-  // Scrollspy logic moved after tabs definition
+  // Memoize tabs - MUST be called before any conditional returns
+  const tabs = React.useMemo(() => [
+    { id: 'overview' as TabType, label: 'Tổng quan', icon: '🚗', show: true },
+    { id: 'exterior' as TabType, label: 'Ngoại thất', icon: '🚘', show: hasExterior },
+    { id: 'interior' as TabType, label: 'Nội thất', icon: '🛋️', show: hasInterior },
+    { id: 'colors' as TabType, label: 'Màu sắc', icon: '🎨', show: hasColors },
+    { id: 'specs' as TabType, label: 'Thông số', icon: '⚙️', show: hasSpecs },
+  ].filter((tab) => tab.show), [hasExterior, hasInterior, hasColors, hasSpecs]);
 
+  // Scrollspy logic - MUST be called before any conditional returns
+  useEffect(() => {
+    if (!car) return; // Guard inside effect instead of conditional hook call
 
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const id = entry.target.id.replace('section-', '') as TabType;
+            setActiveTab(id);
+          }
+        });
+      },
+      {
+        rootMargin: '-100px 0px -70% 0px',
+        threshold: 0,
+      },
+    );
+
+    tabs.forEach((tab) => {
+      const element = document.getElementById(`section-${tab.id}`);
+      if (element) observer.observe(element);
+    });
+
+    return () => observer.disconnect();
+  }, [car, tabs]);
+
+  // Early returns AFTER all hooks
   if (isLoading) {
     return (
       <div className="pt-24 pb-16 flex items-center justify-center min-h-screen">
@@ -98,39 +132,6 @@ const CarDetailPage: React.FC = () => {
       </div>
     );
   }
-
-  const tabs = React.useMemo(() => [
-    { id: 'overview' as TabType, label: 'Tổng quan', icon: '🚗', show: true },
-    { id: 'exterior' as TabType, label: 'Ngoại thất', icon: '🚘', show: hasExterior },
-    { id: 'interior' as TabType, label: 'Nội thất', icon: '🛋️', show: hasInterior },
-    { id: 'colors' as TabType, label: 'Màu sắc', icon: '🎨', show: hasColors },
-    { id: 'specs' as TabType, label: 'Thông số', icon: '⚙️', show: hasSpecs },
-  ].filter((tab) => tab.show), [hasExterior, hasInterior, hasColors, hasSpecs]);
-
-  // Scrollspy logic
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const id = entry.target.id.replace('section-', '') as TabType;
-            setActiveTab(id);
-          }
-        });
-      },
-      {
-        rootMargin: '-100px 0px -70% 0px', // Trigger when section is near top
-        threshold: 0,
-      },
-    );
-
-    tabs.forEach((tab) => {
-      const element = document.getElementById(`section-${tab.id}`);
-      if (element) observer.observe(element);
-    });
-
-    return () => observer.disconnect();
-  }, [car, tabs]); // Re-run when car data changes/tabs load
 
   return (
     <div className="pb-16">

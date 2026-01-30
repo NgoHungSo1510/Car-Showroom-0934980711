@@ -138,7 +138,7 @@ const PostDetailPage: React.FC = () => {
           <div key={index} className="my-8">
             <Link
               to={`/cars/${block.car.slug}`}
-              className="flex items-center gap-4 p-4 glass border border-border rounded-2xl hover:border-primary transition-colors group"
+              className="flex items-center gap-4 p-4 bg-surface border border-white/20 rounded-2xl hover:border-primary transition-colors group"
             >
               {block.car.thumbnail && (
                 <img
@@ -312,7 +312,7 @@ const PostDetailPage: React.FC = () => {
           <div className="max-w-4xl mx-auto mb-10">
             <Link
               to={`/cars/${post.relatedCar.slug}`}
-              className="flex items-center gap-4 p-4 glass border border-border rounded-2xl hover:border-primary transition-colors group"
+              className="flex items-center gap-4 p-4 bg-surface border border-white/20 rounded-2xl hover:border-primary transition-colors group"
             >
               {post.relatedCar.thumbnail && (
                 <img
