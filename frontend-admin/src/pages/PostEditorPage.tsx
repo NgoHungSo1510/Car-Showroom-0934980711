@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { postsAPI, carsAPI, PostInput, ContentBlock } from '../services/api';
 import ImageUploader from '../components/ImageUploader';
+import ContentBlockImageUploader from '../components/ContentBlockImageUploader';
 import toast from 'react-hot-toast';
 
 const PostEditorPage: React.FC = () => {
@@ -199,8 +200,8 @@ const PostEditorPage: React.FC = () => {
                   setFormData({ ...formData, category: cat.value as PostInput['category'] })
                 }
                 className={`p-4 rounded-xl text-left transition-all ${formData.category === cat.value
-                    ? 'bg-primary text-white ring-2 ring-primary'
-                    : 'dark:bg-background-dark light:bg-slate-100 dark:text-slate-300 light:text-slate-600 dark:hover:bg-slate-700 light:hover:bg-slate-200'
+                  ? 'bg-primary text-white ring-2 ring-primary'
+                  : 'dark:bg-background-dark light:bg-slate-100 dark:text-slate-300 light:text-slate-600 dark:hover:bg-slate-700 light:hover:bg-slate-200'
                   }`}
               >
                 <div className="font-bold">{cat.label}</div>
@@ -430,23 +431,12 @@ const PostEditorPage: React.FC = () => {
                 )}
 
                 {block.type === 'image' && (
-                  <div className="space-y-3">
-                    <input
-                      type="text"
-                      value={block.url || ''}
-                      onChange={(e) => updateContentBlock(index, { url: e.target.value })}
-                      className="w-full dark:bg-slate-800 light:bg-white dark:border-border-dark light:border-border-light border rounded-lg px-4 py-3 dark:text-white light:text-text-light focus:ring-primary focus:border-primary"
-                      placeholder="URL ảnh (hoặc upload qua Cloudinary)"
-                    />
-                    <input
-                      type="text"
-                      value={block.caption || ''}
-                      onChange={(e) => updateContentBlock(index, { caption: e.target.value })}
-                      className="w-full dark:bg-slate-800 light:bg-white dark:border-border-dark light:border-border-light border rounded-lg px-4 py-2 dark:text-white light:text-text-light text-sm focus:ring-primary focus:border-primary"
-                      placeholder="Chú thích ảnh (không bắt buộc)"
-                    />
-                    {block.url && <img src={block.url} alt="" className="max-h-32 rounded-lg" />}
-                  </div>
+                  <ContentBlockImageUploader
+                    url={block.url || ''}
+                    caption={block.caption || ''}
+                    onUrlChange={(url) => updateContentBlock(index, { url })}
+                    onCaptionChange={(caption) => updateContentBlock(index, { caption })}
+                  />
                 )}
 
                 {block.type === 'video' && (

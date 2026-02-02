@@ -1,16 +1,27 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { carsAPI, brandsAPI, carTypesAPI } from '../services/api';
 import toast from 'react-hot-toast';
+import axios from 'axios';
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 const CarsPage: React.FC = () => {
   const queryClient = useQueryClient();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Search and filter states
   const [searchTerm, setSearchTerm] = useState('');
   const [brandFilter, setBrandFilter] = useState('');
   const [typeFilter, setTypeFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
+  const [isImporting, setIsImporting] = useState(false);
+  const [showImportModal, setShowImportModal] = useState(false);
+  const [importResult, setImportResult] = useState<{
+    success: number;
+    failed: number;
+    errors: string[];
+  } | null>(null);
 
   const { data: carsData, isLoading } = useQuery({
     queryKey: ['admin-cars'],
@@ -83,6 +94,66 @@ const CarsPage: React.FC = () => {
     }).format(price);
   };
 
+  // Download template
+  const handleDownloadTemplate = async () => {
+    try {
+      const token = localStorage.getItem('adminToken');
+      const response = await axios.get(`${API_URL}/admin/import/car-template`, {
+        responseType: 'blob',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'car_import_template.xlsx');
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      toast.success('Đã tải file mẫu');
+    } catch (error) {
+      toast.error('Không thể tải file mẫu');
+    }
+  };
+
+  // Import from Excel
+  const handleImportExcel = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsImporting(true);
+    setImportResult(null);
+
+    try {
+      const token = localStorage.getItem('adminToken');
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await axios.post(`${API_URL}/admin/import/cars`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      setImportResult(response.data.data);
+      queryClient.invalidateQueries({ queryKey: ['admin-cars'] });
+
+      if (response.data.data.success > 0) {
+        toast.success(response.data.message);
+      }
+      if (response.data.data.failed > 0) {
+        toast.error(`${response.data.data.failed} xe import thất bại`);
+      }
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || 'Import thất bại');
+    } finally {
+      setIsImporting(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -99,14 +170,113 @@ const CarsPage: React.FC = () => {
           <h2 className="text-xl md:text-2xl font-bold dark:text-white light:text-text-light">Quản lý Showroom</h2>
           <p className="dark:text-slate-400 light:text-slate-500 text-sm mt-1">Quản lý danh sách xe trong showroom</p>
         </div>
-        <a
-          href="/cars/new"
-          className="flex items-center justify-center gap-2 px-4 py-2.5 bg-primary hover:bg-accent-blue text-white rounded-xl text-sm font-bold transition-all shadow-lg shadow-primary/20 touch-target"
-        >
-          <span className="material-symbols-outlined text-[18px]">add</span>
-          <span>Thêm xe</span>
-        </a>
+        <div className="flex items-center gap-2">
+          {/* Import Excel Button */}
+          <button
+            onClick={() => setShowImportModal(true)}
+            className="flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm font-bold transition-all shadow-lg shadow-emerald-600/20 touch-target"
+          >
+            <span className="material-symbols-outlined text-[18px]">upload_file</span>
+            <span className="hidden sm:inline">Import Excel</span>
+          </button>
+          <a
+            href="/cars/new"
+            className="flex items-center justify-center gap-2 px-4 py-2.5 bg-primary hover:bg-accent-blue text-white rounded-xl text-sm font-bold transition-all shadow-lg shadow-primary/20 touch-target"
+          >
+            <span className="material-symbols-outlined text-[18px]">add</span>
+            <span>Thêm xe</span>
+          </a>
+        </div>
       </div>
+
+      {/* Import Modal */}
+      {showImportModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="dark:bg-card-dark light:bg-white rounded-2xl p-6 max-w-lg w-full shadow-2xl">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold dark:text-white light:text-text-light">Import xe từ Excel</h3>
+              <button
+                onClick={() => {
+                  setShowImportModal(false);
+                  setImportResult(null);
+                }}
+                className="p-2 hover:bg-slate-500/10 rounded-lg transition-colors"
+              >
+                <span className="material-symbols-outlined dark:text-slate-400 light:text-slate-500">close</span>
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              {/* Step 1: Download template */}
+              <div className="p-4 dark:bg-background-dark light:bg-slate-50 rounded-xl">
+                <p className="text-sm font-medium dark:text-white light:text-text-light mb-2">Bước 1: Tải file mẫu</p>
+                <p className="text-xs dark:text-slate-400 light:text-slate-500 mb-3">
+                  Tải file Excel mẫu, điền thông tin xe và upload lại.
+                </p>
+                <button
+                  onClick={handleDownloadTemplate}
+                  className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors"
+                >
+                  <span className="material-symbols-outlined text-[18px]">download</span>
+                  Tải file mẫu (.xlsx)
+                </button>
+              </div>
+
+              {/* Step 2: Upload */}
+              <div className="p-4 dark:bg-background-dark light:bg-slate-50 rounded-xl">
+                <p className="text-sm font-medium dark:text-white light:text-text-light mb-2">Bước 2: Upload file Excel</p>
+                <p className="text-xs dark:text-slate-400 light:text-slate-500 mb-3">
+                  Upload file Excel đã điền thông tin xe.
+                </p>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".xlsx,.xls"
+                  onChange={handleImportExcel}
+                  className="hidden"
+                />
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isImporting}
+                  className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-medium transition-colors disabled:opacity-50"
+                >
+                  {isImporting ? (
+                    <>
+                      <div className="size-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      Đang import...
+                    </>
+                  ) : (
+                    <>
+                      <span className="material-symbols-outlined text-[18px]">upload</span>
+                      Chọn file để import
+                    </>
+                  )}
+                </button>
+              </div>
+
+              {/* Import Result */}
+              {importResult && (
+                <div className="p-4 dark:bg-background-dark light:bg-slate-50 rounded-xl">
+                  <p className="text-sm font-medium dark:text-white light:text-text-light mb-2">Kết quả import</p>
+                  <div className="flex gap-4 mb-2">
+                    <span className="text-emerald-500 text-sm">✓ Thành công: {importResult.success}</span>
+                    {importResult.failed > 0 && (
+                      <span className="text-red-500 text-sm">✗ Thất bại: {importResult.failed}</span>
+                    )}
+                  </div>
+                  {importResult.errors.length > 0 && (
+                    <div className="max-h-32 overflow-y-auto text-xs dark:text-red-400 light:text-red-600 space-y-1">
+                      {importResult.errors.map((err, i) => (
+                        <p key={i}>• {err}</p>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Search and Filters Toolbar */}
       <div className="flex flex-wrap items-center gap-3 md:gap-4 dark:bg-card-dark light:bg-white dark:border-border-dark light:border-border-light border rounded-xl p-4 shadow-sm">
@@ -213,8 +383,8 @@ const CarsPage: React.FC = () => {
                     </div>
                     <span
                       className={`px-2 py-1 text-[10px] font-bold rounded uppercase ${car.status === 'published'
-                          ? 'bg-emerald-500/10 text-emerald-500'
-                          : 'bg-amber-500/10 text-amber-500'
+                        ? 'bg-emerald-500/10 text-emerald-500'
+                        : 'bg-amber-500/10 text-amber-500'
                         }`}
                     >
                       {car.status === 'published' ? 'Công khai' : 'Nháp'}

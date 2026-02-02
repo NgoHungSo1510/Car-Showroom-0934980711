@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { settingsAPI } from '../services/api';
 import toast from 'react-hot-toast';
+import MiniImageUploader from '../components/MiniImageUploader';
 
 const SettingsPage: React.FC = () => {
   const queryClient = useQueryClient();
@@ -10,6 +11,7 @@ const SettingsPage: React.FC = () => {
     zalo_greeting: '',
     site_name: '',
     site_logo: '',
+    admin_favicon: '',
     site_hotline: '',
     site_address_1: '',
     site_address_2: '',
@@ -31,6 +33,7 @@ const SettingsPage: React.FC = () => {
         zalo_greeting: 'Xin chào! Tôi quan tâm đến xe và muốn được tư vấn.',
         site_name: 'VinFast Miền Trung',
         site_logo: '',
+        admin_favicon: '',
         site_hotline: '0934 98 07 11',
         site_address_1: 'Vincom Đà Nẵng - 910A Ngô Quyền, Sơn Trà',
         site_address_2: 'Showroom 3S - 03 Phạm Hùng, Cẩm Lệ',
@@ -62,6 +65,7 @@ const SettingsPage: React.FC = () => {
         updateMutation.mutateAsync({ key: 'zalo_greeting', value: formData.zalo_greeting }),
         updateMutation.mutateAsync({ key: 'site_name', value: formData.site_name }),
         updateMutation.mutateAsync({ key: 'site_logo', value: formData.site_logo }),
+        updateMutation.mutateAsync({ key: 'admin_favicon', value: formData.admin_favicon }),
         updateMutation.mutateAsync({ key: 'site_hotline', value: formData.site_hotline }),
         updateMutation.mutateAsync({ key: 'site_address_1', value: formData.site_address_1 }),
         updateMutation.mutateAsync({ key: 'site_address_2', value: formData.site_address_2 }),
@@ -105,27 +109,27 @@ const SettingsPage: React.FC = () => {
               placeholder="VinFast Miền Trung"
             />
           </div>
-          <div>
-            <label className="block text-sm font-medium dark:text-slate-300 light:text-slate-600 mb-2">Logo (URL ảnh)</label>
-            <input
-              type="text"
-              value={formData.site_logo}
-              onChange={(e) => setFormData({ ...formData, site_logo: e.target.value })}
-              className="w-full dark:bg-background-dark light:bg-slate-50 dark:border-border-dark light:border-border-light border rounded-lg px-4 py-3 dark:text-white light:text-text-light focus:ring-primary focus:border-primary"
-              placeholder="https://example.com/logo.png"
-            />
-            {formData.site_logo && (
-              <div className="mt-3 flex items-center gap-3">
-                <img
-                  src={formData.site_logo}
-                  alt="Logo preview"
-                  className="h-12 w-12 rounded-full object-cover dark:border-border-dark light:border-border-light border"
-                  onError={(e) => ((e.target as HTMLImageElement).style.display = 'none')}
-                />
-                <span className="text-xs dark:text-slate-500 light:text-slate-400">Preview logo</span>
-              </div>
-            )}
-          </div>
+
+          {/* Logo trang User */}
+          <MiniImageUploader
+            value={formData.site_logo}
+            onChange={(url) => setFormData({ ...formData, site_logo: url })}
+            label="Logo trang User (favicon)"
+            placeholder="https://example.com/logo.png"
+            size="md"
+            shape="circle"
+          />
+
+          {/* Logo trang Admin */}
+          <MiniImageUploader
+            value={formData.admin_favicon}
+            onChange={(url) => setFormData({ ...formData, admin_favicon: url })}
+            label="Logo trang Admin (favicon)"
+            placeholder="https://example.com/admin-favicon.png"
+            size="md"
+            shape="square"
+          />
+
           <div>
             <label className="block text-sm font-medium dark:text-slate-300 light:text-slate-600 mb-2">Hotline</label>
             <input

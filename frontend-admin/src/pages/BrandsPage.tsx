@@ -15,6 +15,8 @@ const BrandsPage: React.FC = () => {
   const [formData, setFormData] = useState({ name: '', country: '', logo: '' });
   const [searchTerm, setSearchTerm] = useState('');
   const [isUploading, setIsUploading] = useState(false);
+  const [inputMode, setInputMode] = useState<'upload' | 'url'>('upload');
+  const [urlInput, setUrlInput] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { data: brandsData, isLoading } = useQuery({
@@ -98,6 +100,8 @@ const BrandsPage: React.FC = () => {
       setEditingBrand(null);
       setFormData({ name: '', country: '', logo: '' });
     }
+    setInputMode('upload');
+    setUrlInput('');
     setIsModalOpen(true);
   };
 
@@ -105,6 +109,8 @@ const BrandsPage: React.FC = () => {
     setIsModalOpen(false);
     setEditingBrand(null);
     setFormData({ name: '', country: '', logo: '' });
+    setInputMode('upload');
+    setUrlInput('');
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -232,42 +238,121 @@ const BrandsPage: React.FC = () => {
               {editingBrand ? 'Chỉnh sửa thương hiệu' : 'Thêm thương hiệu'}
             </h3>
             <form onSubmit={handleSubmit} className="space-y-4">
-              {/* Logo Upload */}
+              {/* Logo Upload with URL option */}
               <div className="flex justify-center">
-                <div
-                  className="relative size-24 rounded-xl border-2 border-dashed dark:border-slate-700 light:border-slate-300 flex items-center justify-center cursor-pointer hover:border-primary transition-colors overflow-hidden group"
-                  onClick={() => fileInputRef.current?.click()}
-                >
-                  {formData.logo ? (
-                    <>
-                      <img
-                        src={formData.logo}
-                        alt="Logo"
-                        className="size-full object-contain p-2"
-                      />
-                      <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                        <span className="material-symbols-outlined text-white">edit</span>
-                      </div>
-                    </>
+                <div className="w-full max-w-xs">
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="block text-sm font-medium dark:text-slate-300 light:text-slate-600">
+                      Logo thương hiệu
+                    </label>
+                    <div className="flex gap-1">
+                      <button
+                        type="button"
+                        onClick={() => setInputMode('upload')}
+                        className={`px-2 py-1 text-xs rounded-md transition-colors ${inputMode === 'upload'
+                          ? 'bg-primary text-white'
+                          : 'dark:bg-background-dark light:bg-slate-100 dark:text-slate-400 light:text-slate-500'
+                          }`}
+                      >
+                        📤 Upload
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setInputMode('url')}
+                        className={`px-2 py-1 text-xs rounded-md transition-colors ${inputMode === 'url'
+                          ? 'bg-primary text-white'
+                          : 'dark:bg-background-dark light:bg-slate-100 dark:text-slate-400 light:text-slate-500'
+                          }`}
+                      >
+                        🔗 URL
+                      </button>
+                    </div>
+                  </div>
+
+                  {inputMode === 'upload' ? (
+                    <div
+                      className="relative size-24 mx-auto rounded-xl border-2 border-dashed dark:border-slate-700 light:border-slate-300 flex items-center justify-center cursor-pointer hover:border-primary transition-colors overflow-hidden group"
+                      onClick={() => fileInputRef.current?.click()}
+                    >
+                      {formData.logo ? (
+                        <>
+                          <img
+                            src={formData.logo}
+                            alt="Logo"
+                            className="size-full object-contain p-2"
+                          />
+                          <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <span className="material-symbols-outlined text-white">edit</span>
+                          </div>
+                        </>
+                      ) : (
+                        <div className="text-center">
+                          <span className="material-symbols-outlined text-slate-400">cloud_upload</span>
+                          <p className="text-[10px] text-slate-500 mt-1">Upload Logo</p>
+                        </div>
+                      )}
+                      {isUploading && (
+                        <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                          <div className="size-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        </div>
+                      )}
+                    </div>
                   ) : (
-                    <div className="text-center">
-                      <span className="material-symbols-outlined text-slate-400">cloud_upload</span>
-                      <p className="text-[10px] text-slate-500 mt-1">Upload Logo</p>
+                    <div className="space-y-2">
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={urlInput}
+                          onChange={(e) => setUrlInput(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              e.preventDefault();
+                              if (urlInput.trim()) {
+                                setFormData((prev) => ({ ...prev, logo: urlInput.trim() }));
+                                setUrlInput('');
+                                toast.success('Đã cập nhật URL logo');
+                              }
+                            }
+                          }}
+                          className="flex-1 dark:bg-background-dark light:bg-slate-50 dark:border-border-dark light:border-border-light border rounded-lg px-3 py-2 text-sm dark:text-white light:text-text-light"
+                          placeholder="https://example.com/logo.png"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (urlInput.trim()) {
+                              setFormData((prev) => ({ ...prev, logo: urlInput.trim() }));
+                              setUrlInput('');
+                              toast.success('Đã cập nhật URL logo');
+                            }
+                          }}
+                          className="px-3 py-2 bg-primary text-white rounded-lg text-sm hover:bg-accent-blue transition-colors"
+                        >
+                          Thêm
+                        </button>
+                      </div>
+                      {formData.logo && (
+                        <div className="flex items-center justify-center gap-2">
+                          <img src={formData.logo} alt="Logo preview" className="size-12 object-contain rounded-lg border dark:border-border-dark light:border-border-light" />
+                          <button
+                            type="button"
+                            onClick={() => setFormData((prev) => ({ ...prev, logo: '' }))}
+                            className="text-xs text-red-400 hover:text-red-300"
+                          >
+                            Xóa
+                          </button>
+                        </div>
+                      )}
                     </div>
                   )}
-                  {isUploading && (
-                    <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                      <div className="size-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    </div>
-                  )}
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    className="hidden"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                  />
                 </div>
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  className="hidden"
-                  accept="image/*"
-                  onChange={handleFileChange}
-                />
               </div>
 
               <div>

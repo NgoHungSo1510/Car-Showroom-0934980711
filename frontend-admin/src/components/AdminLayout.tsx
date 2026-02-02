@@ -3,10 +3,14 @@ import { Outlet, Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Sidebar from './Sidebar';
 import Header from './Header';
+import { useFavicon } from '../hooks/useFavicon';
 
 const AdminLayout: React.FC = () => {
   const { isAuthenticated, isLoading } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // Apply dynamic favicon based on admin_favicon setting
+  useFavicon();
 
   // Show loading state while checking auth
   if (isLoading) {

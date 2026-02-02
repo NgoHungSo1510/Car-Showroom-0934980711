@@ -19,6 +19,12 @@ interface Post {
   facebookSyncedAt?: string;
   tags?: string[];
   coverImage?: string;
+  contentBlocks?: Array<{
+    type: 'text' | 'image' | 'video' | 'car';
+    content?: string;
+    url?: string;
+    caption?: string;
+  }>;
 }
 
 const PostsPage: React.FC = () => {
@@ -65,6 +71,16 @@ const PostsPage: React.FC = () => {
 
     let content = `${categoryEmoji} ${post.title}\n\n`;
     if (post.excerpt) content += `${post.excerpt}\n\n`;
+
+    // Add text content from contentBlocks
+    if (post.contentBlocks && post.contentBlocks.length > 0) {
+      const textBlocks = post.contentBlocks
+        .filter(block => block.type === 'text' && block.content)
+        .map(block => block.content)
+        .join('\n\n');
+      if (textBlocks) content += `${textBlocks}\n\n`;
+    }
+
     content += `👉 Xem chi tiết: ${baseUrl}/posts/${post.slug}\n`;
     if (post.relatedCar) {
       content += `🚗 Xem xe ${post.relatedCar.name}: ${baseUrl}/cars/${post.relatedCar.slug}\n`;

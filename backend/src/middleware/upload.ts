@@ -37,6 +37,22 @@ const modelFilter = (
   }
 };
 
+// File filter for Excel files
+const excelFilter = (
+  req: Express.Request,
+  file: Express.Multer.File,
+  cb: multer.FileFilterCallback,
+) => {
+  const allowedTypes = /xlsx|xls/;
+  const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+
+  if (extname) {
+    cb(null, true);
+  } else {
+    cb(new Error('Only Excel files are allowed (.xlsx, .xls)'));
+  }
+};
+
 // Upload configurations with memory storage
 export const uploadImage = multer({
   storage: memoryStorage,
@@ -54,6 +70,16 @@ export const uploadModel = multer({
   },
 });
 
+export const uploadExcel = multer({
+  storage: memoryStorage,
+  fileFilter: excelFilter,
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10MB
+  },
+});
+
 export const uploadImages = uploadImage.array('images', 10);
 export const uploadSingleImage = uploadImage.single('image');
 export const uploadSingleModel = uploadModel.single('model');
+export const uploadSingleExcel = uploadExcel.single('file');
+

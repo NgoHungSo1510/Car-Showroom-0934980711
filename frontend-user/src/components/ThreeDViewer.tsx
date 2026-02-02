@@ -92,8 +92,8 @@ const ThreeDViewer: React.FC<ThreeDViewerProps> = ({ config, fallbackImage, carN
   );
   const [selectedMeshNames, setSelectedMeshNames] = useState<string[]>(
     config.colorConfigs.find((c) => c.isDefault)?.meshNames ||
-      config.colorConfigs[0]?.meshNames ||
-      [],
+    config.colorConfigs[0]?.meshNames ||
+    [],
   );
 
   const handleColorChange = (hexCode: string, meshNames: string[]) => {
@@ -127,11 +127,6 @@ const ThreeDViewer: React.FC<ThreeDViewerProps> = ({ config, fallbackImage, carN
             </div>
           </div>
         )}
-
-        {/* Gallery fallback badge */}
-        <div className="absolute bottom-4 right-4 px-3 py-1.5 bg-black/50 backdrop-blur-sm rounded-lg text-xs text-text-primary">
-          Mô hình 3D sẽ được cập nhật
-        </div>
       </div>
     );
   }
@@ -183,11 +178,10 @@ const ThreeDViewer: React.FC<ThreeDViewerProps> = ({ config, fallbackImage, carN
               <button
                 key={colorConfig.hexCode}
                 onClick={() => handleColorChange(colorConfig.hexCode, colorConfig.meshNames)}
-                className={`size-6 rounded-full border-2 transition-transform hover:scale-110 ${
-                  selectedColor === colorConfig.hexCode
-                    ? 'border-white scale-110'
-                    : 'border-transparent'
-                }`}
+                className={`size-6 rounded-full border-2 transition-transform hover:scale-110 ${selectedColor === colorConfig.hexCode
+                  ? 'border-white scale-110'
+                  : 'border-transparent'
+                  }`}
                 style={{ backgroundColor: colorConfig.hexCode }}
                 title={colorConfig.name}
               />
