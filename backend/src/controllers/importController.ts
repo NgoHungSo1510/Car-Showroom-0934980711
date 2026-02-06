@@ -138,10 +138,34 @@ export const importCarsFromExcel = asyncHandler(async (req: Request, res: Respon
     const brandMap = new Map(brands.map(b => [b.name.toLowerCase(), b._id]));
     const carTypeMap = new Map(carTypes.map(t => [t.name.toLowerCase(), t._id]));
 
-    const results: { success: number; failed: number; errors: string[] } = {
+    // Fetch all existing cars for duplicate checking
+    const existingCars = await Car.find({}).lean();
+    const existingCarsByName = new Map(existingCars.map(c => [c.name.toLowerCase(), c]));
+
+    const results: {
+        success: number;
+        failed: number;
+        skipped: number;
+        conflicts: number;
+        errors: string[];
+        warnings: string[];
+    } = {
         success: 0,
         failed: 0,
+        skipped: 0,
+        conflicts: 0,
         errors: [],
+        warnings: [],
+    };
+
+    // Helper function to compare values
+    const compareValues = (existing: any, newVal: any, field: string): string | null => {
+        const existingStr = String(existing ?? '').trim();
+        const newStr = String(newVal ?? '').trim();
+        if (existingStr !== newStr && newStr !== '') {
+            return `${field}: "${existingStr}" → "${newStr}"`;
+        }
+        return null;
     };
 
     for (let i = 0; i < data.length; i++) {
@@ -192,6 +216,43 @@ export const importCarsFromExcel = asyncHandler(async (req: Request, res: Respon
             if (!carTypeId) {
                 results.errors.push(`Dòng ${rowNum}: Loại xe "${carTypeName}" không tồn tại`);
                 results.failed++;
+                continue;
+            }
+
+            // Check if car already exists
+            const existingCar = existingCarsByName.get(String(name).toLowerCase());
+
+            if (existingCar) {
+                // Compare key fields to detect differences
+                const differences: string[] = [];
+
+                if (Number(existingCar.price) !== Number(price)) {
+                    differences.push(`Giá: ${existingCar.price.toLocaleString()} → ${Number(price).toLocaleString()}`);
+                }
+
+                const yearDiff = compareValues(existingCar.year, row['Năm'], 'Năm');
+                if (yearDiff) differences.push(yearDiff);
+
+                const priceDiff = compareValues(existingCar.priceRange, row['Khoảng giá'], 'Khoảng giá');
+                if (priceDiff) differences.push(priceDiff);
+
+                const descDiff = compareValues(existingCar.shortDescription, row['Mô tả ngắn'], 'Mô tả ngắn');
+                if (descDiff) differences.push(descDiff);
+
+                const engineDiff = compareValues(existingCar.specs?.engine, row['Động cơ'], 'Động cơ');
+                if (engineDiff) differences.push(engineDiff);
+
+                const powerDiff = compareValues(existingCar.specs?.power, row['Công suất'], 'Công suất');
+                if (powerDiff) differences.push(powerDiff);
+
+                if (differences.length > 0) {
+                    // Car exists but has different data - warn but don't update
+                    results.warnings.push(`⚠️ Dòng ${rowNum} "${name}": Đã có nhưng khác:\n   - ${differences.join('\n   - ')}`);
+                    results.conflicts++;
+                } else {
+                    // Car exists and is identical - skip silently
+                    results.skipped++;
+                }
                 continue;
             }
 
@@ -253,9 +314,15 @@ export const importCarsFromExcel = asyncHandler(async (req: Request, res: Respon
         }
     }
 
+    // Build summary message
+    let message = `Import: ${results.success} thêm mới`;
+    if (results.skipped > 0) message += `, ${results.skipped} bỏ qua (trùng)`;
+    if (results.conflicts > 0) message += `, ${results.conflicts} xe có khác biệt`;
+    if (results.failed > 0) message += `, ${results.failed} lỗi`;
+
     res.status(200).json({
         success: true,
         data: results,
-        message: `Import thành công ${results.success}/${data.length} xe`,
+        message,
     });
 });

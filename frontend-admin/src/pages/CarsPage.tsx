@@ -20,7 +20,10 @@ const CarsPage: React.FC = () => {
   const [importResult, setImportResult] = useState<{
     success: number;
     failed: number;
+    skipped: number;
+    conflicts: number;
     errors: string[];
+    warnings: string[];
   } | null>(null);
 
   const { data: carsData, isLoading } = useQuery({
@@ -269,13 +272,43 @@ const CarsPage: React.FC = () => {
               {importResult && (
                 <div className="p-4 bg-slate-100 dark:bg-background-dark rounded-xl border border-slate-200 dark:border-border-dark">
                   <p className="text-sm font-medium text-slate-900 dark:text-white mb-2">Kết quả import</p>
-                  <div className="flex gap-4 mb-2">
-                    <span className="text-emerald-600 dark:text-emerald-500 text-sm font-medium">✓ Thành công: {importResult.success}</span>
+                  <div className="flex flex-wrap gap-3 mb-3">
+                    <span className="text-emerald-600 dark:text-emerald-500 text-sm font-medium">
+                      ✓ Thêm mới: {importResult.success}
+                    </span>
+                    {importResult.skipped > 0 && (
+                      <span className="text-slate-500 dark:text-slate-400 text-sm">
+                        ⏭️ Bỏ qua: {importResult.skipped}
+                      </span>
+                    )}
+                    {importResult.conflicts > 0 && (
+                      <span className="text-amber-600 dark:text-amber-500 text-sm font-medium">
+                        ⚠️ Khác biệt: {importResult.conflicts}
+                      </span>
+                    )}
                     {importResult.failed > 0 && (
-                      <span className="text-red-600 dark:text-red-500 text-sm font-medium">✗ Thất bại: {importResult.failed}</span>
+                      <span className="text-red-600 dark:text-red-500 text-sm font-medium">
+                        ✗ Lỗi: {importResult.failed}
+                      </span>
                     )}
                   </div>
-                  {importResult.errors.length > 0 && (
+
+                  {/* Warnings - differences detected */}
+                  {importResult.warnings?.length > 0 && (
+                    <div className="mb-2">
+                      <p className="text-xs font-medium text-amber-600 dark:text-amber-400 mb-1">
+                        Xe đã có nhưng khác thông số (không cập nhật):
+                      </p>
+                      <div className="max-h-40 overflow-y-auto text-xs text-amber-700 dark:text-amber-300 space-y-2 bg-amber-50 dark:bg-amber-900/20 p-2 rounded">
+                        {importResult.warnings.map((warn, i) => (
+                          <pre key={i} className="whitespace-pre-wrap font-sans">{warn}</pre>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Errors */}
+                  {importResult.errors?.length > 0 && (
                     <div className="max-h-32 overflow-y-auto text-xs text-red-600 dark:text-red-400 space-y-1">
                       {importResult.errors.map((err, i) => (
                         <p key={i}>• {err}</p>
