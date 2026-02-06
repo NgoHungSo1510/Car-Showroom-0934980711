@@ -233,6 +233,12 @@ const FacebookSyncPage: React.FC = () => {
           >
             ⚙️ Cấu hình Token
           </button>
+          <Link
+            to="/ai-config"
+            className="px-4 py-2 bg-violet-600 hover:bg-violet-500 text-white rounded-lg text-sm font-bold transition-colors"
+          >
+            🤖 Cấu hình AI
+          </Link>
           <a
             href="https://developers.facebook.com/tools/explorer/"
             target="_blank"

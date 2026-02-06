@@ -13,7 +13,6 @@ const navItems = [
   { path: '/brands', icon: 'verified', label: 'Thương hiệu' },
   { path: '/car-types', icon: 'category', label: 'Loại xe' },
   { path: '/facebook-sync', icon: 'sync', label: 'Đồng bộ FB' },
-  { path: '/ai-config', icon: 'tune', label: 'Cấu hình AI' },
   { path: '/notifications', icon: 'notifications', label: 'Thông báo' },
   { path: '/settings', icon: 'settings', label: 'Cài đặt' },
 ];
