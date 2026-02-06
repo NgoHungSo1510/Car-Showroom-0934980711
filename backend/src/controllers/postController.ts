@@ -242,3 +242,26 @@ export const deletePost = asyncHandler(async (req: Request, res: Response) => {
     message: 'Post deleted successfully',
   });
 });
+
+// @desc    Get all unique tags (for autocomplete)
+// @route   GET /api/admin/posts/tags
+// @access  Private
+export const getAllTags = asyncHandler(async (_req: Request, res: Response) => {
+  // Aggregate to get all unique tags with count
+  const tagsWithCount = await Post.aggregate([
+    { $unwind: '$tags' },
+    { $group: { _id: '$tags', count: { $sum: 1 } } },
+    { $sort: { count: -1 } },
+    { $limit: 100 },
+  ]);
+
+  const tags = tagsWithCount.map(t => ({
+    name: t._id,
+    count: t.count,
+  }));
+
+  res.status(200).json({
+    success: true,
+    data: tags,
+  });
+});

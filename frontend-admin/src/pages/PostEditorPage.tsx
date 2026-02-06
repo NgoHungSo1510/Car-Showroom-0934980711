@@ -4,7 +4,9 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { postsAPI, carsAPI, PostInput, ContentBlock } from '../services/api';
 import ImageUploader from '../components/ImageUploader';
 import ContentBlockImageUploader from '../components/ContentBlockImageUploader';
+import TagAutocomplete from '../components/TagAutocomplete';
 import toast from 'react-hot-toast';
+
 
 const PostEditorPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -28,7 +30,6 @@ const PostEditorPage: React.FC = () => {
     discountPercent: undefined,
     discountDescription: '',
   });
-  const [tagInput, setTagInput] = useState('');
 
   const { data: postData, isLoading } = useQuery({
     queryKey: ['admin-post', id],
@@ -96,23 +97,6 @@ const PostEditorPage: React.FC = () => {
       return;
     }
     saveMutation.mutate(formData);
-  };
-
-  const handleAddTag = () => {
-    if (tagInput.trim() && !formData.tags?.includes(tagInput.trim())) {
-      setFormData({
-        ...formData,
-        tags: [...(formData.tags || []), tagInput.trim()],
-      });
-      setTagInput('');
-    }
-  };
-
-  const handleRemoveTag = (tag: string) => {
-    setFormData({
-      ...formData,
-      tags: formData.tags?.filter((t) => t !== tag),
-    });
   };
 
   const addContentBlock = (type: ContentBlock['type']) => {
@@ -495,46 +479,15 @@ const PostEditorPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Tags */}
+        {/* Tags with Autocomplete */}
         <div className="dark:bg-card-dark light:bg-white dark:border-border-dark light:border-border-light border rounded-2xl p-6 shadow-sm">
-          <label className="block text-sm font-medium dark:text-slate-300 light:text-slate-600 mb-2">Thẻ (Tags)</label>
-          <div className="flex gap-2 mb-3">
-            <input
-              type="text"
-              value={tagInput}
-              onChange={(e) => setTagInput(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddTag())}
-              className="flex-1 dark:bg-background-dark light:bg-slate-50 dark:border-border-dark light:border-border-light border rounded-lg px-4 py-2 dark:text-white light:text-text-light focus:ring-primary focus:border-primary"
-              placeholder="Nhập tag và nhấn Enter"
-            />
-            <button
-              type="button"
-              onClick={handleAddTag}
-              className="px-4 py-2 bg-primary text-white rounded-lg"
-            >
-              Thêm
-            </button>
-          </div>
-          {formData.tags && formData.tags.length > 0 && (
-            <div className="flex flex-wrap gap-2">
-              {formData.tags.map((tag) => (
-                <span
-                  key={tag}
-                  className="flex items-center gap-1 px-3 py-1 dark:bg-background-dark light:bg-slate-100 rounded text-sm dark:text-white light:text-text-light"
-                >
-                  #{tag}
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveTag(tag)}
-                    className="text-red-400 hover:text-red-300"
-                  >
-                    ×
-                  </button>
-                </span>
-              ))}
-            </div>
-          )}
+          <TagAutocomplete
+            selectedTags={formData.tags || []}
+            onAddTag={(tag) => setFormData({ ...formData, tags: [...(formData.tags || []), tag] })}
+            onRemoveTag={(tag) => setFormData({ ...formData, tags: formData.tags?.filter(t => t !== tag) })}
+          />
         </div>
+
 
         {/* Actions */}
         <div className="flex items-center gap-4">

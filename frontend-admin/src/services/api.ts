@@ -155,6 +155,8 @@ export const postsAPI = {
   update: (id: string, data: Partial<PostInput>) => api.put(`/admin/posts/${id}`, data),
 
   delete: (id: string) => api.delete(`/admin/posts/${id}`),
+
+  getAllTags: () => api.get('/admin/posts/tags'),
 };
 
 // ============ BRANDS API ============

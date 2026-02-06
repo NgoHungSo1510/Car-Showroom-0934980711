@@ -202,26 +202,26 @@ const CarsPage: React.FC = () => {
 
       {/* Import Modal */}
       {showImportModal && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="dark:bg-card-dark light:bg-white dark:border-border-dark light:border-slate-200 border rounded-2xl p-6 max-w-lg w-full shadow-2xl">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-card-dark border-2 border-slate-300 dark:border-border-dark rounded-2xl p-6 max-w-lg w-full shadow-2xl">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold dark:text-white light:text-text-light">Import xe từ Excel</h3>
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white">Import xe từ Excel</h3>
               <button
                 onClick={() => {
                   setShowImportModal(false);
                   setImportResult(null);
                 }}
-                className="p-2 hover:bg-slate-500/10 rounded-lg transition-colors"
+                className="p-2 hover:bg-slate-100 dark:hover:bg-slate-500/10 rounded-lg transition-colors"
               >
-                <span className="material-symbols-outlined dark:text-slate-400 light:text-slate-500">close</span>
+                <span className="material-symbols-outlined text-slate-500 dark:text-slate-400">close</span>
               </button>
             </div>
 
             <div className="space-y-4">
               {/* Step 1: Download template */}
-              <div className="p-4 dark:bg-background-dark light:bg-slate-50 rounded-xl">
-                <p className="text-sm font-medium dark:text-white light:text-text-light mb-2">Bước 1: Tải file mẫu</p>
-                <p className="text-xs dark:text-slate-400 light:text-slate-500 mb-3">
+              <div className="p-4 bg-slate-100 dark:bg-background-dark rounded-xl border border-slate-200 dark:border-border-dark">
+                <p className="text-sm font-medium text-slate-900 dark:text-white mb-2">Bước 1: Tải file mẫu</p>
+                <p className="text-xs text-slate-600 dark:text-slate-400 mb-3">
                   Tải file Excel mẫu, điền thông tin xe và upload lại.
                 </p>
                 <button
@@ -234,9 +234,9 @@ const CarsPage: React.FC = () => {
               </div>
 
               {/* Step 2: Upload */}
-              <div className="p-4 dark:bg-background-dark light:bg-slate-50 rounded-xl">
-                <p className="text-sm font-medium dark:text-white light:text-text-light mb-2">Bước 2: Upload file Excel</p>
-                <p className="text-xs dark:text-slate-400 light:text-slate-500 mb-3">
+              <div className="p-4 bg-slate-100 dark:bg-background-dark rounded-xl border border-slate-200 dark:border-border-dark">
+                <p className="text-sm font-medium text-slate-900 dark:text-white mb-2">Bước 2: Upload file Excel</p>
+                <p className="text-xs text-slate-600 dark:text-slate-400 mb-3">
                   Upload file Excel đã điền thông tin xe.
                 </p>
                 <input
@@ -267,16 +267,16 @@ const CarsPage: React.FC = () => {
 
               {/* Import Result */}
               {importResult && (
-                <div className="p-4 dark:bg-background-dark light:bg-slate-50 rounded-xl">
-                  <p className="text-sm font-medium dark:text-white light:text-text-light mb-2">Kết quả import</p>
+                <div className="p-4 bg-slate-100 dark:bg-background-dark rounded-xl border border-slate-200 dark:border-border-dark">
+                  <p className="text-sm font-medium text-slate-900 dark:text-white mb-2">Kết quả import</p>
                   <div className="flex gap-4 mb-2">
-                    <span className="text-emerald-500 text-sm">✓ Thành công: {importResult.success}</span>
+                    <span className="text-emerald-600 dark:text-emerald-500 text-sm font-medium">✓ Thành công: {importResult.success}</span>
                     {importResult.failed > 0 && (
-                      <span className="text-red-500 text-sm">✗ Thất bại: {importResult.failed}</span>
+                      <span className="text-red-600 dark:text-red-500 text-sm font-medium">✗ Thất bại: {importResult.failed}</span>
                     )}
                   </div>
                   {importResult.errors.length > 0 && (
-                    <div className="max-h-32 overflow-y-auto text-xs dark:text-red-400 light:text-red-600 space-y-1">
+                    <div className="max-h-32 overflow-y-auto text-xs text-red-600 dark:text-red-400 space-y-1">
                       {importResult.errors.map((err, i) => (
                         <p key={i}>• {err}</p>
                       ))}

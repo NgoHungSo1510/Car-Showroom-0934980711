@@ -7,6 +7,7 @@ import {
   createPost,
   updatePost,
   deletePost,
+  getAllTags,
 } from '../controllers/postController.js';
 import { protectAdmin } from '../middleware/auth.js';
 
@@ -22,8 +23,10 @@ export default router;
 export const adminPostRouter = Router();
 adminPostRouter.use(protectAdmin);
 
+adminPostRouter.get('/tags', getAllTags); // Must be before /:id
 adminPostRouter.get('/', getAdminPosts);
 adminPostRouter.get('/:id', getAdminPost);
 adminPostRouter.post('/', createPost);
 adminPostRouter.put('/:id', updatePost);
 adminPostRouter.delete('/:id', deletePost);
+
