@@ -318,13 +318,13 @@ const CarDetailPage: React.FC = () => {
                   </div>
                 )}
                 {car.exterior?.images && car.exterior.images.length > 0 && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-4">
                     {car.exterior.images.map((img: string, idx: number) => (
-                      <div key={idx} className="rounded-xl overflow-hidden group">
+                      <div key={idx} className="rounded-2xl overflow-hidden shadow-xl group">
                         <img
                           src={img}
                           alt={`Ngoại thất ${idx + 1}`}
-                          className="w-full h-64 object-cover group-hover:scale-105 transition-transform cursor-pointer"
+                          className="w-full h-[50vh] min-h-[300px] object-cover group-hover:scale-105 transition-transform cursor-pointer"
                         />
                       </div>
                     ))}
@@ -349,13 +349,13 @@ const CarDetailPage: React.FC = () => {
                   </div>
                 )}
                 {car.interior?.images && car.interior.images.length > 0 && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-4">
                     {car.interior.images.map((img: string, idx: number) => (
-                      <div key={idx} className="rounded-xl overflow-hidden group">
+                      <div key={idx} className="rounded-2xl overflow-hidden shadow-xl group">
                         <img
                           src={img}
                           alt={`Nội thất ${idx + 1}`}
-                          className="w-full h-64 object-cover group-hover:scale-105 transition-transform cursor-pointer"
+                          className="w-full h-[50vh] min-h-[300px] object-cover group-hover:scale-105 transition-transform cursor-pointer"
                         />
                       </div>
                     ))}
@@ -384,8 +384,8 @@ const CarDetailPage: React.FC = () => {
                           onClick={() => setSelectedColorIndex(idx)}
                           title={color.name}
                           className={`relative w-8 h-8 rounded-full transition-all ${selectedColorIndex === idx
-                              ? 'ring-2 ring-primary ring-offset-2 ring-offset-background scale-110 z-10'
-                              : 'hover:scale-105'
+                            ? 'ring-2 ring-primary ring-offset-2 ring-offset-background scale-110 z-10'
+                            : 'hover:scale-105'
                             }`}
                           style={{ backgroundColor: color.hexCode }}
                         >
