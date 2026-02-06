@@ -97,7 +97,7 @@ const CarsPage: React.FC = () => {
   // Download template
   const handleDownloadTemplate = async () => {
     try {
-      const token = localStorage.getItem('adminToken');
+      const token = localStorage.getItem('admin_token');
       const response = await axios.get(`${API_URL}/admin/import/car-template`, {
         responseType: 'blob',
         headers: { Authorization: `Bearer ${token}` },
@@ -135,7 +135,7 @@ const CarsPage: React.FC = () => {
     setImportResult(null);
 
     try {
-      const token = localStorage.getItem('adminToken');
+      const token = localStorage.getItem('admin_token');
       const formData = new FormData();
       formData.append('file', file);
 
