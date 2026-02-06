@@ -368,66 +368,66 @@ const CarDetailPage: React.FC = () => {
           {/* COLORS SECTION */}
           {hasColors && (
             <section id="section-colors" className="scroll-mt-32">
-              <div className="space-y-6">
-                <div className="glass rounded-2xl p-6">
-                  <h2 className="text-xl font-bold text-text-primary mb-4">🎨 Tùy chọn màu sắc</h2>
-                  <p className="text-text-secondary mb-6">
-                    {car.name} có {car.colorOptions?.length || 0} tùy chọn màu. Chọn màu bên dưới để xem
-                    hình ảnh minh họa.
-                  </p>
+              <div className="space-y-4">
+                {/* Header with Color Bar */}
+                <div className="flex items-center justify-between flex-wrap gap-4">
+                  <h2 className="text-xl font-bold text-text-primary flex items-center gap-2">
+                    <span className="text-2xl">🎨</span> Màu sắc
+                  </h2>
 
-                  {/* Color Swatches */}
-                  <div className="flex flex-wrap gap-3 mb-6">
+                  {/* Compact Color Swatches Bar */}
+                  <div className="flex items-center gap-1 p-1 bg-surface rounded-full">
                     {car.colorOptions?.map(
                       (color: { name: string; hexCode: string; image?: string }, idx: number) => (
                         <button
                           key={idx}
                           onClick={() => setSelectedColorIndex(idx)}
-                          className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-all ${selectedColorIndex === idx
-                            ? 'border-primary bg-primary/10'
-                            : 'border-border hover:border-primary/50'
+                          title={color.name}
+                          className={`relative w-8 h-8 rounded-full transition-all ${selectedColorIndex === idx
+                              ? 'ring-2 ring-primary ring-offset-2 ring-offset-background scale-110 z-10'
+                              : 'hover:scale-105'
                             }`}
+                          style={{ backgroundColor: color.hexCode }}
                         >
-                          <div
-                            className="w-6 h-6 rounded-full border border-border"
-                            style={{ backgroundColor: color.hexCode }}
-                          />
-                          <span
-                            className={
-                              selectedColorIndex === idx
-                                ? 'text-primary font-bold'
-                                : 'text-text-secondary'
-                            }
-                          >
-                            {color.name}
-                          </span>
+                          {selectedColorIndex === idx && (
+                            <span className="absolute inset-0 flex items-center justify-center">
+                              <svg className="w-4 h-4 text-white drop-shadow-md" fill="currentColor" viewBox="0 0 20 20">
+                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                              </svg>
+                            </span>
+                          )}
                         </button>
                       ),
                     )}
                   </div>
+                </div>
 
-                  {/* Selected Color Image */}
+                {/* Selected Color Name */}
+                <p className="text-center text-text-primary font-semibold">
+                  {car.colorOptions?.[selectedColorIndex]?.name}
+                </p>
+
+                {/* Large Color Image Display */}
+                <div className="rounded-2xl overflow-hidden shadow-xl">
                   {car.colorOptions?.[selectedColorIndex]?.image ? (
-                    <div className="rounded-2xl overflow-hidden shadow-lg">
-                      <img
-                        src={car.colorOptions[selectedColorIndex].image}
-                        alt={car.colorOptions[selectedColorIndex].name}
-                        className="w-full h-80 object-cover transition-all duration-500"
-                      />
-                    </div>
+                    <img
+                      src={car.colorOptions[selectedColorIndex].image}
+                      alt={car.colorOptions[selectedColorIndex].name}
+                      className="w-full h-[50vh] min-h-[300px] object-cover transition-all duration-500"
+                    />
                   ) : (
                     <div
-                      className="w-full h-80 rounded-2xl flex items-center justify-center shadow-inner"
+                      className="w-full h-[50vh] min-h-[300px] flex flex-col items-center justify-center gap-4"
                       style={{
-                        backgroundColor: car.colorOptions?.[selectedColorIndex]?.hexCode || '#333',
+                        background: `linear-gradient(135deg, ${car.colorOptions?.[selectedColorIndex]?.hexCode || '#333'} 0%, ${car.colorOptions?.[selectedColorIndex]?.hexCode || '#333'}88 100%)`,
                       }}
                     >
-                      <span className="text-6xl animate-bounce">🚗</span>
+                      <span className="text-8xl">🚗</span>
+                      <span className="text-white/80 font-medium">
+                        {car.colorOptions?.[selectedColorIndex]?.name}
+                      </span>
                     </div>
                   )}
-                  <p className="text-center mt-4 text-text-primary font-bold text-lg">
-                    {car.colorOptions?.[selectedColorIndex]?.name}
-                  </p>
                 </div>
               </div>
             </section>
