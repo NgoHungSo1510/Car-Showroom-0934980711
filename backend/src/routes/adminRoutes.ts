@@ -7,7 +7,10 @@ import { uploadSingleImage, uploadImages, uploadSingleModel, uploadSingleExcel }
 
 const router = Router();
 
-// All routes are protected
+// Public route - Template download (no auth required)
+router.get('/import/car-template', downloadCarTemplate);
+
+// All routes below are protected
 router.use(protectAdmin);
 
 // Dashboard
@@ -19,8 +22,8 @@ router.post('/upload/image', uploadSingleImage, uploadImage);
 router.post('/upload/images', uploadImages, uploadMultipleImages);
 router.post('/upload/model', uploadSingleModel, uploadModel);
 
-// Import
-router.get('/import/car-template', downloadCarTemplate);
+// Import (POST requires auth)
 router.post('/import/cars', uploadSingleExcel, importCarsFromExcel);
 
 export default router;
+
