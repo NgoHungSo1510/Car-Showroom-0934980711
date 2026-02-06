@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { postsAPI, carsAPI } from '../services/api';
 import { useBranding } from '../context/BrandingContext';
+import FeaturedCarousel from '../components/FeaturedCarousel';
 
 // Category labels - solid colors for visibility
 const categoryLabels: Record<string, { label: string; color: string }> = {
@@ -25,11 +26,11 @@ const HomePage: React.FC = () => {
     },
   });
 
-  // Fetch featured cars
+  // Fetch featured cars (Hot cars) - lấy tất cả xe được đánh dấu Hot
   const { data: carsData } = useQuery({
     queryKey: ['featured-cars'],
     queryFn: async () => {
-      const response = await carsAPI.getAll({ featured: true, limit: 3 });
+      const response = await carsAPI.getAll({ featured: true, limit: 100 });
       return response.data;
     },
   });
@@ -70,82 +71,22 @@ const HomePage: React.FC = () => {
         </p>
       </div>
 
-      {/* Featured Cars Carousel with Controls */}
-      <div className="relative group/carousel">
-        {/* Carousel Container */}
-        <div
-          id="featured-carousel"
-          className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide scroll-smooth"
-        >
-          {carsData === undefined ? (
-            // Skeleton loading
-            [...Array(3)].map((_, i) => (
-              <div
-                key={i}
-                className="flex-shrink-0 w-[280px] rounded-xl overflow-hidden border border-border animate-pulse"
-              >
-                <div className="h-36 bg-surface-hover" />
-              </div>
-            ))
-          ) : featuredCars.length > 0 ? (
-            featuredCars.map((car) => (
-              <Link
-                key={car._id}
-                to={`/cars/${car.slug}`}
-                className="flex-shrink-0 w-[280px] rounded-xl overflow-hidden border border-border hover:border-primary/30 transition-all group"
-              >
-                <div
-                  className="h-36 bg-cover bg-center relative"
-                  style={{ backgroundImage: `url("${car.thumbnail}")` }}
-                >
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
-                  {car.model3D?.hasModel && (
-                    <span className="absolute top-2 right-2 px-2 py-0.5 bg-primary text-text-primary text-[10px] font-bold rounded animate-glow">
-                      3D
-                    </span>
-                  )}
-                  <div className="absolute bottom-3 left-3 right-3">
-                    <p className="text-xs text-text-secondary">{car.brand?.name}</p>
-                    <h3 className="text-sm font-bold text-text-primary group-hover:text-primary transition-colors">
-                      {car.name}
-                    </h3>
-                  </div>
-                </div>
-              </Link>
-            ))
-          ) : null}
+      {/* Featured Cars Carousel with Auto-scroll */}
+      {featuredCars.length > 0 && (
+        <FeaturedCarousel cars={featuredCars} carsLoading={carsData === undefined} />
+      )}
+      {carsData === undefined && (
+        <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
+          {[...Array(3)].map((_, i) => (
+            <div
+              key={i}
+              className="flex-shrink-0 w-[280px] rounded-xl overflow-hidden border border-border animate-pulse"
+            >
+              <div className="h-36 bg-surface-hover" />
+            </div>
+          ))}
         </div>
-
-        {/* Carousel Controls - Show on hover */}
-        {featuredCars.length > 2 && (
-          <>
-            <button
-              onClick={() => {
-                const container = document.getElementById('featured-carousel');
-                if (container) container.scrollBy({ left: -296, behavior: 'smooth' });
-              }}
-              className="absolute left-0 top-1/2 -translate-y-1/2 w-10 h-10 bg-surface/90 backdrop-blur-sm border border-border rounded-full flex items-center justify-center text-text-primary opacity-0 group-hover/carousel:opacity-100 transition-opacity hover:bg-surface-hover z-10"
-              aria-label="Previous"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-            </button>
-            <button
-              onClick={() => {
-                const container = document.getElementById('featured-carousel');
-                if (container) container.scrollBy({ left: 296, behavior: 'smooth' });
-              }}
-              className="absolute right-0 top-1/2 -translate-y-1/2 w-10 h-10 bg-surface/90 backdrop-blur-sm border border-border rounded-full flex items-center justify-center text-text-primary opacity-0 group-hover/carousel:opacity-100 transition-opacity hover:bg-surface-hover z-10"
-              aria-label="Next"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </button>
-          </>
-        )}
-      </div>
+      )}
 
       {/* Posts Feed */}
       <div className="flex flex-col gap-6">

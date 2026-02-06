@@ -102,16 +102,27 @@ const CarsPage: React.FC = () => {
         responseType: 'blob',
         headers: { Authorization: `Bearer ${token}` },
       });
-      const url = window.URL.createObjectURL(new Blob([response.data]));
+
+      // Create blob and download
+      const blob = new Blob([response.data], {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      });
+      const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
       link.setAttribute('download', 'car_import_template.xlsx');
       document.body.appendChild(link);
       link.click();
       link.remove();
+      window.URL.revokeObjectURL(url);
       toast.success('Đã tải file mẫu');
-    } catch (error) {
-      toast.error('Không thể tải file mẫu');
+    } catch (error: any) {
+      console.error('Download template error:', error);
+      if (error.response?.status === 401) {
+        toast.error('Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.');
+      } else {
+        toast.error('Không thể tải file mẫu. Vui lòng thử lại.');
+      }
     }
   };
 
@@ -192,7 +203,7 @@ const CarsPage: React.FC = () => {
       {/* Import Modal */}
       {showImportModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="dark:bg-card-dark light:bg-white rounded-2xl p-6 max-w-lg w-full shadow-2xl">
+          <div className="dark:bg-card-dark light:bg-white dark:border-border-dark light:border-slate-200 border rounded-2xl p-6 max-w-lg w-full shadow-2xl">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-bold dark:text-white light:text-text-light">Import xe từ Excel</h3>
               <button

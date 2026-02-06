@@ -227,15 +227,30 @@ const CarEditorPage: React.FC = () => {
             </div>
 
             <div className="md:col-span-2">
-              <label className="flex items-center gap-3 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={formData.isFeatured}
-                  onChange={(e) => setFormData({ ...formData, isFeatured: e.target.checked })}
-                  className="rounded dark:border-border-dark light:border-border-light dark:bg-background-dark light:bg-white text-primary focus:ring-primary"
-                />
-                <span className="text-sm dark:text-slate-300 light:text-slate-600">Đánh dấu là xe nổi bật (Featured)</span>
-              </label>
+              <div className={`p-4 rounded-xl border-2 transition-all ${formData.isFeatured ? 'bg-amber-500/10 border-amber-500 dark:bg-amber-500/20' : 'dark:bg-background-dark light:bg-slate-50 dark:border-border-dark light:border-border-light'}`}>
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={formData.isFeatured}
+                    onChange={(e) => setFormData({ ...formData, isFeatured: e.target.checked })}
+                    className="w-5 h-5 rounded dark:border-border-dark light:border-border-light dark:bg-background-dark light:bg-white text-amber-500 focus:ring-amber-500"
+                  />
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg">🔥</span>
+                      <span className={`font-bold ${formData.isFeatured ? 'text-amber-500' : 'dark:text-slate-300 light:text-slate-600'}`}>
+                        Xe Nổi Bật (Hot)
+                      </span>
+                      {formData.isFeatured && (
+                        <span className="px-2 py-0.5 bg-amber-500 text-white text-xs font-bold rounded">HOT</span>
+                      )}
+                    </div>
+                    <p className="text-xs dark:text-slate-400 light:text-slate-500 mt-1">
+                      Xe sẽ hiển thị ở mục "Đề xuất xe" trang Cộng đồng và có badge HOT trong Showroom
+                    </p>
+                  </div>
+                </label>
+              </div>
             </div>
           </div>
         </div>
