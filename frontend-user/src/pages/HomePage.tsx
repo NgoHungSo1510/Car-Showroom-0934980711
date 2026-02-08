@@ -112,13 +112,9 @@ const HomePage: React.FC = () => {
                   >
                     {/* Text always white on dark gradient overlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
-                    <div className="absolute bottom-4 left-4 right-4 flex justify-between items-end">
-                      <div>
-                        <h2 className="text-xl font-bold leading-tight text-white">{post.title}</h2>
-                        {post.excerpt && (
-                          <p className="text-sm text-white/80 line-clamp-1">{post.excerpt}</p>
-                        )}
-                      </div>
+                    <div className="absolute bottom-4 left-4 right-4">
+                      {/* Only title in background overlay */}
+                      <h2 className="text-xl font-bold leading-tight text-white">{post.title}</h2>
                     </div>
                   </div>
                 )}
@@ -135,13 +131,14 @@ const HomePage: React.FC = () => {
 
               {/* Post Footer */}
               <div className="p-5 flex flex-col gap-4">
-                <Link to={`/posts/${post.slug}`} className="block">
-                  {post.excerpt && post.coverImage && (
+                {/* Excerpt - always shown below background if exists */}
+                {post.excerpt && (
+                  <Link to={`/posts/${post.slug}`} className="block">
                     <p className="text-text-secondary text-sm leading-relaxed line-clamp-2 hover:text-text-primary transition-colors">
                       {post.excerpt}
                     </p>
-                  )}
-                </Link>
+                  </Link>
+                )}
 
                 {/* Category and Time - moved here */}
                 <div className="flex items-center gap-3">
