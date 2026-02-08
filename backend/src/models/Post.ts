@@ -10,7 +10,8 @@ interface ITextBlock {
 
 interface IImageBlock {
   type: 'image';
-  url: string;
+  url?: string; // legacy single image
+  urls?: string[]; // multiple images
   caption?: string;
 }
 
@@ -78,7 +79,8 @@ const contentBlockSchema = new Schema(
       required: true,
     },
     content: String, // for text blocks
-    url: String, // for image/video blocks
+    url: String, // for image/video blocks (legacy single image)
+    urls: [String], // for multiple images in image blocks
     caption: String, // for image/video blocks
     car: {
       type: Schema.Types.ObjectId,

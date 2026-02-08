@@ -102,7 +102,8 @@ const PostEditorPage: React.FC = () => {
   const addContentBlock = (type: ContentBlock['type']) => {
     const newBlock: ContentBlock = { type };
     if (type === 'text') newBlock.content = '';
-    if (type === 'image' || type === 'video') newBlock.url = '';
+    if (type === 'image') newBlock.urls = [];
+    if (type === 'video') newBlock.url = '';
     if (type === 'car') newBlock.car = '';
     setFormData({
       ...formData,
@@ -416,9 +417,9 @@ const PostEditorPage: React.FC = () => {
 
                 {block.type === 'image' && (
                   <ContentBlockImageUploader
-                    url={block.url || ''}
+                    urls={block.urls || (block.url ? [block.url] : [])}
                     caption={block.caption || ''}
-                    onUrlChange={(url) => updateContentBlock(index, { url })}
+                    onUrlsChange={(urls) => updateContentBlock(index, { urls, url: undefined })}
                     onCaptionChange={(caption) => updateContentBlock(index, { caption })}
                   />
                 )}

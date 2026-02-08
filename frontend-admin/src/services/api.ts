@@ -119,7 +119,8 @@ export const carsAPI = {
 export interface ContentBlock {
   type: 'text' | 'image' | 'video' | 'car';
   content?: string; // for text blocks
-  url?: string; // for image/video blocks
+  url?: string; // for image/video blocks (legacy single image)
+  urls?: string[]; // for multiple images in image blocks
   caption?: string; // for image/video blocks
   car?: string; // car ID for car blocks
   description?: string; // for car blocks

@@ -97,7 +97,8 @@ export interface Car {
 export interface ContentBlock {
   type: 'text' | 'image' | 'video' | 'car';
   content?: string;
-  url?: string;
+  url?: string; // legacy single image
+  urls?: string[]; // multiple images
   caption?: string;
   car?: {
     _id: string;

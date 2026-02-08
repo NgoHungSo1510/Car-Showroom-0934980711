@@ -94,10 +94,29 @@ const PostDetailPage: React.FC = () => {
           </div>
         );
 
-      case 'image':
+      case 'image': {
+        // Support both legacy single url and new multiple urls
+        const images = block.urls || (block.url ? [block.url] : []);
+        if (images.length === 0) return null;
+
         return (
           <figure key={index} className="my-8">
-            <img src={block.url} alt={block.caption || ''} className="w-full rounded-xl" />
+            {images.length === 1 ? (
+              // Single image
+              <img src={images[0]} alt={block.caption || ''} className="w-full rounded-xl" />
+            ) : (
+              // Multiple images grid
+              <div className="grid grid-cols-2 gap-3">
+                {images.map((imgUrl, imgIndex) => (
+                  <img
+                    key={imgIndex}
+                    src={imgUrl}
+                    alt={block.caption ? `${block.caption} ${imgIndex + 1}` : `Ảnh ${imgIndex + 1}`}
+                    className="w-full aspect-video object-cover rounded-xl cursor-pointer hover:opacity-90 transition-opacity"
+                  />
+                ))}
+              </div>
+            )}
             {block.caption && (
               <figcaption className="text-center text-sm text-text-secondary mt-3 italic">
                 {block.caption}
@@ -105,6 +124,7 @@ const PostDetailPage: React.FC = () => {
             )}
           </figure>
         );
+      }
 
       case 'video': {
         const youtubeId = block.url ? getYouTubeId(block.url) : null;

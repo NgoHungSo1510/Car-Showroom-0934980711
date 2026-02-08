@@ -3,19 +3,19 @@ import { uploadAPI } from '../services/api';
 import toast from 'react-hot-toast';
 
 interface ContentBlockImageUploaderProps {
-    url: string;
+    urls: string[]; // Changed from single url to array
     caption: string;
-    onUrlChange: (url: string) => void;
+    onUrlsChange: (urls: string[]) => void; // Changed from onUrlChange
     onCaptionChange: (caption: string) => void;
 }
 
 /**
- * Image uploader for content blocks with both Upload and URL modes.
+ * Multi-image uploader for content blocks with both Upload and URL modes.
  */
 const ContentBlockImageUploader: React.FC<ContentBlockImageUploaderProps> = ({
-    url,
+    urls,
     caption,
-    onUrlChange,
+    onUrlsChange,
     onCaptionChange,
 }) => {
     const [inputMode, setInputMode] = useState<'upload' | 'url'>('upload');
@@ -23,54 +23,79 @@ const ContentBlockImageUploader: React.FC<ContentBlockImageUploaderProps> = ({
     const [isUploading, setIsUploading] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    const handleFileUpload = async (file: File) => {
+    const handleFilesUpload = async (files: FileList) => {
         const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-        if (!allowedTypes.includes(file.type)) {
-            toast.error('Chỉ hỗ trợ file ảnh (JPEG, PNG, GIF, WebP)');
-            return;
-        }
+        const validFiles = Array.from(files).filter(file => {
+            if (!allowedTypes.includes(file.type)) {
+                toast.error(`${file.name}: Chỉ hỗ trợ file ảnh (JPEG, PNG, GIF, WebP)`);
+                return false;
+            }
+            if (file.size > 10 * 1024 * 1024) {
+                toast.error(`${file.name}: File quá lớn. Tối đa 10MB`);
+                return false;
+            }
+            return true;
+        });
 
-        if (file.size > 10 * 1024 * 1024) {
-            toast.error('File quá lớn. Tối đa 10MB');
-            return;
-        }
+        if (validFiles.length === 0) return;
 
         setIsUploading(true);
-        try {
-            const response = await uploadAPI.uploadImage(file);
-            if (response.data.success) {
-                onUrlChange(response.data.data.url);
-                toast.success('Upload ảnh thành công!');
+        const newUrls: string[] = [];
+
+        for (const file of validFiles) {
+            try {
+                const response = await uploadAPI.uploadImage(file);
+                if (response.data.success) {
+                    newUrls.push(response.data.data.url);
+                }
+            } catch (error) {
+                console.error('Upload error:', error);
+                toast.error(`Lỗi upload ${file.name}`);
             }
-        } catch (error) {
-            console.error('Upload error:', error);
-            toast.error('Lỗi upload ảnh. Vui lòng thử lại.');
-        } finally {
-            setIsUploading(false);
         }
+
+        if (newUrls.length > 0) {
+            onUrlsChange([...urls, ...newUrls]);
+            toast.success(`Đã upload ${newUrls.length} ảnh`);
+        }
+        setIsUploading(false);
     };
 
     const handleDrop = (e: React.DragEvent) => {
         e.preventDefault();
-        const file = e.dataTransfer.files[0];
-        if (file) {
-            handleFileUpload(file);
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            handleFilesUpload(files);
         }
     };
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            handleFileUpload(file);
+        const files = e.target.files;
+        if (files && files.length > 0) {
+            handleFilesUpload(files);
         }
+        e.target.value = ''; // Reset input
     };
 
     const handleUrlSubmit = () => {
         if (urlInput.trim()) {
-            onUrlChange(urlInput.trim());
+            onUrlsChange([...urls, urlInput.trim()]);
             setUrlInput('');
-            toast.success('Đã cập nhật URL ảnh');
+            toast.success('Đã thêm URL ảnh');
         }
+    };
+
+    const removeImage = (index: number) => {
+        const newUrls = urls.filter((_, i) => i !== index);
+        onUrlsChange(newUrls);
+    };
+
+    const moveImage = (index: number, direction: 'up' | 'down') => {
+        const newUrls = [...urls];
+        const newIndex = direction === 'up' ? index - 1 : index + 1;
+        if (newIndex < 0 || newIndex >= newUrls.length) return;
+        [newUrls[index], newUrls[newIndex]] = [newUrls[newIndex], newUrls[index]];
+        onUrlsChange(newUrls);
     };
 
     return (
@@ -81,8 +106,8 @@ const ContentBlockImageUploader: React.FC<ContentBlockImageUploaderProps> = ({
                     type="button"
                     onClick={() => setInputMode('upload')}
                     className={`px-2 py-1 text-xs rounded-md transition-colors ${inputMode === 'upload'
-                            ? 'bg-green-600 text-white'
-                            : 'dark:bg-slate-700 light:bg-slate-200 dark:text-slate-400 light:text-slate-500'
+                        ? 'bg-green-600 text-white'
+                        : 'dark:bg-slate-700 light:bg-slate-200 dark:text-slate-400 light:text-slate-500'
                         }`}
                 >
                     📤 Upload
@@ -91,12 +116,15 @@ const ContentBlockImageUploader: React.FC<ContentBlockImageUploaderProps> = ({
                     type="button"
                     onClick={() => setInputMode('url')}
                     className={`px-2 py-1 text-xs rounded-md transition-colors ${inputMode === 'url'
-                            ? 'bg-green-600 text-white'
-                            : 'dark:bg-slate-700 light:bg-slate-200 dark:text-slate-400 light:text-slate-500'
+                        ? 'bg-green-600 text-white'
+                        : 'dark:bg-slate-700 light:bg-slate-200 dark:text-slate-400 light:text-slate-500'
                         }`}
                 >
                     🔗 URL
                 </button>
+                <span className="text-xs dark:text-slate-500 light:text-slate-400 ml-2">
+                    {urls.length} ảnh
+                </span>
             </div>
 
             {/* Upload or URL Input */}
@@ -113,6 +141,7 @@ const ContentBlockImageUploader: React.FC<ContentBlockImageUploaderProps> = ({
                         ref={fileInputRef}
                         type="file"
                         accept="image/jpeg,image/png,image/gif,image/webp"
+                        multiple
                         onChange={handleFileChange}
                         className="hidden"
                     />
@@ -125,7 +154,7 @@ const ContentBlockImageUploader: React.FC<ContentBlockImageUploaderProps> = ({
                         <div className="flex items-center justify-center gap-2">
                             <span className="text-xl">📷</span>
                             <span className="text-sm dark:text-slate-400 light:text-slate-500">
-                                Kéo thả hoặc click để upload ảnh
+                                Kéo thả hoặc click để upload ảnh (chọn nhiều)
                             </span>
                         </div>
                     )}
@@ -150,24 +179,57 @@ const ContentBlockImageUploader: React.FC<ContentBlockImageUploaderProps> = ({
                 </div>
             )}
 
-            {/* Preview */}
-            {url && (
-                <div className="relative">
-                    <img
-                        src={url}
-                        alt="Preview"
-                        className="max-h-40 rounded-lg object-cover"
-                        onError={(e) => {
-                            (e.target as HTMLImageElement).src = 'https://via.placeholder.com/400x200?text=Image+Error';
-                        }}
-                    />
-                    <button
-                        type="button"
-                        onClick={() => onUrlChange('')}
-                        className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full text-xs hover:bg-red-600"
-                    >
-                        ✕
-                    </button>
+            {/* Images Grid */}
+            {urls.length > 0 && (
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                    {urls.map((url, index) => (
+                        <div
+                            key={index}
+                            className="relative group aspect-video dark:bg-background-dark light:bg-slate-100 rounded-lg overflow-hidden dark:border-border-dark light:border-border-light border"
+                        >
+                            <img
+                                src={url}
+                                alt={`Ảnh ${index + 1}`}
+                                className="w-full h-full object-cover"
+                                onError={(e) => {
+                                    (e.target as HTMLImageElement).src = 'https://via.placeholder.com/300x200?text=Error';
+                                }}
+                            />
+                            {/* Overlay on hover */}
+                            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1">
+                                <button
+                                    type="button"
+                                    onClick={() => moveImage(index, 'up')}
+                                    disabled={index === 0}
+                                    className="p-1 bg-white/20 hover:bg-white/30 text-white rounded disabled:opacity-30"
+                                    title="Di chuyển trước"
+                                >
+                                    ←
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => moveImage(index, 'down')}
+                                    disabled={index === urls.length - 1}
+                                    className="p-1 bg-white/20 hover:bg-white/30 text-white rounded disabled:opacity-30"
+                                    title="Di chuyển sau"
+                                >
+                                    →
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => removeImage(index)}
+                                    className="p-1 bg-red-500/80 hover:bg-red-500 text-white rounded"
+                                    title="Xóa ảnh"
+                                >
+                                    ✕
+                                </button>
+                            </div>
+                            {/* Index badge */}
+                            <div className="absolute top-1 left-1 px-1.5 py-0.5 bg-black/70 text-white text-xs rounded">
+                                {index + 1}
+                            </div>
+                        </div>
+                    ))}
                 </div>
             )}
 
