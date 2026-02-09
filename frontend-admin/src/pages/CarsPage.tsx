@@ -396,6 +396,7 @@ const CarsPage: React.FC = () => {
               status: string;
               viewCount: number;
               model3D?: { hasModel: boolean };
+              isFeatured?: boolean;
             }) => (
               <div
                 key={car._id}
@@ -411,11 +412,19 @@ const CarsPage: React.FC = () => {
                       directions_car
                     </span>
                   )}
-                  {car.model3D?.hasModel && (
-                    <div className="absolute top-2 right-2 px-2 py-1 bg-primary/90 rounded text-[10px] font-bold uppercase text-white">
-                      3D
-                    </div>
-                  )}
+                  {/* Badges */}
+                  <div className="absolute top-2 right-2 flex items-center gap-1">
+                    {car.isFeatured && (
+                      <div className="px-2 py-1 bg-orange-500/90 rounded text-[10px] font-bold text-white flex items-center gap-1">
+                        🔥 HOT
+                      </div>
+                    )}
+                    {car.model3D?.hasModel && (
+                      <div className="px-2 py-1 bg-primary/90 rounded text-[10px] font-bold uppercase text-white">
+                        3D
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 {/* Info */}
