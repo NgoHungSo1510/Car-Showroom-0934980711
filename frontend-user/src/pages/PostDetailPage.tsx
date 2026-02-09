@@ -376,7 +376,7 @@ const PostDetailPage: React.FC = () => {
                   key={tag}
                   className="px-3 py-1 bg-surface text-text-secondary text-sm rounded-full"
                 >
-                  #{tag}
+                  {tag.startsWith('#') ? tag : `#${tag}`}
                 </span>
               ))}
             </div>
