@@ -40,20 +40,21 @@ const ZaloButton: React.FC<ZaloButtonProps> = ({
     let refThumbnail = '';
 
     // Determine the source and create appropriate message
+    // Format: "Tôi đến từ bài {tiêu đề bài hoặc xe}"
     if (carId && carName) {
       notificationType = 'contact_car';
       refId = carId;
       refTitle = carName;
       refThumbnail = carThumbnail || '';
-      message = `Xin chào! Tôi vừa xem xe "${carName}" trên website của bạn và muốn được tư vấn thêm.`;
+      message = `Tôi đến từ bài ${carName}`;
     } else if (postId && postTitle) {
       notificationType = 'contact_post';
       refId = postId;
       refTitle = postTitle;
       refThumbnail = postThumbnail || '';
-      message = `Xin chào! Tôi vừa đọc bài viết "${postTitle}" trên website của bạn và muốn được tư vấn thêm.`;
+      message = `Tôi đến từ bài ${postTitle}`;
     } else {
-      // Fallback to default message
+      // Fallback to default message from admin settings
       message = data.zalo_greeting || 'Xin chào! Tôi cần được tư vấn.';
       notificationType = 'contact_car';
       refId = '';
