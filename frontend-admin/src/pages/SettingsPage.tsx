@@ -197,17 +197,17 @@ const SettingsPage: React.FC = () => {
           </div>
           <div>
             <label className="block text-sm font-medium dark:text-slate-300 light:text-slate-600 mb-2">
-              Lời chào mặc định
+              Tin nhắn Zalo mặc định (dự phòng)
             </label>
             <textarea
               value={formData.zalo_greeting}
               onChange={(e) => setFormData({ ...formData, zalo_greeting: e.target.value })}
               rows={3}
               className="w-full dark:bg-background-dark light:bg-slate-50 dark:border-border-dark light:border-border-light border rounded-lg px-4 py-3 dark:text-white light:text-text-light focus:ring-primary focus:border-primary resize-none"
-              placeholder="Xin chào! Tôi quan tâm đến xe {car_name}..."
+              placeholder="Xin chào! Tôi cần được tư vấn."
             />
             <p className="text-xs dark:text-slate-500 light:text-slate-400 mt-1">
-              Sử dụng {'{car_name}'} làm placeholder cho tên xe
+              <strong>Lưu ý:</strong> Khi user nhấn Zalo từ trang xe/bài viết, tin nhắn tự động là "Tôi đến từ bài [tên xe/bài viết]". Tin nhắn này chỉ dùng khi không có context.
             </p>
           </div>
         </div>
