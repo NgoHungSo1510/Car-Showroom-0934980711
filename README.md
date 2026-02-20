@@ -6,7 +6,7 @@ Website showroom xe VinFast với hệ thống quản lý nội dung, tích hợ
 
 | Thông tin | Giá trị |
 |-----------|---------|
-| **Hotline** | 0934 980 711 |
+| **Hotline** | 036 9402 764 |
 | **User Website** | [showroom-user.vercel.app](https://car-showroom-0934980711.vercel.app/) |
 | **Admin Dashboard** | [showroom-admin.vercel.app](https://showroom-admin.vercel.app) |
 
@@ -103,16 +103,6 @@ cd frontend-user && npm install && npm run dev
 - **Backend**: Node.js, Express, MongoDB, Mongoose
 - **AI**: Google Gemini API
 - **Deploy**: Vercel (Frontend) + Render (Backend)
-
----
-
-## 📝 Changelog gần đây
-
-- ✅ **09/02/2026** - Zalo message format: "Tôi đến từ bài {tiêu đề}"
-- ✅ **09/02/2026** - Smart hashtag: không thêm # nếu đã có
-- ✅ **08/02/2026** - Multi-image upload cho content block
-- ✅ **02/02/2026** - Quản lý loại xe (Car Types)
-- ✅ **29/01/2026** - Import xe từ Excel
 
 ---
 
